@@ -132,3 +132,25 @@ cyclic_loess <- function(hicexp) {
   }
   return(fit)
 }
+
+
+# loess on MD_list object
+.MD_loess <- function(MD_item, degree = 1, Plot = FALSE, Plot.smooth = TRUE, span = NA, loess.criterion = "gcv") {
+  l <- .loess.as(x = hic.table$D, y = hic.table$M, degree = degree,
+                 criterion = loess.criterion,
+                 control = loess.control(surface = "interpolate",
+                                         statistics = "approximate", trace.hat = "approximate"))
+  # calculate gcv and AIC
+  traceL <- l$trace.hat
+  sigma2 <- sum(l$residuals^2)/(l$n - 1)
+  aicc <- log(sigma2) + 1 + 2 * (2 * (traceL + 1))/(l$n - traceL -
+                                                      2)
+  gcv <- l$n * sigma2/(l$n - traceL)^2
+  # print the span picked by gcv
+  message("Span for loess: ", l$pars$span)
+  message("GCV for loess: ", gcv)
+  message("AIC for loess: ", aicc)
+  # get the correction factor
+  mc <- predict(l, hic.table$D)
+  mhat <- mc/2
+}
