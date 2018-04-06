@@ -4,6 +4,15 @@ Version: 0.0.0.9000
 Authors@R: person("John", "Stansfield", email = "stansfieldjc@vcu.edu", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.3)
-License: What license is it under?
+Imports: data.table,
+  dplyr,
+  HiCcompare
+biocViews: Software,
+  HiC, Sequencing, Normalization
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Suggests: knitr,
+    rmarkdown,
+    testthat
+RoxygenNote: 6.0.1

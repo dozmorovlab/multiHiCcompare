@@ -1,8 +1,9 @@
 #' Make Hi-C experiment object from data
 #' 
 #' @export
-#' @import dplyr
+#' @importFrom dplyr full_join
 #' @import data.table
+#' 
 #' @param ... Hi-C data. Data must in sparse upper triangular 
 #'     format with 4 columns: chr, region1, region2, IF.
 #' @param groups A vector of the experimental groups 
@@ -15,7 +16,7 @@
 #'     to a covariates. 
 #' @details Use this function to create a hicexp object for
 #'     analysis in HiCcompare2.
-#' @examples 
+#' 
 #' 
 make_hicexp <- function(..., groups, covariates = NULL) {
   tabs <- list(...)
@@ -60,7 +61,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
     # rename table columns & replace NA IFs with 0
     colnames(tmp_table)[4:ncol(tmp_table)] <- paste0("IF", 1:(ncol(tmp_table) - 3))
     tmp_table[is.na(tmp_table)] <- 0
-    tmp_table <- data.table::as.data.table(tmp_table)
+    
     
     # calculate resolution
     bins <- unique(c(tmp_table$region1, tmp_table$region2))
@@ -68,7 +69,8 @@ make_hicexp <- function(..., groups, covariates = NULL) {
     resolution <- min(diff(bins))
     res[i] <- resolution
     # calculate distance
-    tmp_table[, D := abs(region2 - region1) / resolution]
+    tmp_table <- data.table::as.data.table(tmp_table)
+    tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
     # rearrange columns
     tmp_table <- tmp_table[, c(1, 2, 3, ncol(tmp_table), 4:(ncol(tmp_table) - 1)), with = FALSE]
     
@@ -101,4 +103,4 @@ make_hicexp <- function(..., groups, covariates = NULL) {
 # groups <- c(1, 1, 1, 2, 2, 2, 2)
 # covariates <- data.frame(enzyme = c('mobi', 'mboi', 'mboi', 'dpnii', 'dpnii', 'dpnii', 'dpnii'), batch = c(1, 2, 1, 2, 1, 2, 2))
 # 
-hic_exp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
+# hic_exp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
