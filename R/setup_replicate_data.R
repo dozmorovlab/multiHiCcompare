@@ -7,6 +7,15 @@ r5 <- read.table("data/HIC005.NONE.chr22.100000.txt", header = FALSE)
 r6 <- read.table("data/HIC006.NONE.chr22.100000.txt", header = FALSE)
 r7 <- read.table("data/HIC007.NONE.chr22.100000.txt", header = FALSE)
 
+r1 <- cbind('chr22', r1)
+r2 <- cbind('chr22', r2)
+r3 <- cbind('chr22', r3)
+r4 <- cbind('chr22', r4)
+r5 <- cbind('chr22', r5)
+r6 <- cbind('chr22', r6)
+r7 <- cbind('chr22', r7)
+
+devtools::use_data(r1, r2, r3, r4, r5, r6, r7, compress = 'xz', overwrite = TRUE)
 
 # test out class
 experiment <- new("hicexp", hic_matrices = list(r1, r2, r3, r4, r5, r6, r7), groups = c(1, 1, 1, 2, 2, 2, 2))
