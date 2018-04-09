@@ -135,7 +135,7 @@ cyclic_loess <- function(hicexp) {
 
 
 # loess on MD_list object
-.MD_loess <- function(MD_item, degree = 1, Plot = FALSE, Plot.smooth = TRUE, span = NA, loess.criterion = "gcv") {
+.MD_loess <- function(MD_item, verbose = TRUE, degree = 1, Plot = FALSE, Plot.smooth = TRUE, span = NA, loess.criterion = "gcv") {
   l <- .loess.as(x = hic.table$D, y = hic.table$M, degree = degree,
                  criterion = loess.criterion,
                  control = loess.control(surface = "interpolate",
@@ -147,9 +147,11 @@ cyclic_loess <- function(hicexp) {
                                                       2)
   gcv <- l$n * sigma2/(l$n - traceL)^2
   # print the span picked by gcv
-  message("Span for loess: ", l$pars$span)
-  message("GCV for loess: ", gcv)
-  message("AIC for loess: ", aicc)
+  if (verbose) {
+    message("Span for loess: ", l$pars$span)
+    message("GCV for loess: ", gcv)
+    message("AIC for loess: ", aicc)
+  }
   # get the correction factor
   mc <- predict(l, hic.table$D)
   mhat <- mc/2
