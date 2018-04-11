@@ -3,57 +3,8 @@
 #' 
 
 cyclic_loess <- function(hicexp) {
-  # split up data for condition by chr
-  for (i in 1:length(hicexp@hic_tables)) {
-    tmp_table <- hicexp@hic_tables[[i]]
-    # get all unique pairs of samples which need to be compared
-    samples <- 5:(ncol(tmp_table))
-    combinations <- combn(samples, 2)
-    # make matrix of M values, each col corresponding to combination of samples specified in combinations object
-    M_matrix <- matrix(nrow = nrow(tmp_table), ncol = ncol(combinations))
-    for (j in 1:ncol(combinations)) {
-      M_matrix[,j] <- log2( (tmp_table[, combinations[1,j], with = FALSE] + 1)[[1]] / (tmp_table[, combinations[2,j], with = FALSE] + 1)[[1]] )
-    }
-    # cbind M_matrix to hic table
-    tmp_table <- cbind(tmp_table, M_matrix)
-    # split up data by chr
-    table_by_chr <- split(tmp_table, tmp_table$chr)
-    # create MD list; this splits up the data into a list containing all data that will need to be loess normalized so that it can put into parallel apply statement
-    MD_list <- list()
-    idx <- 1
-    for (k in 1:length(table_by_chr)) {
-      for(l in (samples + length(samples))) {
-        MD_list[[idx]] <- cbind(D = table_by_chr[[k]]$D, M = table_by_chr[[k]][, l, with = FALSE])
-        colnames(MD_list[[idx]]) <- c("D", "M")
-        idx <- idx + 1
-      }
-    }
-    # input MD_list into loess function
-    mhat_list <- lapply(MD_list, .MD_loess) # return correction factor to correct IFs
-    ## Need to put parallel option here for applying loess function
-    
-    # go through samples and apply loess correction to IFs
-    idx <- 1
-    for (k in 1:length(table_by_chr)) {
-      for(l in 1:ncol(combinations)) {
-        # adjust the IFs
-        IF1 <- table_by_chr[[k]][, combinations[1,l], with = FALSE]
-        IF2 <- table_by_chr[[k]][, combinations[2,l], with = FALSE]
-        IF1 <- 2^(log2(IF1 + 1) - mhat_list[[idx]]) %>% as.vector()
-        IF2 <- 2^(log2(IF2 + 1) + mhat_list[[idx]]) %>% as.vector()
-        ## plot MD plot
-        HiCcompare::MD.plot1((table_by_chr[[k]][, (4 + ncol(combinations) + l), with = FALSE])[[1]], table_by_chr[[k]]$D, mhat_list[[idx]]*2)
-        ##
-        # update table
-        table_by_chr[[k]][, combinations[1,l]] <- IF1
-        table_by_chr[[k]][, combinations[2,l]] <- IF2
-        idx <- idx + 1
-      }
-    }
-    
-    # recombine table_by_chr
-    tmp_table <- rbindlist(table_by_chr)[, 1:(ncol(tmp_table) - ncol(combinations)), with = FALSE] # drop the M columns
-  }
+  # split up data by condition and perform cyclic loess
+  normalized <- lapply(hicexp@hic_tables, .loess_condition, converge = 0.1)
 }
 
 
@@ -179,4 +130,72 @@ cyclic_loess <- function(hicexp) {
   mc <- predict(l, MD_item$D)
   mhat <- mc/2
   return(mhat)
+}
+
+
+### Perform cyclic loess for a condition
+.loess_condition <- function(hic_table, converge = 0.1, parallel = FALSE) {
+  cycles <- 0
+  repeat {
+    # get all unique pairs of samples which need to be compared
+    samples <- 5:(ncol(hic_table))
+    combinations <- combn(samples, 2)
+    # make matrix of M values, each col corresponding to combination of samples specified in combinations object
+    M_matrix <- matrix(nrow = nrow(hic_table), ncol = ncol(combinations))
+    for (j in 1:ncol(combinations)) {
+      M_matrix[,j] <- log2( (hic_table[, combinations[1,j], with = FALSE] + 1)[[1]] / (hic_table[, combinations[2,j], with = FALSE] + 1)[[1]] )
+    }
+    # cbind M_matrix to hic table
+    hic_table <- cbind(hic_table, M_matrix)
+    # split up data by chr
+    table_by_chr <- split(hic_table, hic_table$chr)
+    # create MD list; this splits up the data into a list containing all data that will need to be loess normalized so that it can put into parallel apply statement
+    MD_list <- list()
+    idx <- 1
+    for (k in 1:length(table_by_chr)) {
+      for(l in (5 + length(samples)):(ncol(table_by_chr[[k]]))) {
+        MD_list[[idx]] <- cbind(D = table_by_chr[[k]]$D, M = table_by_chr[[k]][, l, with = FALSE])
+        colnames(MD_list[[idx]]) <- c("D", "M")
+        idx <- idx + 1
+      }
+    }
+    # input MD_list into loess function
+    mhat_list <- lapply(MD_list, .MD_loess) # return correction factor to correct IFs
+    ## Need to put parallel option here for applying loess function
+    
+    ##
+    # go through samples and apply loess correction to IFs
+    idx <- 1
+    for (k in 1:length(table_by_chr)) {
+      for(l in 1:ncol(combinations)) {
+        # adjust the IFs
+        IF1 <- table_by_chr[[k]][, combinations[1,l], with = FALSE]
+        IF2 <- table_by_chr[[k]][, combinations[2,l], with = FALSE]
+        IF1 <- 2^(log2(IF1 + 1) - mhat_list[[idx]]) %>% as.vector()
+        IF2 <- 2^(log2(IF2 + 1) + mhat_list[[idx]]) %>% as.vector()
+        ## plot MD plot
+        HiCcompare::MD.plot1((table_by_chr[[k]][, (4 + length(samples) + l), with = FALSE])[[1]], table_by_chr[[k]]$D, mhat_list[[idx]]*2)
+        ##
+        # update table
+        table_by_chr[[k]][, combinations[1,l]] <- IF1
+        table_by_chr[[k]][, combinations[2,l]] <- IF2
+        idx <- idx + 1
+      }
+    }
+    
+    # recombine table_by_chr
+    hic_table <- rbindlist(table_by_chr)[, 1:(ncol(hic_table) - ncol(combinations)), with = FALSE] # drop the M columns
+    # check convergence criteria
+    cycles <- cycles + 1
+    print( quantile(abs(unlist(mhat_list))))
+    if ( max(abs(unlist(mhat_list))) < converge ) {
+      message(paste0("\n Cyclic loess converged in ", cycles, " cycles. \n"))
+      break()
+    }
+    if (cycles > 5) {
+      warning("Cyclic loess performed over 5 cycles without convergence; ending loop")
+      break()
+    }
+  }
+  return(hic_table)
 }
