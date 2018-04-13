@@ -4,7 +4,8 @@ setClass("hicexp",
          representation(
            hic_tables = "list",
            metadata= "data.frame",
-           resolution = "numeric")
+           resolution = "numeric",
+           normalized = "logical")
          # prototype =  prototype(hic_tables= NULL, metadata=NULL)
 )
 
@@ -18,5 +19,8 @@ setMethod("show", "hicexp", function(object) {
   cat(paste0(uniq_groups, " experimental groups \n"))
   for (i in 1:length(s_per_groups)) {
     cat(paste0("Group ", i, ' has ', s_per_groups[i], ' samples \n'))
+  }
+  if (object@normalized) {
+    cat("Data has been normalized")
   }
 })

@@ -93,7 +93,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
   }
   
   # put into hicexp object
-  experiment <- new("hicexp", hic_tables = hic_tables, metadata = metadata, resolution = resolution)
+  experiment <- new("hicexp", hic_tables = hic_tables, metadata = metadata, resolution = resolution, normalized = FALSE)
   return(experiment)
 }
 
@@ -103,4 +103,4 @@ make_hicexp <- function(..., groups, covariates = NULL) {
 # groups <- c(1, 1, 1, 2, 2, 2, 2)
 # covariates <- data.frame(enzyme = c('mobi', 'mboi', 'mboi', 'dpnii', 'dpnii', 'dpnii', 'dpnii'), batch = c(1, 2, 1, 2, 1, 2, 2))
 # 
-# hic_exp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
+# hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)

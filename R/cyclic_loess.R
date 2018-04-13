@@ -17,12 +17,14 @@
 #' @importFrom BiocParallel bplapply
 #' @importFrom dplyr %>%
 #' @importFrom HiCcompare MD.plot1
+#' @importFrom data.table rbindlist
 
 cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
   # split up data by condition and perform cyclic loess
   normalized <- lapply(hicexp@hic_tables, .loess_condition, iterations = iterations, parallel = parallel, verbose = verbose, span = span, Plot = Plot)
   # put back into hicexp object
   hicexp@hic_tables <- normalized
+  hicexp@normalized <- TRUE
   return(hicexp)
 }
 
@@ -87,7 +89,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
     # recombine table_by_chr
     hic_table <- rbindlist(table_by_chr)[, 1:(ncol(hic_table) - ncol(combinations)), with = FALSE] # drop the M columns
     # check convergence criteria
-    cycles <- cycles + 1
+    # cycles <- cycles + 1
     # print( quantile(abs(unlist(mhat_list))))
     # if ( max(abs(unlist(mhat_list))) < converge ) {
     #   message(paste0("\n Cyclic loess converged in ", cycles, " cycles. \n"))

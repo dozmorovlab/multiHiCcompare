@@ -16,12 +16,14 @@
 #' @export
 #' @importFrom BiocParallel bplapply
 #' @importFrom dplyr %>%
+#' @importFrom data.table rbindlist
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
   # input conditions to fastlo
   normalized <- lapply(hicexp@hic_tables, .fastlo_condition, iterations = iterations, span = span, parallel = parallel, verbose = verbose, Plot = Plot)
   # put back into hicexp object
   hicexp@hic_tables <- normalized
+  hicexp@normalized <- TRUE
   return(hicexp)
 }
 
@@ -37,9 +39,9 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   table_list <- do.call(c, table_list)
   # apply fastlo to list
   if (parallel) {
-    normalized <- BiocParallel::bplapply(table_list, .fastlo, span = span)
+    normalized <- BiocParallel::bplapply(table_list, .fastlo, span = span, iterations = iterations)
   } else {
-    normalized <- lapply(table_list, .fastlo, span = span)
+    normalized <- lapply(table_list, .fastlo, span = span, iterations = iterations)
   }
   # recombine list of tables
   hic_table <- rbindlist(normalized)
@@ -61,7 +63,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 }
 
 # perform fastlo on table
-.fastlo <- function(tab, span) {
+.fastlo <- function(tab, span, iterations, loess.criterion = "gcv", degree = 1) {
   # make matrix of IFs
   IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
   n <- ncol(IF_mat)
