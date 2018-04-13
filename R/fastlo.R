@@ -66,6 +66,8 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 .fastlo <- function(tab, span, iterations, loess.criterion = "gcv", degree = 1) {
   # make matrix of IFs
   IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
+  # log the IF matrix
+  IF_mat <- log2(IF_mat + 1)
   n <- ncol(IF_mat)
   # outer loop for number of cycles
   for (i in 1:iterations) {
@@ -89,6 +91,8 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
       IF_mat[,j] <- IF_mat[,j] - f$fitted
     }
   }
+  # anti-log the IF_mat
+  IF_mat <- (2^IF_mat) - 1
   # deal with negative values after normalization
   IF_mat[IF_mat < 0] <- 0
   # rebuild table
