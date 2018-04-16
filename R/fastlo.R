@@ -20,9 +20,9 @@
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
   # input conditions to fastlo
-  normalized <- lapply(hicexp@hic_tables, .fastlo_condition, iterations = iterations, span = span, parallel = parallel, verbose = verbose, Plot = Plot)
+  normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose, Plot = Plot)
   # put back into hicexp object
-  hicexp@hic_tables <- normalized
+  hicexp@hic_table <- normalized
   hicexp@normalized <- TRUE
   return(hicexp)
 }

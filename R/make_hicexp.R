@@ -13,11 +13,12 @@
 #'     Some examples are enzyme used, batch number, etc.
 #'     Should have the same number of rows as the number
 #'     of Hi-C data objects entered and columns corresponding
-#'     to a covariates. 
+#'     to covariates. 
 #' @details Use this function to create a hicexp object for
 #'     analysis in HiCcompare2.
 #' 
 #' 
+
 make_hicexp <- function(..., groups, covariates = NULL) {
   tabs <- list(...)
   # set column names of data 
@@ -27,7 +28,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
      })
   
   # initialize values
-  hic_tables <- list() # initialize list for tables for each condition
+  # hic_table <- list() # initialize list for tables for each condition
   num_per_group <- table(groups)
   uniq_groups <- unique(groups)
   res <- vector(length = length(uniq_groups))
@@ -50,12 +51,13 @@ make_hicexp <- function(..., groups, covariates = NULL) {
   }
   
   # cycle through groups to create a table for each experimental condition
-  for(i in uniq_groups) {
-    current_group <- which(groups == i)
-    tmp_table <- dplyr::full_join(tabs[[current_group[1]]], tabs[[current_group[2]]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
-    if (num_per_group[i] > 2) {
-      for(j in 3:num_per_group[i]) {
-        tmp_table <- dplyr::full_join(tmp_table, tabs[[current_group[j]]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
+  # for(i in 1:length(tabs)) {
+    # current_group <- which(groups == i)
+    # join first 2 samples
+    tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
+    if (length(tabs) > 2) {
+      for(j in 3:length(tabs)) {
+        tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
       }
     }
     # rename table columns & replace NA IFs with 0
@@ -67,7 +69,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
     bins <- unique(c(tmp_table$region1, tmp_table$region2))
     bins <- bins[order(bins)]
     resolution <- min(diff(bins))
-    res[i] <- resolution
+    # res[i] <- resolution
     # calculate distance
     tmp_table <- data.table::as.data.table(tmp_table)
     tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
@@ -75,15 +77,15 @@ make_hicexp <- function(..., groups, covariates = NULL) {
     tmp_table <- tmp_table[, c(1, 2, 3, ncol(tmp_table), 4:(ncol(tmp_table) - 1)), with = FALSE]
     
     # set table in place on condition list
-    hic_tables[[i]] <- tmp_table
-  }
+    hic_table <- tmp_table
+  # }
   # check that all resolutions are equal
-  if (length(unique(res)) > 1) {
-    stop("Resolution of all datasets must be equal.")
-  }
+  # if (length(unique(res)) > 1) {
+  #   stop("Resolution of all datasets must be equal.")
+  # }
   
   # name items in hic_table
-  names(hic_tables) <- paste0("Group", 1:length(hic_tables))
+  # names(hic_table) <- paste0("Group", 1:length(hic_table))
   
   # make metadata 
   metadata <- data.frame(group = groups)
@@ -93,7 +95,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
   }
   
   # put into hicexp object
-  experiment <- new("hicexp", hic_tables = hic_tables, metadata = metadata, resolution = resolution, normalized = FALSE)
+  experiment <- new("hicexp", hic_table = hic_table, metadata = metadata, resolution = resolution, normalized = FALSE)
   return(experiment)
 }
 

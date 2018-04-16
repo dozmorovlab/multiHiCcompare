@@ -2,7 +2,7 @@
 
 setClass("hicexp",
          representation(
-           hic_tables = "list",
+           hic_table = "data.table",
            metadata= "data.frame",
            resolution = "numeric",
            normalized = "logical")
@@ -12,7 +12,7 @@ setClass("hicexp",
 
 setMethod("show", "hicexp", function(object) {
   # get unique groups
-  uniq_groups <- length(object@hic_tables)
+  uniq_groups <- length(unique(object@metadata$group))
   # get number samples per groups
   s_per_groups <- table(object@metadata$group)
   cat("Hi-C Experiment Object \n")

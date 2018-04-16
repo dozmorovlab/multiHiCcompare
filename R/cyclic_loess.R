@@ -21,9 +21,9 @@
 
 cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
   # split up data by condition and perform cyclic loess
-  normalized <- lapply(hicexp@hic_tables, .loess_condition, iterations = iterations, parallel = parallel, verbose = verbose, span = span, Plot = Plot)
+  normalized <- .loess_condition(hicexp@hic_table, iterations = iterations, parallel = parallel, verbose = verbose, span = span, Plot = Plot)
   # put back into hicexp object
-  hicexp@hic_tables <- normalized
+  hicexp@hic_table <- normalized
   hicexp@normalized <- TRUE
   return(hicexp)
 }

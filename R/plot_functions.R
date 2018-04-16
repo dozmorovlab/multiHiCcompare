@@ -3,9 +3,19 @@
 #' 
 #' @import gridGraphics
 #' @importFrom gridExtra grid.arrange
+#' @importFrom dplyr %>%
 
 # Plan: make a grid of MD plots for all the pairwise combinations of comparisons between replicates in a condition
 # should use a modified bersion of MD.plot1 to be able to accpet new titles / labels for this function
+
+MD.hicexp <- function(hicexp) {
+  # make IF matrix for all samples
+  IF_list <- lapply(hicexp@hic_tables, function(x) x[, 5:(ncol(x)), with = FALSE] %>% as.matrix())
+  do.call("cbind", IF_list)
+s}
+
+
+
 
 MD.hicexp <- function(hicexp) {
  # get list of plots by condition
