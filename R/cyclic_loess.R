@@ -20,6 +20,10 @@
 #' @importFrom data.table rbindlist
 
 cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
+  # check if data already normalized
+  if (hicexp@normalized) {
+    stop("Data has already been normalized.")
+  }
   # split up data by condition and perform cyclic loess
   normalized <- .loess_condition(hicexp@hic_table, iterations = iterations, parallel = parallel, verbose = verbose, span = span, Plot = Plot)
   # put back into hicexp object
