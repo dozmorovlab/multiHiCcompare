@@ -18,7 +18,7 @@ covariate information for your Hi-C experiment.
 Some examples are enzyme used, batch number, etc.
 Should have the same number of rows as the number
 of Hi-C data objects entered and columns corresponding
-to a covariates.}
+to covariates.}
 }
 \description{
 Make Hi-C experiment object from data
