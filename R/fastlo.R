@@ -20,17 +20,24 @@
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
   # input conditions to fastlo
-  normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose, Plot = Plot)
+  normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose)
   # put back into hicexp object
   hicexp@hic_table <- normalized
   hicexp@normalized <- TRUE
+  
+  # plot
+  # plot
+  if (Plot) {
+    MD.hicexp(hicexp)
+  }
+  
   return(hicexp)
 }
 
 # bacground functions
 
 # perform fastlo on a condition
-.fastlo_condition <- function(hic_table, iterations, span, parallel, verbose, Plot) {
+.fastlo_condition <- function(hic_table, iterations, span, parallel, verbose) {
   # split up data by chr
   table_list <- split(hic_table, hic_table$chr)
   # for each chr create list of distance matrices

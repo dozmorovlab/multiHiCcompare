@@ -25,10 +25,16 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
     stop("Data has already been normalized.")
   }
   # split up data by condition and perform cyclic loess
-  normalized <- .loess_condition(hicexp@hic_table, iterations = iterations, parallel = parallel, verbose = verbose, span = span, Plot = Plot)
+  normalized <- .loess_condition(hicexp@hic_table, iterations = iterations, parallel = parallel, verbose = verbose, span = span)
   # put back into hicexp object
   hicexp@hic_table <- normalized
   hicexp@normalized <- TRUE
+  
+  # plot
+  if (Plot) {
+    MD.hicexp(hicexp)
+  }
+  
   return(hicexp)
 }
 
@@ -37,110 +43,69 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
 
 # background functions
 ### Perform cyclic loess for a condition
-.loess_condition <- function(hic_table, iterations, parallel, verbose, span, Plot) {
-  # cycles <- 0
-  for(iter in 1:iterations) {
-    # repeat {
-    # get all unique pairs of samples which need to be compared
-    samples <- 5:(ncol(hic_table))
-    combinations <- combn(samples, 2)
-    # make matrix of M values, each col corresponding to combination of samples specified in combinations object
-    M_matrix <- matrix(nrow = nrow(hic_table), ncol = ncol(combinations))
-    for (j in 1:ncol(combinations)) {
-      M_matrix[,j] <- log2( (hic_table[, combinations[1,j], with = FALSE] + 1)[[1]] / (hic_table[, combinations[2,j], with = FALSE] + 1)[[1]] )
-    }
-    # cbind M_matrix to hic table
-    hic_table <- cbind(hic_table, M_matrix)
-    # split up data by chr
-    table_by_chr <- split(hic_table, hic_table$chr)
-    # create MD list; this splits up the data into a list containing all data that will need to be loess normalized so that it can put into parallel apply statement
-    MD_list <- list()
-    idx <- 1
-    for (k in 1:length(table_by_chr)) {
-      for(l in (5 + length(samples)):(ncol(table_by_chr[[k]]))) {
-        MD_list[[idx]] <- cbind(D = table_by_chr[[k]]$D, M = table_by_chr[[k]][, l, with = FALSE])
-        colnames(MD_list[[idx]]) <- c("D", "M")
-        idx <- idx + 1
-      }
-    }
-    # input MD_list into loess function
-    # return correction factor to correct IFs
-    if (parallel) {
-      mhat_list <- BiocParallel::bplapply(MD_list, .MD_loess, verbose = verbose, span = span)
-    } else {
-      mhat_list <- lapply(MD_list, .MD_loess, verbose = verbose, span = span)
-    }
-
-    # go through samples and apply loess correction to IFs
-    idx <- 1
-    for (k in 1:length(table_by_chr)) {
-      for(l in 1:ncol(combinations)) {
-        # adjust the IFs
-        IF1 <- table_by_chr[[k]][, combinations[1,l], with = FALSE]
-        IF2 <- table_by_chr[[k]][, combinations[2,l], with = FALSE]
-        IF1 <- 2^(log2(IF1 + 1) + mhat_list[[idx]]) %>% as.vector()
-        IF2 <- 2^(log2(IF2 + 1) - mhat_list[[idx]]) %>% as.vector()
-        ## plot MD plot
-        if (Plot) HiCcompare::MD.plot1((table_by_chr[[k]][, (4 + length(samples) + l), with = FALSE])[[1]], table_by_chr[[k]]$D, mhat_list[[idx]]*2)
-        ##
-        # update table
-        table_by_chr[[k]][, combinations[1,l]] <- IF1
-        table_by_chr[[k]][, combinations[2,l]] <- IF2
-        idx <- idx + 1
-      }
-    }
-    
-    # recombine table_by_chr
-    hic_table <- rbindlist(table_by_chr)[, 1:(ncol(hic_table) - ncol(combinations)), with = FALSE] # drop the M columns
-    # check convergence criteria
-    # cycles <- cycles + 1
-    # print( quantile(abs(unlist(mhat_list))))
-    # if ( max(abs(unlist(mhat_list))) < converge ) {
-    #   message(paste0("\n Cyclic loess converged in ", cycles, " cycles. \n"))
-    #   break()
-    # }
-    # if (cycles > 5) {
-    #   warning("Cyclic loess performed over 5 cycles without convergence; ending loop")
-    #   break()
-    # }
-  }
-  return(hic_table)
-}
-
-
-
-# loess on MD_list object
-.MD_loess <- function(MD_item, verbose, degree = 1, span, loess.criterion = "gcv") {
-  if (is.na(span)) {
-    l <- .loess.as(x = MD_item$D, y = MD_item$M, degree = degree, 
-                   criterion = loess.criterion,
-                   control = loess.control(surface = "interpolate",
-                                           statistics = "approximate", trace.hat = "approximate"))
+.loess_condition <- function(hic_table, iterations, parallel, verbose, span) {
+  # split up data by chr
+  table_list <- split(hic_table, hic_table$chr)
+  # plug into parallelized loess function
+  if (parallel) {
+    normalized <- BiocParallel::bplapply(table_list, .cloess, iterations = iterations, verbose = verbose, span = span)
   } else {
-    l <- .loess.as(x = MD_item$D, y = MD_item$M, degree = degree, user.span = span,
-                   criterion = loess.criterion,
-                   control = loess.control(surface = "interpolate",
-                                           statistics = "approximate", trace.hat = "approximate"))
+    normalized <- lapply(table_list, .cloess, iterations = iterations, verbose = verbose, span = span)
   }
-  
-  # calculate gcv and AIC
-  traceL <- l$trace.hat
-  sigma2 <- sum(l$residuals^2)/(l$n - 1)
-  aicc <- log(sigma2) + 1 + 2 * (2 * (traceL + 1))/(l$n - traceL -
-                                                      2)
-  gcv <- l$n * sigma2/(l$n - traceL)^2
-  # print the span picked by gcv
-  if (verbose) {
-    message("Span for loess: ", l$pars$span)
-    message("GCV for loess: ", gcv)
-    message("AIC for loess: ", aicc)
-  }
-  # get the correction factor
-  # mc <- predict(l, MD_item$D)
-  mc <- l$fitted
-  mhat <- mc/2
-  return(mhat)
+  # recombine tables
+  normalized <- data.table::rbindlist(normalized)
+  return(normalized)
 }
+
+# perform cyclic loess on a table 
+.cloess <- function(tab, iterations, verbose, span, degree = 1, loess.criterion = "gcv") {
+  # make matrix of IFs
+  IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
+  # log the matrix
+  IF_mat <- log2(IF_mat + 1)
+  n <- ncol(IF_mat)
+  # begin cyclic loess
+  for (i in 1:iterations) {
+    for(j in 1:(n-1)) {
+      for (k in (j+1):n) {
+        M <- IF_mat[,k] - IF_mat[,j]
+        if (is.na(span)) {
+          l <- .loess.as(x =tab$D, y = M, degree = degree, 
+                         criterion = loess.criterion,
+                         control = loess.control(surface = "interpolate",
+                                                 statistics = "approximate", trace.hat = "approximate"))
+        } else {
+          l <- .loess.as(x = tab$D, y = M, degree = degree, user.span = span,
+                         criterion = loess.criterion,
+                         control = loess.control(surface = "interpolate",
+                                                 statistics = "approximate", trace.hat = "approximate"))
+        }
+        # calculate gcv and AIC
+        traceL <- l$trace.hat
+        sigma2 <- sum(l$residuals^2)/(l$n - 1)
+        aicc <- log(sigma2) + 1 + 2 * (2 * (traceL + 1))/(l$n - traceL -2)
+        gcv <- l$n * sigma2/(l$n - traceL)^2
+        # print the span picked by gcv
+        if (verbose) {
+          message("Span for loess: ", l$pars$span)
+          message("GCV for loess: ", gcv)
+          message("AIC for loess: ", aicc)
+        }
+        # adjust IFs
+        IF_mat[,j] <- IF_mat[,j] + l$fitted/2
+        IF_mat[,k] <- IF_mat[,k] - l$fitted/2
+      }
+    }
+  }
+  # anti-log IFs
+  IF_mat <- (2^IF_mat) - 1
+  # set negative values to 0
+  IF_mat[IF_mat < 0] <- 0
+  # recombine table
+  tab <- cbind(tab[, 1:4, with = FALSE], IF_mat)
+  return(tab)
+}
+
 
 
 # loess with Automatic Smoothing Parameter Selection adjusted possible
