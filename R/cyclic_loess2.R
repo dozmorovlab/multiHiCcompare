@@ -42,49 +42,64 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   table_list <- split(hic_table, hic_table$chr)
   # plug into parallelized loess function
   if (parallel) {
-    normalized <- BiocParallel::bplapply(table_list, .cloess)
+    normalized <- BiocParallel::bplapply(table_list, .cloess, iterations = iterations, verbose = verbose, span = span)
   } else {
-    normalized <- lapply(table_list, .cloess)
+    normalized <- lapply(table_list, .cloess, iterations = iterations, verbose = verbose, span = span)
   }
+  # recombine tables
+  normalized <- data.table::rbindlist(normalized)
+  return(normalized)
 }
 
 # perform cyclic loess on a table 
-.cloess <- function(tab, iterations, verbose, span, Plot) {
+.cloess <- function(tab, iterations, verbose, span, degree = 1, loess.criterion = "gcv") {
   # make matrix of IFs
+  IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
+  # log the matrix
+  IF_mat <- log2(IF_mat + 1)
+  n <- ncol(IF_mat)
+  # begin cyclic loess
+  for (i in 1:iterations) {
+    for(j in 1:(n-1)) {
+      for (k in (j+1):n) {
+        M <- IF_mat[,k] - IF_mat[,j]
+        if (is.na(span)) {
+          l <- .loess.as(x =tab$D, y = M, degree = degree, 
+                         criterion = loess.criterion,
+                         control = loess.control(surface = "interpolate",
+                                                 statistics = "approximate", trace.hat = "approximate"))
+        } else {
+          l <- .loess.as(x = tab$D, y = M, degree = degree, user.span = span,
+                         criterion = loess.criterion,
+                         control = loess.control(surface = "interpolate",
+                                                 statistics = "approximate", trace.hat = "approximate"))
+        }
+        # calculate gcv and AIC
+        traceL <- l$trace.hat
+        sigma2 <- sum(l$residuals^2)/(l$n - 1)
+        aicc <- log(sigma2) + 1 + 2 * (2 * (traceL + 1))/(l$n - traceL -2)
+        gcv <- l$n * sigma2/(l$n - traceL)^2
+        # print the span picked by gcv
+        if (verbose) {
+          message("Span for loess: ", l$pars$span)
+          message("GCV for loess: ", gcv)
+          message("AIC for loess: ", aicc)
+        }
+        # adjust IFs
+        IF_mat[,j] <- IF_mat[,j] + l$fitted/2
+        IF_mat[,k] <- IF_mat[,k] - l$fitted/2
+      }
+    }
+  }
+  # anti-log IFs
+  IF_mat <- (2^IF_mat) - 1
+  # set negative values to 0
+  IF_mat[IF_mat < 0] <- 0
+  # recombine table
+  tab <- cbind(tab[, 1:4, with = FALSE], IF_mat)
+  return(tab)
 }
 
-# loess on MD_list object
-.MD_loess <- function(MD_item, verbose, degree = 1, span, loess.criterion = "gcv") {
-  if (is.na(span)) {
-    l <- .loess.as(x = MD_item$D, y = MD_item$M, degree = degree, 
-                   criterion = loess.criterion,
-                   control = loess.control(surface = "interpolate",
-                                           statistics = "approximate", trace.hat = "approximate"))
-  } else {
-    l <- .loess.as(x = MD_item$D, y = MD_item$M, degree = degree, user.span = span,
-                   criterion = loess.criterion,
-                   control = loess.control(surface = "interpolate",
-                                           statistics = "approximate", trace.hat = "approximate"))
-  }
-  
-  # calculate gcv and AIC
-  traceL <- l$trace.hat
-  sigma2 <- sum(l$residuals^2)/(l$n - 1)
-  aicc <- log(sigma2) + 1 + 2 * (2 * (traceL + 1))/(l$n - traceL -
-                                                      2)
-  gcv <- l$n * sigma2/(l$n - traceL)^2
-  # print the span picked by gcv
-  if (verbose) {
-    message("Span for loess: ", l$pars$span)
-    message("GCV for loess: ", gcv)
-    message("AIC for loess: ", aicc)
-  }
-  # get the correction factor
-  # mc <- predict(l, MD_item$D)
-  mc <- l$fitted
-  mhat <- mc/2
-  return(mhat)
-}
 
 
 # loess with Automatic Smoothing Parameter Selection adjusted possible
