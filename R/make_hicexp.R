@@ -38,7 +38,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
     stop("Length of groups must equal the number of Hi-C data objects entered")
   }
   if (sum(num_per_group < 2) > 0) {
-    stop("Each experimental condition must have at least 2 samples. If you have less than 2 samples per group use HiCcompare instead")
+    warning("Each experimental condition should have at least 2 samples. If you have less than 2 samples per group use HiCcompare instead")
   }
   if (!is.null(covariates)) {
     # check for data.frame
@@ -95,7 +95,7 @@ make_hicexp <- function(..., groups, covariates = NULL) {
   }
   
   # put into hicexp object
-  experiment <- new("hicexp", hic_table = hic_table, metadata = metadata, resolution = resolution, normalized = FALSE)
+  experiment <- new("hicexp", hic_table = hic_table, comparison = data.table::data.table(), metadata = metadata, resolution = resolution, normalized = FALSE)
   return(experiment)
 }
 

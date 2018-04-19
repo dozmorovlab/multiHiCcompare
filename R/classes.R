@@ -3,6 +3,7 @@
 setClass("hicexp",
          representation(
            hic_table = "data.table",
+           comparison = "data.frame",
            metadata= "data.frame",
            resolution = "numeric",
            normalized = "logical")

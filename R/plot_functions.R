@@ -38,6 +38,19 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3) {
 }
 
 
+#' Plot a composite MD plot with the results of a comparison
+#' 
+#' @export
+
+MD.composite <- function(hicexp) {
+  # check to make sure data has been compared
+  if (nrow(hicexp@comparison) < 1) {
+    stop("You must compare the Hi-C data first before using this plot function")
+  }
+  .MD.smooth(M = hicexp@comparison$logFC, D = hicexp@comparison$D, p.val = hicexp@comparison$p.adj, 
+             title = "Composite MD Plot")
+}
+
 
 .MD.smooth <- function(M, D, p.val = NA, title = 'MD Plot', ylab = 'M', xlab = 'Distance') {
   # smooth scatter version
