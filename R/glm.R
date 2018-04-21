@@ -79,19 +79,24 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #'    "QLFTest", "LRTest", or "Treat".
 #' @param M The log2 fold change value for a TREAT analysis.
 #' @param parallel Logical, Shoudl parallel processing be used?
+#' 
+#' @import edgeR
+#' @importFrom data.table rbindlist
+#' @importFrom dplyr %>%
+#' @export
 
-hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, parallel = FALSE) {
+hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE) {
   # check to make sure hicexp is normalized
   if (!hicexp@normalized) {
     warning("You should normalize the data before entering it into hic_glm")
   }
   # contrast & coef input
-  if (is.na(contrast) & is.na(coef)) {
-    stop("You must enter a value for contrast or a coef, but not both")
-  }
-  if (!is.na(contrast) & !is.na(coef)) {
-    stop("Please enter either a value for contrast or coef but NOT both.")
-  }
+  # if (is.na(contrast) & is.na(coef)) {
+  #   stop("You must enter a value for contrast or a coef, but not both")
+  # }
+  # if (!is.na(contrast) & !is.na(coef)) {
+  #   stop("Please enter either a value for contrast or coef but NOT both.")
+  # }
   # First need to split up hic_table by chr and then by distance
   # split up data by chr
   table_list <- split(hicexp@hic_table, hicexp@hic_table$chr)
@@ -117,34 +122,69 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   }
   
   ## Perform test based on method and contrast/coef specified 
-  # ?? should probably add parallel option here too
-  # apply QL F-test test
-  if (method == "QLFTest") {
-    if (is.na(coef)) {
-      result <- lapply(fit, edgeR::glmQLFTest, contrast = contrast)
-    } else {
-      result <- lapply(fit, edgeR::glmQLFTest, coef = coef)
+  if (parallel) {
+    # QL F-test test
+    if (method == "QLFTest") {
+      if (is.na(coef)) {
+        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, contrast = contrast)
+      } else {
+        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, coef = coef)
+      }
+    }
+    # Likelihood Ratio Test
+    if (method == "LRTest") {
+      if (is.na(coef)) {
+        result <- BiocParallel::bplapply(fit, edgeR::glmLRT, contrast = contrast)
+      } else {
+        result <- BiocParallel::bplapply(fit, edgeR::glmLRT, coef = coef)
+      }
+    }
+    # TREAT Analysis based on a minimum log2 fold change specified as M
+    if (method == "Treat") {
+      if (is.na(coef)) {
+        result <- BiocParallel::bplapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
+      } else {
+        result <- BiocParallel::bplapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
+      }
+    }
+  } else {
+    # QL F-test test
+    if (method == "QLFTest") {
+      if (is.na(coef)) {
+        result <- lapply(fit, edgeR::glmQLFTest, contrast = contrast)
+      } else {
+        result <- lapply(fit, edgeR::glmQLFTest, coef = coef)
+      }
+    }
+    # Likelihood Ratio Test
+    if (method == "LRTest") {
+      if (is.na(coef)) {
+        result <- lapply(fit, edgeR::glmLRT, contrast = contrast)
+      } else {
+        result <- lapply(fit, edgeR::glmLRT, coef = coef)
+      }
+    }
+    # TREAT Analysis based on a minimum log2 fold change specified as M
+    if (method == "Treat") {
+      if (is.na(coef)) {
+        result <- lapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
+      } else {
+        result <- lapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
+      }
     }
   }
-  # Likelihood Ratio Test
-  if (method == "LRTest") {
-    if (is.na(coef)) {
-      result <- lapply(fit, edgeR::glmLRT, contrast = contrast)
-    } else {
-      result <- lapply(fit, edgeR::glmLRT, coef = coef)
-    }
-  }
-  # TREAT Analysis based on a minimum log2 fold change specified as M
-  if (method == "Treat") {
-    if (is.na(coef)) {
-      result <- lapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
-    } else {
-      result <- lapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
-    }
-  }
+  
   
   # format results for differentially interacting regions
+  result <- mapply(.glm_reformat, result, table_list, MoreArgs = list(p.method = p.method), SIMPLIFY = FALSE)
+  result <- data.table::rbindlist(result)
+  hicexp@comparison <- result
   
+  if (Plot) {
+    MD.composite(hicexp)
+  }
+  
+  return(hicexp)
 }
 
 

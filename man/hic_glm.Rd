@@ -4,7 +4,24 @@
 \alias{hic_glm}
 \title{Function to perform GLM differential analysis on Hi-C experiment}
 \usage{
-hic_glm(hicexp, design, parallel = FALSE)
+hic_glm(hicexp, design, contrast = NA, coef = NA, method = "QLFTest",
+  M = 1, parallel = FALSE, Plot = TRUE)
+}
+\arguments{
+\item{hicexp}{A hicexp object,}
+
+\item{design}{A design matrix for the GLM.}
+
+\item{contrast}{A vector containing the contrast you want to test}
+
+\item{coef}{A value or vect or the coefficients to test.}
+
+\item{method}{The test method to be performed. Should be one of
+"QLFTest", "LRTest", or "Treat".}
+
+\item{M}{The log2 fold change value for a TREAT analysis.}
+
+\item{parallel}{Logical, Shoudl parallel processing be used?}
 }
 \description{
 Function to perform GLM differential analysis on Hi-C experiment

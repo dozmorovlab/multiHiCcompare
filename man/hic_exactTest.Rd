@@ -4,7 +4,7 @@
 \alias{hic_exactTest}
 \title{Perform exact test based difference detection on a Hi-C experiment}
 \usage{
-hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr")
+hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE)
 }
 \description{
 Perform exact test based difference detection on a Hi-C experiment
