@@ -6,7 +6,9 @@ Description: What the package does (one paragraph).
 Depends: R (>= 3.4.3)
 Imports: data.table,
   dplyr,
-  HiCcompare
+  HiCcompare,
+  edgeR,
+  BiocParallel
 biocViews: Software,
   HiC, Sequencing, Normalization
 License: MIT + file LICENSE

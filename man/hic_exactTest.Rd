@@ -6,6 +6,20 @@
 \usage{
 hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE)
 }
+\arguments{
+\item{hicexp}{A hicexp object.}
+
+\item{parallel}{Logical, should parallel processing be used?}
+
+\item{p.method}{Charact string to be input into p.adjust()
+as the method for multiple testing correction. Defaults to "fdr".}
+
+\item{Plot}{Logical, should a composite MD plot be made for the results.}
+}
 \description{
 Perform exact test based difference detection on a Hi-C experiment
+}
+\details{
+This function performs the edgeR exact test on a per distance
+    basis for Hi-C data.
 }

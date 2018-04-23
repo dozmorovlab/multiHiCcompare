@@ -1,5 +1,12 @@
 #' Perform exact test based difference detection on a Hi-C experiment
 #' 
+#' @param hicexp A hicexp object.
+#' @param parallel Logical, should parallel processing be used?
+#' @param p.method Charact string to be input into p.adjust()
+#'    as the method for multiple testing correction. Defaults to "fdr".
+#' @param Plot Logical, should a composite MD plot be made for the results.
+#' @details This function performs the edgeR exact test on a per distance
+#'     basis for Hi-C data. 
 #' @export
 #' @import edgeR
 #' @importFrom dplyr %>%
@@ -56,18 +63,6 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 }
 
 
-# Reformat exact test results and adjust p-values
-## !!! current p-value adjustment is taking place on per distance basis
-.et_reformat <- function(et_result, hic_table, p.method) {
-  # create table of location info and p-value results
-  result <- cbind(hic_table[, 1:4, with = FALSE], et_result$table)
-  colnames(result)[7] <-"p.value"
-  # adjust p-values
-  result$p.adj <- p.adjust(result$p.value, method = p.method)
-  return(result)
-}
-
-
 
 #' Function to perform GLM differential analysis on Hi-C experiment
 #' 
@@ -78,8 +73,11 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @param method The test method to be performed. Should be one of
 #'    "QLFTest", "LRTest", or "Treat".
 #' @param M The log2 fold change value for a TREAT analysis.
-#' @param parallel Logical, Shoudl parallel processing be used?
-#' 
+#' @param parallel Logical, Should parallel processing be used?
+#' @param Plot Logical, Should a composite MD plot be made for 
+#'     the results?
+#' @details This function performs the specified edgeR test
+#'     on a per distance basis on the Hi-C data. 
 #' @import edgeR
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr %>%
@@ -185,6 +183,22 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   }
   
   return(hicexp)
+}
+
+
+
+
+## Background functions
+
+# Reformat exact test results and adjust p-values
+## !!! current p-value adjustment is taking place on per distance basis
+.et_reformat <- function(et_result, hic_table, p.method) {
+  # create table of location info and p-value results
+  result <- cbind(hic_table[, 1:4, with = FALSE], et_result$table)
+  colnames(result)[7] <-"p.value"
+  # adjust p-values
+  result$p.adj <- p.adjust(result$p.value, method = p.method)
+  return(result)
 }
 
 
