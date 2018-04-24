@@ -84,6 +84,8 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @export
 
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE) {
+  # match method
+  method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), several.ok = FALSE)
   # check to make sure hicexp is normalized
   if (!hicexp@normalized) {
     warning("You should normalize the data before entering it into hic_glm")
