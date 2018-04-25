@@ -200,6 +200,8 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   colnames(result)[7] <-"p.value"
   # adjust p-values
   result$p.adj <- p.adjust(result$p.value, method = p.method)
+  # convert logFC from natural log to log2
+  result$logFC <- exp(result$logFC) %>% log2()
   return(result)
 }
 
@@ -211,6 +213,8 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   colnames(result)[ncol(result)] <-"p.value"
   # adjust p-values
   result$p.adj <- p.adjust(result$p.value, method = p.method)
+  # convert logFC from natural log to log2
+  result$logFC <- exp(result$logFC) %>% log2()
   return(result)
 }
 
