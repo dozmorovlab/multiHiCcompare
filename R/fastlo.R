@@ -21,6 +21,8 @@
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
   # input conditions to fastlo
   normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose)
+  # sort hic_table
+  normalized <- normalized[order(chr, region1, region2),]
   # put back into hicexp object
   hicexp@hic_table <- normalized
   hicexp@normalized <- TRUE

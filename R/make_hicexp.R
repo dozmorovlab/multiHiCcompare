@@ -78,6 +78,8 @@ make_hicexp <- function(..., groups, covariates = NULL) {
     
     # set table in place on condition list
     hic_table <- tmp_table
+    # sort hic_table
+    hic_table <- hic_table[order(chr, region1, region2),]
   # }
   # check that all resolutions are equal
   # if (length(unique(res)) > 1) {

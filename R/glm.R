@@ -51,6 +51,8 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   # reformat results back into hicexp object
   comparison <- mapply(.et_reformat, et, table_list, SIMPLIFY = FALSE, MoreArgs = list(p.method = p.method))
   comparison <- data.table::rbindlist(comparison)
+  # sort comparison table
+  comparison <- comparison[order(chr, region1, region2),]
   hicexp@comparison <- comparison
   
   # plot
@@ -178,6 +180,8 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   # format results for differentially interacting regions
   result <- mapply(.glm_reformat, result, table_list, MoreArgs = list(p.method = p.method), SIMPLIFY = FALSE)
   result <- data.table::rbindlist(result)
+  # sort comparison table
+  result <- result[order(chr, region1, region2),]
   hicexp@comparison <- result
   
   if (Plot) {
