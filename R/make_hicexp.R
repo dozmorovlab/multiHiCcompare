@@ -108,3 +108,5 @@ make_hicexp <- function(..., groups, covariates = NULL) {
 # covariates <- data.frame(enzyme = c('mobi', 'mboi', 'mboi', 'dpnii', 'dpnii', 'dpnii', 'dpnii'), batch = c(1, 2, 1, 2, 1, 2, 2))
 # 
 # hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
+# 
+# devtools::use_data(hicexp, compress = 'xz', overwrite = TRUE)
