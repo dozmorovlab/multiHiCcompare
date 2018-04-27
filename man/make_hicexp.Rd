@@ -4,11 +4,15 @@
 \alias{make_hicexp}
 \title{Make Hi-C experiment object from data}
 \usage{
-make_hicexp(..., groups, covariates = NULL)
+make_hicexp(..., data_list = NA, groups, covariates = NULL)
 }
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 
 format with 4 columns: chr, region1, region2, IF.}
+
+\item{data_list}{Alternate way to enter date. If you have
+your Hi-C data in the form of a list already with each
+entry of the list representing a sample use this option.}
 
 \item{groups}{A vector of the experimental groups 
 corresponding to each Hi-C data object entered.}

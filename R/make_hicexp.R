@@ -6,6 +6,9 @@
 #' 
 #' @param ... Hi-C data. Data must in sparse upper triangular 
 #'     format with 4 columns: chr, region1, region2, IF.
+#' @param data_list Alternate way to enter date. If you have
+#'     your Hi-C data in the form of a list already with each
+#'     entry of the list representing a sample use this option.
 #' @param groups A vector of the experimental groups 
 #'     corresponding to each Hi-C data object entered.
 #' @param covariates Optional data.frame containing 
@@ -19,8 +22,12 @@
 #' 
 #' 
 
-make_hicexp <- function(..., groups, covariates = NULL) {
-  tabs <- list(...)
+make_hicexp <- function(..., data_list = NA, groups, covariates = NULL) {
+  if (!is.na(data_list)) {
+    tabs <- data_list
+  } else {
+    tabs <- list(...)
+  }
   # set column names of data 
   tabs <- lapply(tabs, function(x) {
      colnames(x) <- c('chr', 'region1', 'region2', 'IF') 
