@@ -17,12 +17,14 @@
 #'     Should have the same number of rows as the number
 #'     of Hi-C data objects entered and columns corresponding
 #'     to covariates. 
+#' @param remove_zeros Logical, should rows with 1 or more
+#'     zero IF values be removed?
 #' @details Use this function to create a hicexp object for
 #'     analysis in HiCcompare2.
 #' 
 #' 
 
-make_hicexp <- function(..., data_list = NA, groups, covariates = NULL) {
+make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_zeros = FALSE) {
   if (!is.na(data_list)) {
     tabs <- data_list
   } else {
@@ -92,6 +94,14 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL) {
   # if (length(unique(res)) > 1) {
   #   stop("Resolution of all datasets must be equal.")
   # }
+    # remove rows with 0's
+    if (remove_zeros) {
+      IFs <- hic_table[, 5:(ncol(hic_table)), with = FALSE] %>% as.matrix()
+      IFs <- IFs == 0 # matrix of TRUE where zeros occur
+      keep <- rowSums(IFs) == 0 # if row has no zeros it will sum to 0
+      hic_table <- hic_table[keep,]
+    }
+    
   
   # name items in hic_table
   # names(hic_table) <- paste0("Group", 1:length(hic_table))

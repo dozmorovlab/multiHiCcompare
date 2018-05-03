@@ -4,7 +4,8 @@
 \alias{make_hicexp}
 \title{Make Hi-C experiment object from data}
 \usage{
-make_hicexp(..., data_list = NA, groups, covariates = NULL)
+make_hicexp(..., data_list = NA, groups, covariates = NULL,
+  remove_zeros = FALSE)
 }
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 
@@ -23,6 +24,9 @@ Some examples are enzyme used, batch number, etc.
 Should have the same number of rows as the number
 of Hi-C data objects entered and columns corresponding
 to covariates.}
+
+\item{remove_zeros}{Logical, should rows with 1 or more
+zero IF values be removed?}
 }
 \description{
 Make Hi-C experiment object from data
