@@ -63,6 +63,9 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
 .cloess <- function(tab, iterations, verbose, span, degree = 1, loess.criterion = "gcv") {
   # make matrix of IFs
   IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
+  # make index matrix
+  idx_mat <- IF_mat
+  idx_mat[idx_mat != 0] <- 1
   # log the matrix
   IF_mat <- log2(IF_mat + 1)
   n <- ncol(IF_mat)
@@ -70,14 +73,21 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   for (i in 1:iterations) {
     for(j in 1:(n-1)) {
       for (k in (j+1):n) {
+        # # get rows with zeros
+        # zeros1 <-  IF_mat[,k] == 0
+        # zeros2 <- IF_mat[,j] == 0
+        # zeros <- zeros1 | zeros2
+        # M <- IF_mat[!zeros, k] - IF_mat[!zeros, j]
+        # D <- tab$D[!zeros]
         M <- IF_mat[,k] - IF_mat[,j]
+        D <- tab$D
         if (is.na(span)) {
-          l <- .loess.as(x =tab$D, y = M, degree = degree, 
+          l <- .loess.as(x = D, y = M, degree = degree, 
                          criterion = loess.criterion,
                          control = loess.control(surface = "interpolate",
                                                  statistics = "approximate", trace.hat = "approximate"))
         } else {
-          l <- .loess.as(x = tab$D, y = M, degree = degree, user.span = span,
+          l <- .loess.as(x = D, y = M, degree = degree, user.span = span,
                          criterion = loess.criterion,
                          control = loess.control(surface = "interpolate",
                                                  statistics = "approximate", trace.hat = "approximate"))
@@ -94,6 +104,8 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
           message("AIC for loess: ", aicc)
         }
         # adjust IFs
+        # IF_mat[!zeros,j] <- IF_mat[!zeros,j] + l$fitted/2
+        # IF_mat[!zeros,k] <- IF_mat[!zeros,k] - l$fitted/2
         IF_mat[,j] <- IF_mat[,j] + l$fitted/2
         IF_mat[,k] <- IF_mat[,k] - l$fitted/2
       }
@@ -101,6 +113,8 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   }
   # anti-log IFs
   IF_mat <- (2^IF_mat) - 1
+  # reset zeros
+  IF_mat <- IF_mat * idx_mat
   # set negative values to 0
   IF_mat[IF_mat < 0] <- 0
   # recombine table
