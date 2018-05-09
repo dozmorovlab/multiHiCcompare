@@ -75,6 +75,9 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 .fastlo <- function(tab, span, iterations, loess.criterion = "gcv", degree = 1) {
   # make matrix of IFs
   IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
+  # make indicator matrix
+  idx_mat <- IF_mat
+  idx_mat[idx_mat != 0] <- 1
   # log the IF matrix
   IF_mat <- log2(IF_mat + 1)
   n <- ncol(IF_mat)
@@ -102,6 +105,8 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   }
   # anti-log the IF_mat
   IF_mat <- (2^IF_mat) - 1
+  # revert zeros
+  IF_mat <- IF_mat * idx_mat
   # deal with negative values after normalization
   IF_mat[IF_mat < 0] <- 0
   # rebuild table
