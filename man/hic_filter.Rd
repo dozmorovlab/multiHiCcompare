@@ -4,7 +4,20 @@
 \alias{hic_filter}
 \title{Perform filtering on a Hi-C experiment}
 \usage{
-hic_filter(hicexp)
+hic_filter(hicexp, zero.p = 0.8, A.min = 5)
+}
+\arguments{
+\item{hicexp}{A hicexp object.}
+
+\item{zero.p}{The proportion of zeros in a row to filter by. 
+If the proportion of zeros in a row is less than zero.p
+the row will be filtered out.}
+
+\item{A.min}{The minimum average expression value
+(row mean) for an interaction pair. If the 
+interaction pair has an average expression 
+value less than A.min the row will be filtered
+out.}
 }
 \description{
 Perform filtering on a Hi-C experiment
