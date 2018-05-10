@@ -2,8 +2,10 @@
 #' 
 #' @param hicexp A hicexp object.
 #' @param zero.p The proportion of zeros in a row to filter by. 
-#'     If the proportion of zeros in a row is less than zero.p
-#'     the row will be filtered out.
+#'     If the proportion of zeros in a row is <= zero.p
+#'     the row will be filtered out, i.e. zero.p = 1 means
+#'     nothing is filtered based on zeros and zero.p = 0 
+#'     will filter rows that have any zeros.
 #' @param A.min The minimum average expression value
 #'     (row mean) for an interaction pair. If the 
 #'     interaction pair has an average expression 
@@ -27,9 +29,11 @@ hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
   keep.A <- A > A.min
   # filter by proportion of zero IFs for each interaction pair
   zeros <- rowSums(IF_mat == 0) / ncol(IF_mat) # proportion of zeros by row
-  keep.z <- zeros < zero.p
+  keep.z <- zeros <= zero.p
   # final keep vector
   keep <- keep.A & keep.z
+  # keep <- keep.A
+  # keep <- keep.z
   # filter table
   hicexp@hic_table <- hicexp@hic_table[keep,]
   return(hicexp)

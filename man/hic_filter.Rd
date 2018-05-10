@@ -10,8 +10,10 @@ hic_filter(hicexp, zero.p = 0.8, A.min = 5)
 \item{hicexp}{A hicexp object.}
 
 \item{zero.p}{The proportion of zeros in a row to filter by. 
-If the proportion of zeros in a row is less than zero.p
-the row will be filtered out.}
+If the proportion of zeros in a row is <= zero.p
+the row will be filtered out, i.e. zero.p = 1 means
+nothing is filtered based on zeros and zero.p = 0 
+will filter rows that have any zeros.}
 
 \item{A.min}{The minimum average expression value
 (row mean) for an interaction pair. If the 
