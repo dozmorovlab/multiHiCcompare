@@ -14,8 +14,9 @@
 # r5 <- cbind('chr22', r5)
 # r6 <- cbind('chr22', r6)
 # r7 <- cbind('chr22', r7)
-# 
+
 # devtools::use_data(r1, r2, r3, r4, r5, r6, r7, compress = 'xz', overwrite = TRUE)
+# devtools::use_data(r1, r2, r3, r4, compress = 'xz', overwrite = TRUE)
 # 
 # # test out class
 # experiment <- new("hicexp", hic_matrices = list(r1, r2, r3, r4, r5, r6, r7), groups = c(1, 1, 1, 2, 2, 2, 2))

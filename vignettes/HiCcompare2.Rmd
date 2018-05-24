@@ -1,0 +1,171 @@
+---
+title: "HiCcompare2 Vignette"
+author: "John C. Stansfield & Mikhail G. Dozmorov"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Introduction
+
+`HiCcompare2` is an extension of the original `HiCcompare` package. It provides functions for the joint normalization and detection of differential chromatin interactions between multiple Hi-C datasets. `HiCcompare2` operates on processed Hi-C data in the form of chromosome-specific chromatin interaction matrices. It accepts four-column tab-separated text files storing chromatin interaction matrices in a sparse matrix format (see [Creating the hicexp object](#hicexp)). Functions to convert popular Hi-C data formats (`.hic`, `.cool`) to sparse format are available (see ?cooler2sparse). `HiCcompare2` differs from other packages that attempt to compare Hi-C data in that it works on processed data in chromatin interaction matrix format instead of raw sequencing data. In addition, `HiCcompare2` provides a non-parametric method for the joint normalization and removal of biases between multiple Hi-C datasets for the purpose of comparative analysis. `HiCcompare2` also provides a general linear model (GLM) based framework for detecting differences in Hi-C data.
+
+# How to use `HiCcompare2`
+
+## Install `HiCcompare2` from Bioconductor
+
+```{r, eval = FALSE}
+source("https://bioconductor.org/biocLite.R")
+biocLite("HiCcompare2")
+library(HiCcompare2)
+```
+
+## Getting Hi-C Data
+
+You will need processed Hi-C data in the form of sparse upper triangular matrices or BEDPE files in order to use `HiCcompare2`. Data is available from several sources and two examples for downloading and extracting data are listed below. If you have full Hi-C contact matrices you can convert them to sparse upper triangular format using the full `full2sparse` function as shown in [additional functions](#addfunc)
+
+### Extracting data from `.hic` files
+
+Hi-C data is available from several sources and in many formats. `HiCcompare` is built to work with the sparse upper triangular matrix format popularized by the lab of Erez Lieberman-Aiden [http://aidenlab.org/data.html](http://aidenlab.org/data.html).  If you already have Hi-C data either in the form of a sparse upper triangular matrix or a full contact matrix you can skip to the [Creating the hic.table object](#hic_table) section. If you obtain data from the Aiden Lab in the `.hic` format you will need to first extract the matrices that you wish to compare. 
+
+  1. Download the `straw` software from [https://github.com/theaidenlab/straw/wiki](https://github.com/theaidenlab/straw/wiki) and install it.
+  2. Use `straw` to extract a Hi-C sparse upper triangular matrix. An example is below:
+  
+Say we downloaded the `GSE63525_K562_combined_30.hic ` file from GEO [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525)  
+
+To extract the raw matrix corresponding to chromosome 22 at 500kb resolution we would use the following command within the terminal
+
+  `./straw NONE GSE63525_K562_combined_30.hic  22 22 BP 500000 > K562.chr22.500kb.txt`
+
+This will extract the matrix from the `.hic` file and save it to the `K562.chr22.500kb.txt` text file, in the sparse upper triangular matrix format. See more examples on on how to use `straw` at [https://github.com/theaidenlab/straw/wiki/CPP#running](https://github.com/theaidenlab/straw/wiki/CPP#running). Straw requires several inputs for the extraction of data from a `.hic` file.
+
+`<NONE/VC/VC_SQRT/KR> <hicFile(s)> <chr1>[:x1:x2] <chr2>[:y1:y2] <BP/FRAG> <binsize>`
+
+The first argument is the normalization method. For use in `HiCcompare` you want the raw data so you should selected `NONE`. The second argument is the `.hic` file name. Next is the chromosome numbers of the matrix you want. For an intrachromosomal contact map both should be the same as in the above example. If you want a matrix of interchromosomal interactions you can use different chromosomes i.e. interactions between chromosome 1 and chromosome 2 (Note that `HiCcompare` is only meant to be used on intrachromosomal interactions at this point in development). The next argument is whether you want basepair or fragment files. For `HiCcompare` use `BP`. The final argument is the binsize of the matrix (the resolution). To extract a matrix at a resolution of 1MB enter `10000000`. Typical bin sizes are 1MB, 500KB, 100KB, 50KB, 5KB, 1KB. Note that most matrices with resolutions higher than 100KB (i.e. matrices with resolutions of 1KB - 50KB) are typically too sparse (due to insufficient sequencing coverage) for analysis in `HiCcompare`. 
+
+From here we can just import the matrix into R as you would normally for any tab-delimited file.
+
+  3. Import the data into R `K562.chr22 <- read.table('K562.chr22.500kb.txt', header=FALSE)`
+  4. Repeat these steps for any other Hi-C dataset that you wish to compare to the first dataset using  `HiCcompare2`, then proceed to [Creating the `hicexp` object](#hicexp).
+ 
+### Extracting data from `.cool` files
+
+The `cooler` software, [http://cooler.readthedocs.io/en/latest/index.html](http://cooler.readthedocs.io/en/latest/index.html), allows access to a large collection of Hi-C data. The cooler index [ftp://cooler.csail.mit.edu/coolers](ftp://cooler.csail.mit.edu/coolers) contains Hi-C data for `hg19` and `mm9` from many different sources. To use data in the `.cool` format in `HiCcompare` follow these steps:
+
+  1. Download and install `cooler` from [http://cooler.readthedocs.io/en/latest/index.html](http://cooler.readthedocs.io/en/latest/index.html)
+  2. Download a `.cool` file from the cooler index [ftp://cooler.csail.mit.edu/coolers](ftp://cooler.csail.mit.edu/coolers).
+  3. Say we downloaded the `Dixon2012-H1hESC-HindIII-allreps-filtered.1000kb.cool` file. See `cooler dump --help` for data extraction options. To extract the contact matrix we use the following commands in the terminal:  
+  `cooler dump --join Dixon2012-H1hESC-HindIII-allreps-filtered.1000kb.cool > dixon.hESC.1000kb.txt`
+  4. Read in the text file as you would any tab-delimited file in R  
+  `hesc1000kb <- read.table("dixon.hESC.1000kb.txt", header = FALSE)`
+  5. Convert to a sparse upper triangular matrix using the `HiCcompare::cooler2sparse` function.  
+  `sparse <- cooler2sparse(hesc1000kb) `
+  6. Repeat the steps for another Hi-C dataset that you wish to compare to the first dataset then proceed to [Creating the `hicexp` object](#hicexp).
+
+
+### Using data from HiC-Pro
+
+HiC-Pro is another tool for processing raw Hi-C data into usable matrix files. HiC-Pro will produce a `.matrix` file and a `.bed` file for the data. These `.matrix` files are in sparse upper triangular format similar to the results of Juicer and the dumped contents of a `.hic` file, however instead of using the genomic start coordinates for the first two columns of the sparse matrix they use an ID number. The `.bed` file contains the mappings for each of these IDs to their genomic coordinates. The original `HiCcompare` includes a function to convert the results of HiC-Pro into a usable format for analysis in `HiCcompare2`. When using data from HiC-Pro it is important to use the raw `.matrix` files and NOT the iced `.matrix` files. The iced `.matrix` files have already had ICE normalization applied to them and are not suitable for entry into `HiCcompare2`. Here we convert HiC-Pro data for input into HiCcompare:
+
+```{r, eval=FALSE}
+# read in files
+mat <- read.table("hic_1000000.matrix")
+bed <- read.table("hic_1000000_abs.bed")
+# convert to BEDPE
+dat <- HiCcompare::hicpro2bedpe(mat, bed)
+# NOTE: hicpro2bedpe returns a list of lists. The first list, dat$cis, contains the intrachromosomal contact matrices
+# NOTE: dat$trans contains the interchromosomal contact matrix which is not used in HiCcompare.
+```
+
+
+See the help using `?HiCcompare::hicpro2bedpe` for more details.
+
+
+## Parallel Processing
+
+Hi-C data is large, especially at high resolutions, and loess normalization is computationally intensive. `HiCcompare2` was built with parallelization in mind and the best performance when working with large Hi-C experiments (many samples or high resolution) will be achieved when using a computing cluster. Parallel processing can be used for all normalization and comparison functions by setting `parallel = TRUE` in the function options. `HiCcompare2` uses the Bioconductor `BiocParallel` package for parallel processing. You can set the number of processors to use on linux with the following command:
+
+```{r, eval = FALSE}
+library(BiocParallel)
+numCores <- 20
+register(MulticoreParam(workers = numCores), default = TRUE)
+```
+
+Or on Windows with:
+
+```{r, eval = FALSE}
+library(BiocParallel)
+numCores <- 20
+register(SnowParam(workers = numCores), default = TRUE)
+```
+
+where `numCores` is the user-set number of processing cores to be used. For parallel processing in `HiCcompare2`, jobs are split by chromosome and sometimes distance thus the more processors used, the quicker the function will run. For maximum speed it is recommended to set `numCores` to the maximum number of processors available. 
+
+## Creating the `hicexp` object {#hicexp}
+
+### Sparse upper triangular format
+
+A sparse matrix format represents a relatively compact and human-readable way to store pair-wise interactions. It is a tab-delimited text format containing three columns: "region1" - a start coordinate (in bp) of the first region, "region2" a start coordinate of the second region, and "IF" - the interaction frequency between them (IFs). Zero IFs are dropped (hence, the _sparse_ format). Since the full matrix of chromatin interactions is symmetric, only the upper triangular portion, including the diagonal, is stored. Typically matrices in this format are stored in their own separate text files for each chromosome. For use in `HiCcompare2` you will need to add an additional column for the chromosome number. If you are planning to analyze data for more than a single chromosome you will need to concatenate these matrices together. A sparse Hi-C matrix ready to be input into `HiCcompare2` should look like the following:
+
+```{r}
+sparse_mat <- read.table("data/HIC001.NONE.chr22.100000.txt", header = FALSE) # read matrix
+sparse_mat <- cbind('chr22', sparse_mat) # add chromosome column
+colnames(sparse_mat) <- c('chr', 'region1', 'region2', 'IF') # rename columns
+head(sparse_mat) # matrix ready to be input into HiCcompare2
+```
+
+
+If you have full Hi-C contact matrices you can convert them to sparse upper triangular matrices using the `HiCcompare::full2sparse` function and then add an additional column indicating the chromosome.
+
+
+Say we have data from 2 experimental conditions with 2 samples each. We can make a `hicexp` object by doing the following.
+
+```{r}
+data("r1", "r2", "r3", "r4")
+hicexp1 <- make_hicexp(r1, r2, r3, r4, groups = c(0, 0, 1, 1))
+hicexp1
+```
+
+The `groups` option specifies the experimental groups. You must enter a vector the length of the number of Hi-C matrices with indicators for which group each matrix belongs to. An optional covariate `data.frame` with rows corresponding the Hi-C matrices and columns for each additional covariate can be provided with the `covariates` option. 
+
+### BEDPE format data
+
+<!-- need to add functionality to make_hicexp() for reading in BEDPE data -->
+
+
+### The `hicexp` object
+
+The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `@hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `@comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `@hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `@metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
+
+
+## Normalization
+
+`HiCcompare2` comes with a few methods for normalizing your Hi-C data. Our joint normalization methods are again based on the MD plot as in the original `HiCcompare`. The MD plot is similar to the MA plot or the Bland-Altman plot. $M$ is the $log2$ difference between the interaction frequencies from the two datasets. $D$ is the unit distance between the two interacting regions. Loess is performed on the data after it is represented in the MD coordinate system. 
+
+### Library scaling
+
+<!-- Probably should add something to just do library scaling normalization -->
+
+### Cyclic Loess Normalization
+
+
+### Fast Loess Normalization (Fastlo)
+
+
+## Difference Detection
+
+### Exact Test
+
+
+### GLM Methods

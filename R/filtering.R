@@ -32,8 +32,6 @@ hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
   keep.z <- zeros <= zero.p
   # final keep vector
   keep <- keep.A & keep.z
-  # keep <- keep.A
-  # keep <- keep.z
   # filter table
   hicexp@hic_table <- hicexp@hic_table[keep,]
   return(hicexp)

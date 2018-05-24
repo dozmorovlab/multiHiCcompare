@@ -2,8 +2,13 @@ Package: HiCcompare2
 Title: Normalize and detect differences between Hi-C datasets when replicates of each experimental condition are available.
 Version: 0.0.0.9000
 Authors@R: person("John", "Stansfield", email = "stansfieldjc@vcu.edu", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.4.3)
+Description: HiCcompare2 provides functions for joint normalization and difference detection in multiple Hi-C datasets. This extension of
+    the original HiCcompare package now allows for Hi-C experiments with more than 2 groups and multiple samples per group. HiCcompare2 
+    operates on processed Hi-C data in the form of sparse upper triangular matrices. It accepts four column (chromosome, region1, region2, IF)
+    tab-separated text files storing chromatin interaction matrices. HiCcompare2 provides cyclic loess and fast loess (fastlo) methods adapted
+    to jointly normalizing Hi-C data. Additionally, it provides a general linear model (GLM) framework adapting the edgeR package to detect
+    differences in Hi-C data in a distance dependent manner. 
+Depends: R (>= 3.4.0)
 Imports: data.table,
   dplyr,
   HiCcompare,
@@ -18,3 +23,4 @@ Suggests: knitr,
     rmarkdown,
     testthat
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr
