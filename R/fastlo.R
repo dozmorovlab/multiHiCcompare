@@ -60,7 +60,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 # make list of tables by distance
 .get_dist_tables <- function(chr_table) {
   all_dist <- sort(unique(chr_table$D))
-  dist_85 <- ceiling(0.85 * length(all_dist))
+  dist_85 <- ceiling(0.75 * length(all_dist))
   table_by_dist <- list()
   idx <- 1
   for(i in all_dist[1:dist_85]) {
