@@ -57,18 +57,32 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   return(hic_table)
 }
 
+## This is the old version where only the last 75% (85%) of distances are pooled
+# # make list of tables by distance
+# .get_dist_tables <- function(chr_table) {
+#   all_dist <- sort(unique(chr_table$D))
+#   dist_85 <- ceiling(0.75 * length(all_dist))
+#   table_by_dist <- list()
+#   idx <- 1
+#   for(i in all_dist[1:dist_85]) {
+#     table_by_dist[[idx]] <- chr_table[D == i,]
+#     idx <- idx + 1
+#   }
+#   table_by_dist[[idx]] <- chr_table[D > all_dist[dist_85],]
+#   return(table_by_dist)
+# }
+
+## This is the new version where we use progressive pooling of distances
 # make list of tables by distance
 .get_dist_tables <- function(chr_table) {
-  all_dist <- sort(unique(chr_table$D))
-  dist_85 <- ceiling(0.75 * length(all_dist))
-  table_by_dist <- list()
-  idx <- 1
-  for(i in all_dist[1:dist_85]) {
-    table_by_dist[[idx]] <- chr_table[D == i,]
-    idx <- idx + 1
-  }
-  table_by_dist[[idx]] <- chr_table[D > all_dist[dist_85],]
-  return(table_by_dist)
+  D <- chr_table$D %>% unique() %>% sort()
+  # use triangular number series to solve for number of pools
+  x <- length(D)
+  n <- (sqrt((8 * x) + 1) - 1) / 2 
+  n <- ceiling(n)
+  pools <- rep(D[1:n], 1:n)[1:x]
+  # sort the table by distance
+  chr_table <- chr_table[order(chr_table$D),]
 }
 
 # perform fastlo on table
