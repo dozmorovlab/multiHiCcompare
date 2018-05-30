@@ -11,6 +11,8 @@
 #'     entry of the list representing a sample use this option.
 #' @param groups A vector of the experimental groups 
 #'     corresponding to each Hi-C data object entered.
+#'     If it is not in factor form when entered it will
+#'     be converted to a factor.
 #' @param covariates Optional data.frame containing 
 #'     covariate information for your Hi-C experiment.
 #'     Some examples are enzyme used, batch number, etc.
@@ -41,6 +43,11 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
   num_per_group <- table(groups)
   uniq_groups <- unique(groups)
   res <- vector(length = length(uniq_groups))
+  
+  # convert groups to a factor if it is not already
+  if (!is.factor(groups)) {
+    groups <- as.factor(groups)
+  }
   
   # check for correct input
   if (length(groups) != length(tabs)) {
