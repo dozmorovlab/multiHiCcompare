@@ -23,8 +23,18 @@
 #'     zero IF values be removed?
 #' @details Use this function to create a hicexp object for
 #'     analysis in HiCcompare2.
-#' 
-#' 
+#' @examples 
+#' # load data in sparse upper triangular format
+#' data("r1", "r2", "r3", "r4", "r5", "r6", "r7")
+#' # need to add chromosome column to the matrices
+#' tabs <- list(r1, r2, r3, r4, r5, r6, r7)
+#' tabs <- lapply(tabs, function(x) cbind('22', x))
+#' # make groups & covariate input
+#' groups <- factor(c(1, 1, 1, 2, 2, 2, 2))
+#' covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi', 'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
+#' # make the hicexp object
+#' hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
+
 
 make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_zeros = FALSE) {
   if (!is.na(data_list)) {
