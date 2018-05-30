@@ -4,7 +4,7 @@
 \alias{MD.hicexp}
 \title{Make MD plots for all combinations of a condition}
 \usage{
-MD.hicexp(hicexp, prow = 3, pcol = 3)
+MD.hicexp(hicexp, prow = 3, pcol = 3, plot.chr = NA)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}
@@ -14,6 +14,15 @@ grid of MD plots. Defaults to 3.}
 
 \item{pcol}{The number of columns to use for
 the grid of MD plots. Defaults to 3.}
+
+\item{plot.chr}{A specific chromosome or 
+set of chromosome which you want to plot.
+This should be a numeric value, i.e. to
+plot chromosome 1 set plot.chr = 1, to
+plot chromosomes 1 and 5 set plot.chr 
+= c(1, 5). Defaults to NA indicating that
+all chromosomes present in the hicexp
+will be plotted.}
 }
 \description{
 Make MD plots for all combinations of a condition

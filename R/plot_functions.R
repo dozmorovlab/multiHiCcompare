@@ -5,7 +5,14 @@
 #'    grid of MD plots. Defaults to 3.
 #' @param pcol The number of columns to use for
 #'     the grid of MD plots. Defaults to 3.
-#'     
+#' @param plot.chr A specific chromosome or 
+#'     set of chromosome which you want to plot.
+#'     This should be a numeric value, i.e. to
+#'     plot chromosome 1 set plot.chr = 1, to
+#'     plot chromosomes 1 and 5 set plot.chr 
+#'     = c(1, 5). Defaults to NA indicating that
+#'     all chromosomes present in the hicexp
+#'     will be plotted. 
 #'
 #' @importFrom dplyr %>%
 #' @export
@@ -17,18 +24,43 @@
 # Plan: make a grid of MD plots for all the pairwise combinations of comparisons between replicates in a condition
 # should use a modified bersion of MD.plot1 to be able to accpet new titles / labels for this function
 
-MD.hicexp <- function(hicexp, prow = 3, pcol = 3) {
+MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
+  # check if more than one chromosome then split
+  if (length(unique(hicexp@hic_table$chr)) > 1) {
+    chr_table <- split(hicexp@hic_table, hicexp@hic_table$chr)
+    # check if chr to plot is specified
+    if (!is.na(plot.chr[1])) {
+      chrs.to.plot <- which(as.numeric(names(chr_table)) %in% plot.chr)
+      if (length(chrs.to.plot) < 1) {
+        stop("Chr selected in plot.chr does not exist in the data")
+      }
+      tmp <- lapply(chr_table[chrs.to.plot], .MD.hicexp.chr, prow = prow, pcol = pcol)
+    } else {
+      # otherwise plot every chr
+      tmp <- lapply(chr_table, .MD.hicexp.chr, prow = prow, pcol = pcol)
+    }
+  } else {
+    # if only a single chr just plot
+    .MD.hicexp.chr(hicexp@hic_table, prow = prow, pcol = pcol)
+  }
+  
+}
+
+
+
+.MD.hicexp.chr <- function(chr_table, prow, pcol) {
   # get all unique pairs
-  samples <- 5:ncol(hicexp@hic_table)
+  samples <- 5:ncol(chr_table)
   combinations <- combn(samples, 2)
   # make M matrix
-  M_matrix <- matrix(nrow = nrow(hicexp@hic_table), ncol = ncol(combinations))
+  M_matrix <- matrix(nrow = nrow(chr_table), ncol = ncol(combinations))
   plot_list <- list()
   par(mfrow = c(prow, pcol), mai = c(0.3, 0.3, 0.2, 0.1))
   for (j in 1:ncol(combinations)) {
-    M_matrix[,j] <- log2( (hicexp@hic_table[, combinations[1,j], with = FALSE] + 1)[[1]] / (hicexp@hic_table[, combinations[2,j], with = FALSE] + 1)[[1]] )
+    M_matrix[,j] <- log2( (chr_table[, combinations[1,j], with = FALSE] + 1)[[1]] / (chr_table[, combinations[2,j], with = FALSE] + 1)[[1]] )
     # make MD plot
-    .MD.smooth(M_matrix[,j], hicexp@hic_table$D, title = paste0('Sample ', combinations[1,j] - 4, ' vs. ', combinations[2,j] - 4), ylab = '', xlab = '')
+    .MD.smooth(M_matrix[,j], chr_table$D, title = paste0('chr', chr_table$chr[1], ' ', 
+                                                         'Sample ', combinations[1,j] - 4, ' vs. ', combinations[2,j] - 4), ylab = '', xlab = '')
     # grid.echo()
     # plot_list[[j]] <- grid.grab()
     # plot.new()
@@ -39,22 +71,52 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3) {
 
 
 #' Plot a composite MD plot with the results of a comparison
-#' 
+#' @param hicexp A hicexp object.
+#' @param plot.chr A specific chromosome or 
+#'     set of chromosome which you want to plot.
+#'     This should be a numeric value, i.e. to
+#'     plot chromosome 1 set plot.chr = 1, to
+#'     plot chromosomes 1 and 5 set plot.chr 
+#'     = c(1, 5). Defaults to NA indicating that
+#'     all chromosomes present in the hicexp
+#'     will be plotted. 
 #' @export
 
-MD.composite <- function(hicexp) {
+MD.composite <- function(hicexp, plot.chr = NA) {
   # check to make sure data has been compared
   if (nrow(hicexp@comparison) < 1) {
     stop("You must compare the Hi-C data first before using this plot function")
   }
-  .MD.smooth(M = hicexp@comparison$logFC, D = hicexp@comparison$D, p.val = hicexp@comparison$p.adj, 
-             title = "Composite MD Plot")
+  
+  # check if more than one chromosome then split
+  if (length(unique(hicexp@comparison$chr)) > 1) {
+    chr_table <- split(hicexp@comparison, hicexp@comparison$chr)
+    # check if chr to plot is specified
+    if (!is.na(plot.chr[1])) {
+      chrs.to.plot <- which(as.numeric(names(chr_table)) %in% plot.chr)
+      if (length(chrs.to.plot) < 1) {
+        stop("Chr selected in plot.chr does not exist in the data")
+      }
+      tmp <- lapply(chr_table[chrs.to.plot], function(x) {
+        .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]))
+      })
+    } else {
+      # otherwise plot every chr
+      tmp <- lapply(chr_table, function(x) {
+        .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]))
+      })
+    }
+  } else {
+    # if only a single chr just plot
+    .MD.smooth(M = hicexp@comparison$logFC, D = hicexp@comparison$D, p.val = hicexp@comparison$p.adj, 
+               title = "Composite MD Plot")
+  }
 }
 
 
 .MD.smooth <- function(M, D, p.val = NA, title = 'MD Plot', ylab = 'M', xlab = 'Distance') {
   # smooth scatter version
-  smoothScatter(D, M, xlab = xlab, ylab = ylab, main = title)
+  smoothScatter(D, M, xlab = xlab, ylab = ylab, main = title, cex.main = 0.85)
   abline(h = 0)
   if (!is.na(p.val[1])) {
     p0.01 <- which(p.val < 0.01)
