@@ -88,8 +88,46 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   table_by_dist <- split(table_by_dist, table_by_dist$pools)
   # drop pools column
   table_by_dist <- lapply(table_by_dist, function(x) x[, pools := NULL])
+  # check number of rows per table
+  table_by_dist <- .check_tables(table_by_dist)
   return(table_by_dist)
 }
+
+# check to make sure number of rows for each table is not less than 100
+.check_tables <- function(table_by_dist) {
+  min.row <- 120
+  # get row numbers
+  row.nums <- lapply(table_by_dist, nrow)
+  # find which tables have number of rows < min.row
+  small_D <- which(row.nums < min.row)
+  # check if any tables have less than min.row
+  if (length(small_D) > 0) {
+    while (length(small_D) > 0) {
+      i <- small_D[1]
+      # check if first distance has less than min.row
+      if (table_by_dist[[i]]$D[1] == 0) {
+        new_table <- rbind(table_by_dist[[i]], table_by_dist[[i+1]])
+        table_by_dist[[i]] <- new_table
+        table_by_dist[[i+1]] <- NA
+      } else {
+        # otherwise combine with previous table
+        new_table <- rbind(table_by_dist[[i-1]], table_by_dist[[i]])
+        table_by_dist[[i-1]] <- new_table
+        table_by_dist[[i]] <- NA
+      }
+      # remove NAs
+      table_by_dist <- table_by_dist[!is.na(table_by_dist)]
+      # update row numbers
+      row.nums <- lapply(table_by_dist, nrow)
+      # update which tables have number of rows < min.row
+      small_D <- which(row.nums < min.row)
+    }
+    return(table_by_dist)
+  } else {
+    return(table_by_dist)
+  }
+}
+
 
 # perform fastlo on table
 .fastlo <- function(tab, span, iterations, loess.criterion = "gcv", degree = 1) {

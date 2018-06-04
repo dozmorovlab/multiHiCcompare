@@ -234,3 +234,6 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   dge <- DGEList(counts = IFs, samples = covariates)
   return(dge)
 }
+
+
+
