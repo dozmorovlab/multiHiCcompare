@@ -107,6 +107,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     # check chr format, if "chr#" change to just the number
     if (!is.numeric(hic_table$chr)) {
       hic_table[, chr := sub("chr", "", chr)]
+      hic_table[, chr := as.numeric(chr)]
     }
     # sort hic_table
     hic_table <- hic_table[order(chr, region1, region2),]
