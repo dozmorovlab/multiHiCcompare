@@ -119,11 +119,11 @@ MD.composite <- function(hicexp, plot.chr = NA) {
   smoothScatter(D, M, xlab = xlab, ylab = ylab, main = title, cex.main = 0.85)
   abline(h = 0)
   if (!is.na(p.val[1])) {
-    p0.01 <- which(p.val < 0.01)
-    p0.05 <- which(p.val >= 0.01 & p.val < 0.05)
-    points(D[p0.01], M[p0.01], col = "red", pch = 20)
+    p0.001 <- which(p.val < 0.001)
+    p0.05 <- which(p.val >= 0.001 & p.val < 0.05)
+    points(D[p0.001], M[p0.001], col = "red", pch = 20)
     points(D[p0.05], M[p0.05], col = 'yellow', pch = 20)
-    legend('bottomright', legend = c('P < 0.01', 'P < 0.05'), fill = c('red', 'yellow'), bty = 'n', horiz = TRUE)
+    legend('bottomright', legend = c('P < 0.001', 'P < 0.05'), fill = c('red', 'yellow'), bty = 'n', horiz = TRUE)
   }
 }
 
