@@ -57,7 +57,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   return(hic_table)
 }
 
-## This is the old version where only the last 75% (85%) of distances are pooled
+# # This is the old version where only the last 75% (85%) of distances are pooled
 # # make list of tables by distance
 # .get_dist_tables <- function(chr_table) {
 #   all_dist <- sort(unique(chr_table$D))
@@ -78,11 +78,16 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   D <- chr_table$D %>% unique() %>% sort()
   # use triangular number series to solve for number of pools
   x <- length(D)
-  n <- (sqrt((8 * x) + 1) - 1) / 2 
+  n <- (sqrt((8 * x) + 1) - 1) / 2
   n <- ceiling(n)
   pools <- rep(D[1:n], 1:n)[1:x]
   # add the pools column to the data.table corresponding to the distances
   id.df <- cbind(D, pools) %>% as.data.frame()
+  # get 70% distance
+  dist_70 <- ceiling(0.50 * nrow(id.df))
+  # combine pools for everything at or above 70% distance
+  pool_70 <- id.df[dist_70,2] 
+  id.df[id.df$pools >= pool_70,2] <- pool_70
   table_by_dist <- left_join(chr_table, id.df, by = c("D" = "D")) %>% data.table::as.data.table()
   # split up tables by pool
   table_by_dist <- split(table_by_dist, table_by_dist$pools)
@@ -93,9 +98,9 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   return(table_by_dist)
 }
 
-# check to make sure number of rows for each table is not less than 100
+# check to make sure number of rows for each table is not less than 500
 .check_tables <- function(table_by_dist) {
-  min.row <- 120
+  min.row <- 1000
   # get row numbers
   row.nums <- lapply(table_by_dist, nrow)
   # find which tables have number of rows < min.row
@@ -127,6 +132,24 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
     return(table_by_dist)
   }
 }
+
+# # check to make sure number of rows for each table is not less than min.row
+# # if it is less then throw out those tables
+# .check_tables <- function(table_by_dist) {
+#   min.row <- 500
+#   # get row numbers
+#   row.nums <- lapply(table_by_dist, nrow)
+#   # find which tables have number of rows < min.row
+#   small_D <- which(row.nums < min.row)
+#   # check if any tables have less than min.row
+#   if (length(small_D) > 0) {
+#     table_by_dist[small_D] <- NA
+#     table_by_dist <- table_by_dist[!is.na(table_by_dist)]
+#     return(table_by_dist)
+#   } else {
+#     return(table_by_dist)
+#   }
+# }
 
 
 # perform fastlo on table

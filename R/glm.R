@@ -41,7 +41,13 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
     if (parallel) {
       dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
     } else {
-      dge_list <- lapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
+      # dge_list <- lapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
+      
+      # temporary change to print out which chromosome things are failing on
+      dge_list <- mapply(function(x,y) {
+          message('chr', x$chr[1])
+          edgeR::estimateDisp(y, design=model.matrix(~hicexp@metadata$group))
+          }, table_list, dge_list, SIMPLIFY = FALSE)
     }
   }
   
