@@ -37,7 +37,7 @@
 
 
 make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_zeros = FALSE) {
-  if (!is.na(data_list)) {
+  if (!is.na(data_list[1])) {
     tabs <- data_list
   } else {
     tabs <- list(...)
