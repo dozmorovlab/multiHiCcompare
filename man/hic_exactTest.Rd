@@ -4,7 +4,8 @@
 \alias{hic_exactTest}
 \title{Perform exact test based difference detection on a Hi-C experiment}
 \usage{
-hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE)
+hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE,
+  max.pool = 0.7)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}
@@ -15,6 +16,18 @@ hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE)
 as the method for multiple testing correction. Defaults to "fdr".}
 
 \item{Plot}{Logical, should a composite MD plot be made for the results.}
+
+\item{max.pool}{The proportion of unit distances after
+which all further distances will be pooled. Distances
+before this value will be progressively pooled and
+any distances after this value will be combined
+into a single pool. Defaults to 0.7. Warning: do
+not adjust this value from the default unless you
+are getting errors related to the lfproc function
+or due to sparsity in fastlo normalization. If these
+errors occur it is due to either sparsity or low 
+variance and max.pool will need to be lowered; 
+typically to 0.5 or 0.6.}
 }
 \description{
 Perform exact test based difference detection on a Hi-C experiment

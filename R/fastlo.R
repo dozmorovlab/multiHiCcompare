@@ -9,6 +9,17 @@
 #'     significantly slow down the normalization process.
 #' @param parallel Logical. Should parallel processing be
 #'     used?
+#' @param max.pool The proportion of unit distances after
+#'     which all further distances will be pooled. Distances
+#'     before this value will be progressively pooled and
+#'     any distances after this value will be combined
+#'     into a single pool. Defaults to 0.7. Warning: do
+#'     not adjust this value from the default unless you
+#'     are getting errors related to the lfproc function
+#'     or due to sparsity in fastlo normalization. If these
+#'     errors occur it is due to either sparsity or low 
+#'     variance and max.pool will need to be lowered; 
+#'     typically to 0.5 or 0.6. 
 #' 
 #' @details This function performs the fast loess (fastlo)
 #'    normalization procedure on an hicexp object. 
@@ -18,9 +29,9 @@
 #' @importFrom dplyr %>%
 #' @importFrom data.table rbindlist
 
-fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
+fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
   # input conditions to fastlo
-  normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose)
+  normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose, max.pool = max.pool)
   # sort hic_table
   normalized <- normalized[order(chr, region1, region2),]
   # put back into hicexp object
@@ -39,11 +50,11 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 # bacground functions
 
 # perform fastlo on a condition
-.fastlo_condition <- function(hic_table, iterations, span, parallel, verbose) {
+.fastlo_condition <- function(hic_table, iterations, span, parallel, verbose, max.pool) {
   # split up data by chr
   table_list <- split(hic_table, hic_table$chr)
   # for each chr create list of distance matrices
-  table_list <- lapply(table_list, .get_dist_tables)
+  table_list <- lapply(table_list, .get_dist_tables, max.pool = max.pool)
   # combine list of lists into single list of tables
   table_list <- do.call(c, table_list)
   # apply fastlo to list
@@ -74,7 +85,20 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 
 ## This is the new version where we use progressive pooling of distances
 # make list of tables by distance pool
-.get_dist_tables <- function(chr_table) {
+.get_dist_tables <- function(chr_table, max.pool) {
+  # check for correct max.pool input
+  if (!is.numeric(max.pool)) {
+    stop("max.pool must be a numeric value between 0 and 1")
+  }
+  if (max.pool < 0 | max.pool > 1) {
+    stop("max.pool must be between 0 and 1")
+  }
+  if (max.pool < 0.5) {
+    warning("Setting max.pool < 0.5 may cause issues")
+  }
+  if (max.pool > 0.7) {
+    warning("Setting max.pool > 0.7 may cause issues")
+  }
   D <- chr_table$D %>% unique() %>% sort()
   # use triangular number series to solve for number of pools
   x <- length(D)
@@ -83,11 +107,11 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   pools <- rep(D[1:n], 1:n)[1:x]
   # add the pools column to the data.table corresponding to the distances
   id.df <- cbind(D, pools) %>% as.data.frame()
-  # get 70% distance
-  dist_70 <- ceiling(0.50 * nrow(id.df))
-  # combine pools for everything at or above 70% distance
-  pool_70 <- id.df[dist_70,2] 
-  id.df[id.df$pools >= pool_70,2] <- pool_70
+  # get maximum distance
+  dist_max <- ceiling(max.pool * nrow(id.df))
+  # combine pools for everything at or above maximum distance
+  pool_max <- id.df[dist_max,2] 
+  id.df[id.df$pools >= pool_max,2] <- pool_max
   table_by_dist <- left_join(chr_table, id.df, by = c("D" = "D")) %>% data.table::as.data.table()
   # split up tables by pool
   table_by_dist <- split(table_by_dist, table_by_dist$pools)

@@ -5,13 +5,26 @@
 #' @param p.method Charact string to be input into p.adjust()
 #'    as the method for multiple testing correction. Defaults to "fdr".
 #' @param Plot Logical, should a composite MD plot be made for the results.
+#' @param max.pool The proportion of unit distances after
+#'     which all further distances will be pooled. Distances
+#'     before this value will be progressively pooled and
+#'     any distances after this value will be combined
+#'     into a single pool. Defaults to 0.7. Warning: do
+#'     not adjust this value from the default unless you
+#'     are getting errors related to the lfproc function
+#'     or due to sparsity in fastlo normalization. If these
+#'     errors occur it is due to either sparsity or low 
+#'     variance and max.pool will need to be lowered; 
+#'     typically to 0.5 or 0.6. 
+#'     
 #' @details This function performs the edgeR exact test on a per distance
 #'     basis for Hi-C data. 
+#'
 #' @export
 #' @import edgeR
 #' @importFrom dplyr %>%
 
-hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE) {
+hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE, max.pool = 0.7) {
   # check to make sure hicexp is normalized
   if (!hicexp@normalized) {
     warning("You should normalize the data before entering it into hic_glm")
@@ -24,7 +37,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   # split up data by chr
   table_list <- split(hicexp@hic_table, hicexp@hic_table$chr)
   # for each chr create list of distance matrices
-  table_list <- lapply(table_list, .get_dist_tables)
+  table_list <- lapply(table_list, .get_dist_tables, max.pool = max.pool)
   # combine list of lists into single list of tables
   table_list <- do.call(c, table_list)
   # input each of the chr-distance tables into a DGElist object for edgeR
@@ -41,13 +54,13 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
     if (parallel) {
       dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
     } else {
-      # dge_list <- lapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
+      dge_list <- lapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
       
-      # temporary change to print out which chromosome things are failing on
-      dge_list <- mapply(function(x,y) {
-          message('chr', x$chr[1])
-          edgeR::estimateDisp(y, design=model.matrix(~hicexp@metadata$group))
-          }, table_list, dge_list, SIMPLIFY = FALSE)
+      # # temporary change to print out which chromosome things are failing on
+      # dge_list <- mapply(function(x,y) {
+      #     message('chr', x$chr[1])
+      #     edgeR::estimateDisp(y, design=model.matrix(~hicexp@metadata$group))
+      #     }, table_list, dge_list, SIMPLIFY = FALSE)
     }
   }
   
@@ -84,6 +97,18 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @param parallel Logical, Should parallel processing be used?
 #' @param Plot Logical, Should a composite MD plot be made for 
 #'     the results?
+#' @param max.pool The proportion of unit distances after
+#'     which all further distances will be pooled. Distances
+#'     before this value will be progressively pooled and
+#'     any distances after this value will be combined
+#'     into a single pool. Defaults to 0.7. Warning: do
+#'     not adjust this value from the default unless you
+#'     are getting errors related to the lfproc function
+#'     or due to sparsity in fastlo normalization. If these
+#'     errors occur it is due to either sparsity or low 
+#'     variance and max.pool will need to be lowered; 
+#'     typically to 0.5 or 0.6. 
+#'     
 #' @details This function performs the specified edgeR test
 #'     on a per distance basis on the Hi-C data. 
 #' @import edgeR
@@ -91,7 +116,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @importFrom dplyr %>%
 #' @export
 
-hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE) {
+hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
   # match method
   method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), several.ok = FALSE)
   # check to make sure hicexp is normalized
@@ -109,7 +134,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   # split up data by chr
   table_list <- split(hicexp@hic_table, hicexp@hic_table$chr)
   # for each chr create list of distance matrices
-  table_list <- lapply(table_list, .get_dist_tables)
+  table_list <- lapply(table_list, .get_dist_tables, max.pool = max.pool)
   # combine list of lists into single list of tables
   table_list <- do.call(c, table_list)
   # input each of the chr-distance tables into a DGElist object for edgeR
