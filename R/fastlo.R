@@ -124,7 +124,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 
 # check to make sure number of rows for each table is not less than 500
 .check_tables <- function(table_by_dist) {
-  min.row <- 1000
+  min.row <- 500
   # get row numbers
   row.nums <- lapply(table_by_dist, nrow)
   # find which tables have number of rows < min.row
