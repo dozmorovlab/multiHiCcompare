@@ -117,6 +117,9 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   IF_mat <- IF_mat * idx_mat
   # set negative values to 0
   IF_mat[IF_mat < 0] <- 0
+  # fix any potential Infs or NaN's
+  IF_mat[is.nan(IF_mat)] <- 0
+  IF_mat[is.infinite(IF_mat)] <- 0
   # recombine table
   tab <- cbind(tab[, 1:4, with = FALSE], IF_mat)
   return(tab)

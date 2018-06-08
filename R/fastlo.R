@@ -214,6 +214,9 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   IF_mat <- IF_mat * idx_mat
   # deal with negative values after normalization
   IF_mat[IF_mat < 0] <- 0
+  # fix any potential Infs or NaN's
+  IF_mat[is.nan(IF_mat)] <- 0
+  IF_mat[is.infinite(IF_mat)] <- 0
   # rebuild table
   tab <- cbind(tab[, 1:4, with = FALSE], IF_mat)
   return(tab)
