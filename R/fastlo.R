@@ -22,12 +22,21 @@
 #'     typically to 0.5 or 0.6. 
 #' 
 #' @details This function performs the fast loess (fastlo)
-#'    normalization procedure on an hicexp object. 
-#' 
+#'    normalization procedure on a hicexp object. the fast linear loess ("fastlo") method 
+#'    of Ballman (2004) that is adapted to Hi-C data on a per-distance basis. To perform 
+#'    "fastlo" on Hi-C data we first split the data into p pooled matrices. The
+#'    "progressive pooling" is used to split up the Hi-C matrix by unit distance. Fastlo
+#'    is then performed on the MA plots for each distance pool. See Stansfield et al (2018)
+#'    for full description. 
+#'   
+#' @return A hicexp object that is normalized.
 #' @export
 #' @importFrom BiocParallel bplapply
 #' @importFrom dplyr %>%
 #' @importFrom data.table rbindlist
+#' @examples 
+#' data("hicexp")
+#' hicexp <- fastlo(hicexp)
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
   # input conditions to fastlo

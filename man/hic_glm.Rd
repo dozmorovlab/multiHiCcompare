@@ -39,10 +39,34 @@ errors occur it is due to either sparsity or low
 variance and max.pool will need to be lowered; 
 typically to 0.5 or 0.6.}
 }
+\value{
+A hicexp object with a filled in comparison slot.
+}
 \description{
 Function to perform GLM differential analysis on Hi-C experiment
 }
 \details{
-This function performs the specified edgeR test
-    on a per distance basis on the Hi-C data.
+This function performs the specified edgeR GLM based test
+    on a per distance basis on the Hi-C data. Distances groups
+    are pooled using "progressive pooling". There are 3 options
+    for the type of GLM based test to be used which is specified
+    with the method option. \cr
+    \code{QLFTest} will use edgeR's glmQLFit and glmQLFTest functions which
+    makes use of quasi-likelihood methods described in Lund
+    et al (2012). \cr
+    \code{LRTest} uses edgeR's glmFit and glmLRT functions which uses
+    a interaction-wise negative binomial general linear model.
+    This method uses a likelihood ratio test for the coefficients
+    specified in the model. \cr
+    \code{Treat} uses edgeR's glmTreat function which performs a test
+    for differential expression with a minimum required fold-change
+    threshold imposed. It tests whether the absolute value of the 
+    log2 fold change is greater than the value specified as the \code{M}
+    option.
+}
+\examples{
+data("hicexp")
+hicexp <- fastlo(hicexp)
+d <- model.matrix(~factor(hicexp@metadata$group) + factor(hicexp@metadata$batch))
+hicexp <- hic_glm(hicexp, design = d, coef = 2)
 }

@@ -24,10 +24,23 @@ be printed to the screen.}
 
 \item{Plot}{Logical. Should MD plots be printed?}
 }
+\value{
+A hicexp object that has been normalized.
+}
 \description{
 Cyclic Loess normalization for Hi-C data
 }
 \details{
 This function performs cyclic loess normalization
-   on a Hi-C experiment.
+   on a Hi-C experiment. HiCcompare2's cyclic loess procedure
+   is a modified version of Ballman's (2004) cyclic loess and
+   the joint loess normalization used in the original HiCcompare.
+   For each unique pair of samples in the hicexp object an MD plot
+   is generated. A loess curve is fit to the MD plot and then the 
+   fitted values are used to adjust the data. This is performed on
+   all unique pairs and then repeated until convergence.
+}
+\examples{
+data("hicexp")
+hicexp <- cyclic_loess(hicexp)
 }

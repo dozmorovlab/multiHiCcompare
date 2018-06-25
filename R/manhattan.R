@@ -13,9 +13,29 @@
 #'     plotted. 
 #' @param return_df Logical, should the data.frame used to
 #'     generate the plot be returned?
-#' 
+#' @details This function is used to create a manhattan
+#'     plot for the significance of all genomic regions 
+#'     in the dataset. These correspond to the rows (or columns)
+#'     of the upper triangle of the full Hi-C matrix. Each genomic
+#'     region of the Hi-C dataset has multiple interactions it
+#'     is involved in and the significance of all of these can 
+#'     be visualized with \code{method = "standard"}. 
+#'     Alternatively the p-values for all these interactions
+#'     can be combined using either Fisher's method or the
+#'     Stouffer-Liptak method of combining p-values. The 
+#'     manhattan plot can be used to identify "hotspot"
+#'     regions of the genome where major differences
+#'     seem to be located based on the results of a HiCcompare2
+#'     analysis.
+#' @return A manhattan plot and optionally the data.frame used
+#'     to generate the manhattan plot.
 #' @importFrom qqman manhattan
 #' @export
+#' @examples 
+#' data("hicexp")
+#' hicexp <- fastlo(hicexp)
+#' hicexp <- hic_exactTest(hicexp)
+#' manhattan_hicexp(hicexp)
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   # check input

@@ -29,10 +29,24 @@ errors occur it is due to either sparsity or low
 variance and max.pool will need to be lowered; 
 typically to 0.5 or 0.6.}
 }
+\value{
+A hicexp object with the comparison slot filled.
+}
 \description{
 Perform exact test based difference detection on a Hi-C experiment
 }
 \details{
 This function performs the edgeR exact test on a per distance
-    basis for Hi-C data.
+    basis for Hi-C data. It tests for differences between two groups
+    when the groups are the only variable of interest. This is
+    an application of the negative binomial exact test proposed
+    by Robinson and Smyth (2008) for a difference in mean between
+    the groups. These exact tests are applied to the Hi-C data
+    on a distance group basis using "progressive pooling" of 
+    distances.
+}
+\examples{
+data("hicexp")
+hicexp <- fastlo(hicexp)
+hicexp <- hic_exactTest(hicexp)
 }

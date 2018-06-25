@@ -30,6 +30,10 @@
 #' @export
 #' @import edgeR
 #' @importFrom dplyr %>%
+#' @examples 
+#' data("hicexp")
+#' hicexp <- fastlo(hicexp)
+#' hicexp <- hic_exactTest(hicexp)
 
 hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE, max.pool = 0.7) {
   # check to make sure hicexp is normalized
@@ -118,11 +122,32 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #'     
 #' @details This function performs the specified edgeR GLM based test
 #'     on a per distance basis on the Hi-C data. Distances groups
-#'     are pooled using "progressive pooling". 
+#'     are pooled using "progressive pooling". There are 3 options
+#'     for the type of GLM based test to be used which is specified
+#'     with the method option. \cr
+#'     \code{QLFTest} will use edgeR's glmQLFit and glmQLFTest functions which
+#'     makes use of quasi-likelihood methods described in Lund
+#'     et al (2012). \cr
+#'     \code{LRTest} uses edgeR's glmFit and glmLRT functions which uses
+#'     a interaction-wise negative binomial general linear model.
+#'     This method uses a likelihood ratio test for the coefficients
+#'     specified in the model. \cr
+#'     \code{Treat} uses edgeR's glmTreat function which performs a test
+#'     for differential expression with a minimum required fold-change
+#'     threshold imposed. It tests whether the absolute value of the 
+#'     log2 fold change is greater than the value specified as the \code{M}
+#'     option.
+#'      
+#' @return A hicexp object with a filled in comparison slot.
 #' @import edgeR
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr %>%
 #' @export
+#' @examples 
+#' data("hicexp")
+#' hicexp <- fastlo(hicexp)
+#' d <- model.matrix(~factor(hicexp@metadata$group) + factor(hicexp@metadata$batch))
+#' hicexp <- hic_glm(hicexp, design = d, coef = 2)
 
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
   # match method
