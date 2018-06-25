@@ -105,6 +105,8 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @param method The test method to be performed. Should be one of
 #'    "QLFTest", "LRTest", or "Treat".
 #' @param M The log2 fold change value for a TREAT analysis.
+#' @param p.method p-value adjustment method to be used. Defaults
+#'     to "fdr". See ?p.adjust for other adjustment options.
 #' @param parallel Logical, Should parallel processing be used?
 #' @param Plot Logical, Should a composite MD plot be made for 
 #'     the results?

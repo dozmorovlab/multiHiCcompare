@@ -21,6 +21,11 @@ significantly slow down the normalization process.}
 \item{parallel}{Logical. Should parallel processing be
 used?}
 
+\item{verbose}{Logical, should messages about
+the normalization be printed?}
+
+\item{Plot}{Logical, should MD plots be printed?}
+
 \item{max.pool}{The proportion of unit distances after
 which all further distances will be pooled. Distances
 before this value will be progressively pooled and

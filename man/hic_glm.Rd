@@ -22,6 +22,9 @@ hic_glm(hicexp, design, contrast = NA, coef = NA, method = "QLFTest",
 
 \item{M}{The log2 fold change value for a TREAT analysis.}
 
+\item{p.method}{p-value adjustment method to be used. Defaults
+to "fdr". See ?p.adjust for other adjustment options.}
+
 \item{parallel}{Logical, Should parallel processing be used?}
 
 \item{Plot}{Logical, Should a composite MD plot be made for 

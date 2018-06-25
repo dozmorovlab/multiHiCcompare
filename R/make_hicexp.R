@@ -1,7 +1,7 @@
 #' Make Hi-C experiment object from data
 #' 
 #' @export
-#' @importFrom dplyr full_join
+#' @importFrom dplyr full_join left_join right_join
 #' @import data.table
 #' 
 #' @param ... Hi-C data. Data must in sparse upper triangular 

@@ -1,6 +1,6 @@
 Package: HiCcompare2
-Title: Normalize and detect differences between Hi-C datasets when replicates of each experimental condition are available.
-Version: 0.0.0.9000
+Title: Normalize and detect differences between Hi-C datasets when replicates of each experimental condition are available
+Version: 0.99.0
 Authors@R: person("John", "Stansfield", email = "stansfieldjc@vcu.edu", role = c("aut", "cre"))
 Description: HiCcompare2 provides functions for joint normalization and difference detection in multiple Hi-C datasets. This extension of
     the original HiCcompare package now allows for Hi-C experiments with more than 2 groups and multiple samples per group. HiCcompare2 
@@ -13,7 +13,8 @@ Imports: data.table,
   dplyr,
   HiCcompare,
   edgeR,
-  BiocParallel
+  BiocParallel,
+  qqman
 biocViews: Software,
   HiC, Sequencing, Normalization
 License: MIT + file LICENSE

@@ -9,6 +9,9 @@
 #'     significantly slow down the normalization process.
 #' @param parallel Logical. Should parallel processing be
 #'     used?
+#' @param verbose Logical, should messages about
+#'     the normalization be printed?
+#' @param Plot Logical, should MD plots be printed?
 #' @param max.pool The proportion of unit distances after
 #'     which all further distances will be pooled. Distances
 #'     before this value will be progressively pooled and
