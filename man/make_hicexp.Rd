@@ -11,7 +11,7 @@ make_hicexp(..., data_list = NA, groups, covariates = NULL,
 \item{...}{Hi-C data. Data must in sparse upper triangular 
 format with 4 columns: chr, region1, region2, IF.}
 
-\item{data_list}{Alternate way to enter date. If you have
+\item{data_list}{Alternate way to enter data. If you have
 your Hi-C data in the form of a list already with each
 entry of the list representing a sample use this option.}
 
@@ -29,6 +29,9 @@ to covariates.}
 
 \item{remove_zeros}{Logical, should rows with 1 or more
 zero IF values be removed?}
+}
+\value{
+A hicexp object.
 }
 \description{
 Make Hi-C experiment object from data

@@ -24,6 +24,13 @@ plot chromosomes 1 and 5 set plot.chr
 all chromosomes present in the hicexp
 will be plotted.}
 }
+\value{
+A set of MD plots.
+}
 \description{
 Make MD plots for all combinations of a condition
+}
+\examples{
+data("hicexp")
+MD.hicexp(hicexp)
 }

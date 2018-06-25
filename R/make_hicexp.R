@@ -6,7 +6,7 @@
 #' 
 #' @param ... Hi-C data. Data must in sparse upper triangular 
 #'     format with 4 columns: chr, region1, region2, IF.
-#' @param data_list Alternate way to enter date. If you have
+#' @param data_list Alternate way to enter data. If you have
 #'     your Hi-C data in the form of a list already with each
 #'     entry of the list representing a sample use this option.
 #' @param groups A vector of the experimental groups 
@@ -23,6 +23,8 @@
 #'     zero IF values be removed?
 #' @details Use this function to create a hicexp object for
 #'     analysis in HiCcompare2.
+#'     
+#' @return A hicexp object.
 #' @examples 
 #' # load data in sparse upper triangular format
 #' data("r1", "r2", "r3", "r4", "r5", "r6", "r7")

@@ -14,8 +14,14 @@
 #'     all chromosomes present in the hicexp
 #'     will be plotted. 
 #'
+#' @return A set of MD plots.
+#' 
+#'
 #' @importFrom dplyr %>%
 #' @export
+#' @examples
+#' data("hicexp")
+#' MD.hicexp(hicexp)
 
 
 # @import gridGraphics
@@ -71,7 +77,8 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
 
 
 #' Plot a composite MD plot with the results of a comparison
-#' @param hicexp A hicexp object.
+#' @param hicexp A hicexp object which has 
+#'     had a HiCcompare2 comparison step performed on it.
 #' @param plot.chr A specific chromosome or 
 #'     set of chromosome which you want to plot.
 #'     This should be a numeric value, i.e. to
@@ -80,7 +87,14 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
 #'     = c(1, 5). Defaults to NA indicating that
 #'     all chromosomes present in the hicexp
 #'     will be plotted. 
+#' @return An MD plot
+#' @examples 
+#' data("hicexp")
+#' hicexp <- fastlo(hicexp)
+#' hicexp <- hic_exactTest(hicexp)
+#' MD.composite(hicexp)
 #' @export
+
 
 MD.composite <- function(hicexp, plot.chr = NA) {
   # check to make sure data has been compared

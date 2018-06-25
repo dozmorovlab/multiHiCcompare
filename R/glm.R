@@ -18,7 +18,14 @@
 #'     typically to 0.5 or 0.6. 
 #'     
 #' @details This function performs the edgeR exact test on a per distance
-#'     basis for Hi-C data. 
+#'     basis for Hi-C data. It tests for differences between two groups
+#'     when the groups are the only variable of interest. This is
+#'     an application of the negative binomial exact test proposed
+#'     by Robinson and Smyth (2008) for a difference in mean between
+#'     the groups. These exact tests are applied to the Hi-C data
+#'     on a distance group basis using "progressive pooling" of 
+#'     distances. 
+#' @return A hicexp object with the comparison slot filled.
 #'
 #' @export
 #' @import edgeR
@@ -109,8 +116,9 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #'     variance and max.pool will need to be lowered; 
 #'     typically to 0.5 or 0.6. 
 #'     
-#' @details This function performs the specified edgeR test
-#'     on a per distance basis on the Hi-C data. 
+#' @details This function performs the specified edgeR GLM based test
+#'     on a per distance basis on the Hi-C data. Distances groups
+#'     are pooled using "progressive pooling". 
 #' @import edgeR
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr %>%

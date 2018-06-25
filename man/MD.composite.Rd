@@ -7,7 +7,8 @@
 MD.composite(hicexp, plot.chr = NA)
 }
 \arguments{
-\item{hicexp}{A hicexp object.}
+\item{hicexp}{A hicexp object which has 
+had a HiCcompare2 comparison step performed on it.}
 
 \item{plot.chr}{A specific chromosome or 
 set of chromosome which you want to plot.
@@ -18,6 +19,15 @@ plot chromosomes 1 and 5 set plot.chr
 all chromosomes present in the hicexp
 will be plotted.}
 }
+\value{
+An MD plot
+}
 \description{
 Plot a composite MD plot with the results of a comparison
+}
+\examples{
+data("hicexp")
+hicexp <- fastlo(hicexp)
+hicexp <- hic_exactTest(hicexp)
+MD.composite(hicexp)
 }
