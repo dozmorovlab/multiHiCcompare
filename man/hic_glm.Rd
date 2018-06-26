@@ -13,9 +13,12 @@ hic_glm(hicexp, design, contrast = NA, coef = NA, method = "QLFTest",
 
 \item{design}{A design matrix for the GLM.}
 
-\item{contrast}{A vector containing the contrast you want to test}
+\item{contrast}{Numeric vector or matrix specifying one or more 
+contrasts of the linear model coefficients to be tested 
+equal to zero.}
 
-\item{coef}{A value or vect or the coefficients to test.}
+\item{coef}{integer or character index vector indicating which 
+coefficients of the linear model are to be tested equal to zero.}
 
 \item{method}{The test method to be performed. Should be one of
 "QLFTest", "LRTest", or "Treat".}

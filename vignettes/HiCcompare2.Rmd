@@ -3,6 +3,8 @@ title: "HiCcompare2 Vignette"
 author: "John C. Stansfield & Mikhail G. Dozmorov"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+fig_width: 6 
+fig_height: 4 
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -151,7 +153,23 @@ The `groups` option specifies the experimental groups. You must enter a vector t
 
 ### The `hicexp` object
 
-The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `@hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `@comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `@hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `@metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
+The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `@hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
+
+## Filtering
+
+Filtering can be performed on a `hicexp` object using the `hic_filter()` function. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of HiCcompare2. Filtering can be performed either before normalization or after normalization. You can filter your data as shown below:
+
+```{r}
+# load data
+data("hicexp")
+hicexp@hic_table
+
+hicexp <- hic_filter(hicexp, zero.p = 0.8, A.min = 5)
+
+hicexp@hic_table
+```
+
+As you can see the settings used above filters out about 17,000 interactions. The `zero.p` option allows for filtering by the proportion of zero IFs for an interaction. The `A.min` allows for filtering by a minimum average IF value. These options can be used together or individually to filter your data. See `?hic_filter()` for more information.
 
 
 ## Normalization
@@ -164,13 +182,110 @@ The `hicexp` S4 class has several slots which can be accessed with the `@` opera
 
 ### Cyclic Loess Normalization
 
+HiCcompare2 provides a cyclic loess method for the joint normalization of multiple Hi-C datasets. The method is based on representing the data on an MD plot. The MD plot is similar to the MA plot (Bland-Altman plot) which is commonly used for the visualization of gene expression differences. $M$ is defined as the log difference between the two data sets $M = log_2(IF_2/IF_1)$, where $IF_1$ and $IF_2$ are interaction frequencies of the first and the second Hi-C datasets, respectively. $D$ is defined as the distance between two interacting regions, expressed in unit-length of the $X$ resolution of the Hi-C data. A loess regression curve is fit through the MD plot and used to remove global biases by centering the $M$ differences around $M=0$ baseline.
+
+The cyclic loess algorithm proceeds through the following steps. 
+
+1. Choose two out of the $N$ total samples then generate an MD plot. 
+2. Fit a loess curve $f(d)$ to the MD plot. 
+3. Subtract $f(d)/2$ from the first dataset and add $f(d)/2$ to the second. 
+4. Repeat until all unique pairs have been compared. 
+5. Repeat until convergence. 
+
+To perform cyclic loess on your Hi-C data you will need to use the `cyclic_loess()` function as shown below:
+
+```{r}
+hicexp1 <- cyclic_loess(hicexp1, verbose = FALSE, Plot = TRUE, parallel = FALSE)
+```
+
+As can be seen in the above MD plots, the data for each sample has been jointly normalized with all other samples. The `hic_table` slot in the `hicexp` object has also been updated with the normalized IFs.
+
+```{r}
+hicexp1@hic_table
+```
+
+The run time of cyclic loess can be increased when multiple processors are available by setting the `parallel` option to `TRUE`. This option splits up the data by chromosome and sends each chromosome's data to a parallel processor. 
 
 ### Fast Loess Normalization (Fastlo)
+
+In addition to the standard cyclic loess method, HiCcompare2 also implements the Fast Loess (Fastlo) joint normalization algorithm. Our implementation of fastlo is adapted to Hi-C data on a per-distance basis. To perform "fastlo" on Hi-C data we first split the data into $p$ pooled matrices. The "progressive pooling" is used to split up the Hi-C matrix by unit distance such that distance 0 is its own pool, distances 1 and 2 are pooled, distance 3, 4, 5 are pooled, and so on until all unit distances belong to on of $p$ pools. Each matrix will have an $IF_{gj}$ value with $g$ interacting pairs for each of the $j$ samples. These $p$ matrices can then be input into the "fastlo" algorithm using the following steps. 
+
+1. Create the vector $\hat{IF}_{pgj}$, the row means of the $p^{th}$ matrix. This is the equivalent of creating an average IF at distance pool $p$. 
+2. Plot $\hat{IF}_{p}$ versus $(IF_{pg} - \hat{IF_p})$ for each sample $j$. This is equivalent to an MA plot at a genomic distance pool $p$. 
+3. Fit a loess curve $f(x)$ to the plot. 
+4. Subtract $f(x)$ from sample $j$. 
+5. Repeat for all remaining replicates. 
+6. Repeat until algorithm converges. 
+
+You can perform fastlo normalization on your data as follows:
+
+```{r}
+# remake the original hicexp object
+hicexp2 <- make_hicexp(r1, r2, r3, r4, groups = c(0, 0, 1, 1))
+# perform fastlo normalization
+hicexp2 <- fastlo(hicexp2, verbose = FALSE, Plot = TRUE, parallel = FALSE)
+```
+
+Again, the above MD plots show the normalized data. `fastlo()` can also make use of parallelization to speed up computation speeds by setting the `parallel` option to `TRUE`. The results of `fastlo()` and `cyclic_loess()` may be slightly different, but both should result in the removal of biases between Hi-C datasets. `fastlo()` will have quicker run times compared to `cyclic_loess()`, but `cyclic_loess()` will likely give a slightly better normalization.  
 
 
 ## Difference Detection
 
+HiCcompare2 provides two main ways to perform a differential comparison between the groups or conditions of your Hi-C experiment. For simple experiments where only a comparison between two groups is being made, the `hic_exactTest()` function can be used. For more complex experiments with covariates or multiple groups, the `hic_glm()` function should be used. Both of these functions make use of the `edgeR` package for fitting negative binomial models to the Hi-C data. For the difference detection steps, HiCcompare2 first splits the data up by distance using the progressive pooling described in the fastlo section. Each distance pool is then treated similar to an independent RNA-seq data matrix on which `edgeR`'s functions are applied to fit the specified model. This process is illustrated in Figure 1 below.
+
+![](HiCcompare2_glm.png)
+
+**Figure 1.** The off-diagonal analysis of multiple Hi-C replicates.Dashed lines represent the off-diagonal vectors of interaction frequencies at a given distance between interacting regions. Right: Converted into a matrix format similar to RNA-seq data, IFs can be loess normalized, variance across replicates can be estimated using an empirical Bayes approach and differences can be detected using log-linear GLMs. 
+
+
 ### Exact Test
 
+For simple Hi-C experiments the `hic_exactTest()` function can be used as shown below:
+
+```{r}
+hicexp1 <- hic_exactTest(hicexp1, p.method = 'fdr', Plot = TRUE, parallel = FALSE)
+```
+
+The above composite MD plot displays where any significant differences are detected between the two groups. This function can also be sped up by using the `parallel` option. The results of the comparison are then saved in the `comparison` slot of the `hicexp` object.
+
+```{r}
+hicexp1@comparison
+```
+
+In this `data.table` the first 3 columns represent the identity of the interaction, then followed by the unit genomic distance (`D`), the log fold change difference between the groups (`logFC`), the log counts per million for the interaction (`logCPM`), the p-value and finally the multiple testing correction p-value (`p.adj`). The type of multiple testing applied can be changed using the `p.method` option. To view what other adjustment methods are available look at the help for `?p.adjust`. 
 
 ### GLM Methods
+
+For more complex Hi-C experiments the `hic_glm()` function must be used. In order to use this function, a design matrix must first be created. Here we load an example `hicexp` object with some covariates and create the design matrix.
+
+```{r}
+# load example hicexp object
+data("hicexp")
+# view covariates
+hicexp@metadata
+# normalize
+hicexp <- fastlo(hicexp, verbose = FALSE, Plot = FALSE)
+
+# produce design matrix
+d <- model.matrix(~factor(hicexp@metadata$group) + factor(hicexp@metadata$batch))
+```
+
+The design matrix should contain the covariates of interest. Any categorical variables should be entered as factors. Next, the comparison of interest will need to be specified using either the `contrast` or the `coef` option. For this example we are interested in the group difference thus we can set `coef = 2` to test if the group effect is equal to 0. For more information on using `contrast` and `coef` please see the `edgeR` user manual. Now we are ready to perform the comparison.
+
+```{r}
+hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "QLFTest", p.method = "fdr", parallel = FALSE, Plot = TRUE)
+```
+
+The above composite MD plot displays where the significant differences were detected. 
+
+There are 3 methods by whichc `hic_glm()` can be performed. The default method is to the use the `QLFTest` which makes use of the quasi-likelihood model. Additionally there is the `LRTest` which conducts a likelihood ratio test. The final method is the `Treat` method which conducts a test relative to a specified fold change threshold. For this option the `M` option will need to be used to specify the log2 fold change threshold.
+
+```{r}
+# use Treat option
+hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "Treat", M = 0.5, p.method = "fdr", parallel = FALSE, Plot = TRUE)
+```
+
+
+## Other functions
+
+

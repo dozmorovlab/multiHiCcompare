@@ -100,8 +100,11 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' 
 #' @param hicexp A hicexp object,
 #' @param design A design matrix for the GLM.
-#' @param contrast A vector containing the contrast you want to test 
-#' @param coef A value or vect or the coefficients to test.
+#' @param contrast Numeric vector or matrix specifying one or more 
+#'     contrasts of the linear model coefficients to be tested 
+#'     equal to zero.
+#' @param coef integer or character index vector indicating which 
+#'     coefficients of the linear model are to be tested equal to zero. 
 #' @param method The test method to be performed. Should be one of
 #'    "QLFTest", "LRTest", or "Treat".
 #' @param M The log2 fold change value for a TREAT analysis.
