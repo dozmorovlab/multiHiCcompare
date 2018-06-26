@@ -34,6 +34,22 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   if (hicexp@normalized) {
     stop("Data has already been normalized.")
   }
+  # check span input
+  if (!is.na(span)) {
+    if (!is.numeric(span)) {
+      stop("span must be set to NA or a value between 0 and 1")
+    }
+    if (span <= 0 | span > 1) {
+      stop("span must be set to NA or a value between 0 and 1")
+    }
+  }
+  # check iterations input
+  if (iterations < 2) {
+    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
+  }
+  if (iterations > 4) {
+    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
+  }
   # split up data by condition and perform cyclic loess
   normalized <- .loess_condition(hicexp@hic_table, iterations = iterations, parallel = parallel, verbose = verbose, span = span)
   # sort hic_table

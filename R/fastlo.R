@@ -35,13 +35,33 @@
 #' @return A hicexp object that is normalized.
 #' @export
 #' @importFrom BiocParallel bplapply
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% left_join
 #' @importFrom data.table rbindlist
 #' @examples 
 #' data("hicexp")
 #' hicexp <- fastlo(hicexp)
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
+  # check if data already normalized
+  if (hicexp@normalized) {
+    stop("Data has already been normalized.")
+  }
+  # check span input
+  if (!is.na(span)) {
+    if (!is.numeric(span)) {
+      stop("span must be set to NA or a value between 0 and 1")
+    }
+    if (span <= 0 | span > 1) {
+      stop("span must be set to NA or a value between 0 and 1")
+    }
+  }
+  # check iterations input
+  if (iterations < 2) {
+    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
+  }
+  if (iterations > 4) {
+    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
+  }
   # input conditions to fastlo
   normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose, max.pool = max.pool)
   # sort hic_table

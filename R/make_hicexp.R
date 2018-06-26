@@ -33,7 +33,8 @@
 #' tabs <- lapply(tabs, function(x) cbind('22', x))
 #' # make groups & covariate input
 #' groups <- factor(c(1, 1, 1, 2, 2, 2, 2))
-#' covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi', 'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
+#' covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi',
+#'  'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
 #' # make the hicexp object
 #' hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
 

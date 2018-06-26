@@ -9,6 +9,4 @@
 #'     \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104888}
 #'
 #' @return A hicexp object
-
-#'
 "hicexp"
