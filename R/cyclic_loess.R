@@ -29,7 +29,7 @@
 #' data("hicexp")
 #' hicexp <- cyclic_loess(hicexp)
 
-cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = TRUE, Plot = TRUE) {
+cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = FALSE, Plot = TRUE) {
   # check if data already normalized
   if (hicexp@normalized) {
     stop("Data has already been normalized.")
@@ -248,8 +248,3 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   }
   return(fit)
 }
-
-
-
-
-

@@ -146,10 +146,6 @@ hicexp1
 
 The `groups` option specifies the experimental groups. You must enter a vector the length of the number of Hi-C matrices with indicators for which group each matrix belongs to. An optional covariate `data.frame` with rows corresponding the Hi-C matrices and columns for each additional covariate can be provided with the `covariates` option. 
 
-### BEDPE format data
-
-<!-- need to add functionality to make_hicexp() for reading in BEDPE data -->
-
 
 ### The `hicexp` object
 
@@ -178,7 +174,13 @@ As you can see the settings used above filters out about 17,000 interactions. Th
 
 ### Library scaling
 
-<!-- Probably should add something to just do library scaling normalization -->
+The simplest form of normalization for the purpose of comparing Hi-C data is library scaling. HiCcompare2 provides the `hic_scale()` function to scale the Hi-C libraries from each sample to the size of the smallest library. If you believe that any trends present in your data are important differences and not due to bias then you can use library scaling for normalizing your data. Otherwise it is recommended to use either cyclic loess or fast loess. You can perform library scaling as follows.
+
+```{r}
+data("hicexp")
+hicexp <- hic_scale(hicexp)
+```
+
 
 ### Cyclic Loess Normalization
 
