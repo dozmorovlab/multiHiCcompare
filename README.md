@@ -8,7 +8,7 @@
 
 The main functions of `HiCcompare2` are:
 
-- `cyclic_loess()` and `fastlo()` for performing joint normalization
+- `cyclic_loess()` and `fastlo()` for performing joint normalization.
 - `hic_exactTest()` and `hic_glm()` for performing comparisons between experimental conditions.
 
 Some example Hi-C data along with an extensive vignette documenting the usage of `HiCcompare2` are included in the package. 
