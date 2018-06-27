@@ -153,7 +153,7 @@ The `groups` option specifies the experimental groups. You must enter a vector t
 
 ### The `hicexp` object
 
-The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `@hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
+The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
 
 ## Filtering
 
@@ -287,5 +287,23 @@ hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "Treat", M = 0.5, p.met
 
 
 ## Other functions
+
+There are several other functions included in `HiCcompare2`. `manhattan_hicexp()` produces a manhattan plot for the results of a comparison to identify "hotspot" regions of the genome where large numbers of significant differences are found.
+
+```{r}
+manhattan_hicexp(hicexp, method = "standard")
+```
+
+There are also the MD plotting functions `MD.hicexp()` which will plot MD plots for each unique pair of samples in the `hicexp` object.
+
+```{r}
+MD.hicexp(hicexp1, prow = 2, pcol = 3)
+```
+
+The `MD.composite()` function will plot a composite MD plot of the results of a comparison where the significant differences are highlighted.
+
+```{r}
+MD.composite(hicexp)
+```
 
 

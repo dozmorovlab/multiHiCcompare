@@ -96,6 +96,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 
 
 
+
 #' Function to perform GLM differential analysis on Hi-C experiment
 #' 
 #' @param hicexp A hicexp object,
