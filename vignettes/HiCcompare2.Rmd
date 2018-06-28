@@ -153,7 +153,7 @@ The `hicexp` S4 class has several slots which can be accessed with the `@` opera
 
 ## Filtering
 
-Filtering can be performed on a `hicexp` object using the `hic_filter()` function. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of HiCcompare2. Filtering can be performed either before normalization or after normalization. You can filter your data as shown below:
+Filtering can be performed on a `hicexp` object using the `hic_filter()` function. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of `HiCcompare2`. Filtering can be performed either before normalization or after normalization. You can filter your data as shown below:
 
 ```{r}
 # load data
@@ -174,7 +174,7 @@ As you can see the settings used above filters out about 17,000 interactions. Th
 
 ### Library scaling
 
-The simplest form of normalization for the purpose of comparing Hi-C data is library scaling. HiCcompare2 provides the `hic_scale()` function to scale the Hi-C libraries from each sample to the size of the smallest library. If you believe that any trends present in your data are important differences and not due to bias then you can use library scaling for normalizing your data. Otherwise it is recommended to use either cyclic loess or fast loess. You can perform library scaling as follows.
+The simplest form of normalization for the purpose of comparing Hi-C data is library scaling. `HiCcompare2` provides the `hic_scale()` function to scale the Hi-C libraries from each sample to the size of the smallest library. If you believe that any trends present in your data are important differences and not due to bias then you can use library scaling for normalizing your data. Otherwise it is recommended to use either cyclic loess or fast loess. You can perform library scaling as follows.
 
 ```{r}
 data("hicexp")
@@ -184,7 +184,7 @@ hicexp <- hic_scale(hicexp)
 
 ### Cyclic Loess Normalization
 
-HiCcompare2 provides a cyclic loess method for the joint normalization of multiple Hi-C datasets. The method is based on representing the data on an MD plot. The MD plot is similar to the MA plot (Bland-Altman plot) which is commonly used for the visualization of gene expression differences. $M$ is defined as the log difference between the two data sets $M = log_2(IF_2/IF_1)$, where $IF_1$ and $IF_2$ are interaction frequencies of the first and the second Hi-C datasets, respectively. $D$ is defined as the distance between two interacting regions, expressed in unit-length of the $X$ resolution of the Hi-C data. A loess regression curve is fit through the MD plot and used to remove global biases by centering the $M$ differences around $M=0$ baseline.
+`HiCcompare2` provides a cyclic loess method for the joint normalization of multiple Hi-C datasets. The method is based on representing the data on an MD plot. The MD plot is similar to the MA plot (Bland-Altman plot) which is commonly used for the visualization of gene expression differences. $M$ is defined as the log difference between the two data sets $M = log_2(IF_2/IF_1)$, where $IF_1$ and $IF_2$ are interaction frequencies of the first and the second Hi-C datasets, respectively. $D$ is defined as the distance between two interacting regions, expressed in unit-length of the $X$ resolution of the Hi-C data. A loess regression curve is fit through the MD plot and used to remove global biases by centering the $M$ differences around $M=0$ baseline.
 
 The cyclic loess algorithm proceeds through the following steps. 
 
@@ -210,7 +210,7 @@ The run time of cyclic loess can be increased when multiple processors are avail
 
 ### Fast Loess Normalization (Fastlo)
 
-In addition to the standard cyclic loess method, HiCcompare2 also implements the Fast Loess (Fastlo) joint normalization algorithm. Our implementation of fastlo is adapted to Hi-C data on a per-distance basis. To perform "fastlo" on Hi-C data we first split the data into $p$ pooled matrices. The "progressive pooling" is used to split up the Hi-C matrix by unit distance such that distance 0 is its own pool, distances 1 and 2 are pooled, distance 3, 4, 5 are pooled, and so on until all unit distances belong to on of $p$ pools. Each matrix will have an $IF_{gj}$ value with $g$ interacting pairs for each of the $j$ samples. These $p$ matrices can then be input into the "fastlo" algorithm using the following steps. 
+In addition to the standard cyclic loess method, `HiCcompare2` also implements the Fast Loess (Fastlo) joint normalization algorithm. Our implementation of fastlo is adapted to Hi-C data on a per-distance basis. To perform "fastlo" on Hi-C data we first split the data into $p$ pooled matrices. The "progressive pooling" is used to split up the Hi-C matrix by unit distance such that distance 0 is its own pool, distances 1 and 2 are pooled, distance 3, 4, 5 are pooled, and so on until all unit distances belong to on of $p$ pools. Each matrix will have an $IF_{gj}$ value with $g$ interacting pairs for each of the $j$ samples. These $p$ matrices can then be input into the "fastlo" algorithm using the following steps. 
 
 1. Create the vector $\hat{IF}_{pgj}$, the row means of the $p^{th}$ matrix. This is the equivalent of creating an average IF at distance pool $p$. 
 2. Plot $\hat{IF}_{p}$ versus $(IF_{pg} - \hat{IF_p})$ for each sample $j$. This is equivalent to an MA plot at a genomic distance pool $p$. 
@@ -233,7 +233,7 @@ Again, the above MD plots show the normalized data. `fastlo()` can also make use
 
 ## Difference Detection
 
-HiCcompare2 provides two main ways to perform a differential comparison between the groups or conditions of your Hi-C experiment. For simple experiments where only a comparison between two groups is being made, the `hic_exactTest()` function can be used. For more complex experiments with covariates or multiple groups, the `hic_glm()` function should be used. Both of these functions make use of the `edgeR` package for fitting negative binomial models to the Hi-C data. For the difference detection steps, HiCcompare2 first splits the data up by distance using the progressive pooling described in the fastlo section. Each distance pool is then treated similar to an independent RNA-seq data matrix on which `edgeR`'s functions are applied to fit the specified model. This process is illustrated in Figure 1 below.
+`HiCcompare2` provides two main ways to perform a differential comparison between the groups or conditions of your Hi-C experiment. For simple experiments where only a comparison between two groups is being made, the `hic_exactTest()` function can be used. For more complex experiments with covariates or multiple groups, the `hic_glm()` function should be used. Both of these functions make use of the `edgeR` package for fitting negative binomial models to the Hi-C data. For the difference detection steps, `HiCcompare2` first splits the data up by distance using the progressive pooling described in the fastlo section. Each distance pool is then treated similar to an independent RNA-seq data matrix on which `edgeR`'s functions are applied to fit the specified model. This process is illustrated in Figure 1 below.
 
 ![](HiCcompare2_glm.png)
 
@@ -280,7 +280,7 @@ hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "QLFTest", p.method = "
 
 The above composite MD plot displays where the significant differences were detected. 
 
-There are 3 methods by whichc `hic_glm()` can be performed. The default method is to the use the `QLFTest` which makes use of the quasi-likelihood model. Additionally there is the `LRTest` which conducts a likelihood ratio test. The final method is the `Treat` method which conducts a test relative to a specified fold change threshold. For this option the `M` option will need to be used to specify the log2 fold change threshold.
+There are 3 methods by which `hic_glm()` can be performed. The default method is to the use the `QLFTest` which makes use of the quasi-likelihood model. Additionally there is the `LRTest` which conducts a likelihood ratio test. The final method is the `Treat` method which conducts a test relative to a specified fold change threshold. For this option the `M` option will need to be used to specify the log2 fold change threshold.
 
 ```{r}
 # use Treat option
@@ -290,7 +290,7 @@ hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "Treat", M = 0.5, p.met
 
 ## Other functions
 
-There are several other functions included in `HiCcompare2`. `manhattan_hicexp()` produces a manhattan plot for the results of a comparison to identify "hotspot" regions of the genome where large numbers of significant differences are found.
+There are several other functions included in `HiCcompare2`. `manhattan_hicexp()` produces a Manhattan plot for the results of a comparison to identify "hotspot" regions of the genome where large numbers of significant differences are found.
 
 ```{r}
 manhattan_hicexp(hicexp, method = "standard")
