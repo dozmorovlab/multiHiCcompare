@@ -31,9 +31,11 @@
 #' @import edgeR
 #' @importFrom dplyr %>%
 #' @examples 
+#' \dontrun{
 #' data("hicexp")
 #' hicexp <- fastlo(hicexp)
 #' hicexp <- hic_exactTest(hicexp)
+#' }
 
 hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE, max.pool = 0.7) {
   # check to make sure hicexp is normalized
@@ -145,10 +147,12 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @importFrom dplyr %>%
 #' @export
 #' @examples 
+#' \dontrun{
 #' data("hicexp")
 #' hicexp <- fastlo(hicexp)
 #' d <- model.matrix(~factor(hicexp@metadata$group) + factor(hicexp@metadata$batch))
 #' hicexp <- hic_glm(hicexp, design = d, coef = 2)
+#' }
 
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
   # match method

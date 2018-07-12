@@ -31,11 +31,13 @@
 #'     to generate the manhattan plot.
 #' @importFrom qqman manhattan
 #' @export
-#' @examples 
+#' @examples
+#' \dontrun{ 
 #' data("hicexp")
 #' hicexp <- fastlo(hicexp)
 #' hicexp <- hic_exactTest(hicexp)
 #' manhattan_hicexp(hicexp)
+#' }
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   # check input

@@ -26,8 +26,10 @@
 #' @importFrom HiCcompare MD.plot1
 #' @importFrom data.table rbindlist
 #' @examples 
+#' \dontrun{
 #' data("hicexp")
 #' hicexp <- cyclic_loess(hicexp)
+#' }
 
 cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = FALSE, Plot = TRUE) {
   # check if data already normalized
