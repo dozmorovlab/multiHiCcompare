@@ -82,7 +82,7 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
 #' @return An MD plot
 #' @examples 
 #' data("hicexp")
-#' dontrun{
+#' \dontrun{
 #' hicexp <- fastlo(hicexp)
 #' }
 #' hicexp <- hic_exactTest(hicexp)

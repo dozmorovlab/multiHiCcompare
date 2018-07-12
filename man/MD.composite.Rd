@@ -27,7 +27,7 @@ Plot a composite MD plot with the results of a comparison
 }
 \examples{
 data("hicexp")
-dontrun{
+\dontrun{
 hicexp <- fastlo(hicexp)
 }
 hicexp <- hic_exactTest(hicexp)

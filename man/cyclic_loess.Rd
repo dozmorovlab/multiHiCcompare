@@ -40,3 +40,9 @@ This function performs cyclic loess normalization
    fitted values are used to adjust the data. This is performed on
    all unique pairs and then repeated until convergence.
 }
+\examples{
+#' data("hicexp")
+\dontrun{
+hicexp <- cyclic_loess(hicexp)
+}
+}

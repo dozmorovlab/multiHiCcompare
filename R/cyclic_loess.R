@@ -27,7 +27,7 @@
 #' @importFrom data.table rbindlist
 #' @examples 
 #' #' data("hicexp")
-#' \dontrun
+#' \dontrun{
 #' hicexp <- cyclic_loess(hicexp)
 #' }
 
