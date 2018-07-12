@@ -24,11 +24,7 @@
 #' MD.hicexp(hicexp)
 
 
-# @import gridGraphics
-# @importFrom gridExtra grid.arrange
 
-# Plan: make a grid of MD plots for all the pairwise combinations of comparisons between replicates in a condition
-# should use a modified bersion of MD.plot1 to be able to accpet new titles / labels for this function
 
 MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
   # check if more than one chromosome then split
@@ -67,11 +63,7 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
     # make MD plot
     .MD.smooth(M_matrix[,j], chr_table$D, title = paste0('chr', chr_table$chr[1], ' ', 
                                                          'Sample ', combinations[1,j] - 4, ' vs. ', combinations[2,j] - 4), ylab = '', xlab = '')
-    # grid.echo()
-    # plot_list[[j]] <- grid.grab()
-    # plot.new()
   }
-  # cowplot::plot_grid(plotlist = plot_list[1:6], align='hv')
   .reset_par()
 }
 
@@ -177,30 +169,3 @@ MD.composite <- function(hicexp, plot.chr = NA) {
 }
 
 
-# 
-# MD.hicexp <- function(hicexp) {
-#  # get list of plots by condition
-#   plot_by_condition <- lapply(hicexp@hic_tables, .MD_condition)
-#   # arrange into grid
-#   p <- unlist(plot_by_condition)
-#   grid.arrange(p)
-# }
-# 
-# 
-# .MD_condition <- function(hic_table) {
-#   # get all unique pairs of samples which need to be compared
-#   samples <- 5:(ncol(hic_table))
-#   combinations <- combn(samples, 2)
-#   # make matrix of M values, each col corresponding to combination of samples specified in combinations object
-#   M_matrix <- matrix(nrow = nrow(hic_table), ncol = ncol(combinations))
-#   plot_list <- list()
-#   for (j in 1:ncol(combinations)) {
-#     M_matrix[,j] <- log2( (hic_table[, combinations[1,j], with = FALSE] + 1)[[1]] / (hic_table[, combinations[2,j], with = FALSE] + 1)[[1]] )
-#     # make plots
-#     HiCcompare::MD.plot2(M_matrix[,j], hic_table$D)
-#     grid.echo()
-#     plot_list[[j]] <- grid.grab()
-#     plot.new()
-#   }
-#   return(plot_list)
-# }

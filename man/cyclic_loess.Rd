@@ -5,7 +5,7 @@
 \title{Cyclic Loess normalization for Hi-C data}
 \usage{
 cyclic_loess(hicexp, iterations = 3, span = NA, parallel = FALSE,
-  verbose = TRUE, Plot = TRUE)
+  verbose = FALSE, Plot = TRUE)
 }
 \arguments{
 \item{hicexp}{A hicexp object}

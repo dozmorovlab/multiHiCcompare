@@ -67,11 +67,6 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
     } else {
       dge_list <- lapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
       
-      # # temporary change to print out which chromosome things are failing on
-      # dge_list <- mapply(function(x,y) {
-      #     message('chr', x$chr[1])
-      #     edgeR::estimateDisp(y, design=model.matrix(~hicexp@metadata$group))
-      #     }, table_list, dge_list, SIMPLIFY = FALSE)
     }
   }
   
@@ -179,7 +174,6 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   # input each of the chr-distance tables into a DGElist object for edgeR
   dge_list <- lapply(table_list, .hictable2DGEList, covariates = hicexp@metadata)
   # estimate dispersion for data
-  # ??? might need to adjust this to use the design matrix
   if (parallel) {
     dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, design = design)
   } else {
@@ -295,8 +289,6 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
 
 
 # function to convert hic_table to a DGEList object
-# ??? Might need to add "gene" names as an ID for each row if the original hic_table in case edgeR removes rows/moves them around during processing so that they match
-# back up with the original chrs, region1, region2, etc.
 .hictable2DGEList <- function(hic_table, covariates) {
   # convert IFs into a matrix
   IFs <- hic_table[, 5:(ncol(hic_table)), with = FALSE] %>% as.matrix

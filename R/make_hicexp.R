@@ -94,9 +94,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
   }
   
   # cycle through groups to create a table for each experimental condition
-  # for(i in 1:length(tabs)) {
-    # current_group <- which(groups == i)
-    # join first 2 samples
+
     tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
     if (length(tabs) > 2) {
       for(j in 3:length(tabs)) {
@@ -112,8 +110,6 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     bins <- unique(c(tmp_table$region1, tmp_table$region2))
     bins <- bins[order(bins)]
     resolution <- min(diff(bins))
-    # res[i] <- resolution
-    # calculate distance
     tmp_table <- data.table::as.data.table(tmp_table)
     tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
     # rearrange columns
@@ -128,11 +124,11 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     }
     # sort hic_table
     hic_table <- hic_table[order(chr, region1, region2),]
-  # }
+
   # check that all resolutions are equal
-  # if (length(unique(res)) > 1) {
-  #   stop("Resolution of all datasets must be equal.")
-  # }
+  if (length(unique(res)) > 1) {
+    stop("Resolution of all datasets must be equal.")
+  }
     # remove rows with 0's
     if (remove_zeros) {
       IFs <- hic_table[, 5:(ncol(hic_table)), with = FALSE] %>% as.matrix()
@@ -141,10 +137,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
       hic_table <- hic_table[keep,]
     }
     
-  
-  # name items in hic_table
-  # names(hic_table) <- paste0("Group", 1:length(hic_table))
-  
+
   # make metadata 
   metadata <- data.frame(group = groups)
   row.names(metadata) <- paste0("Sample", 1:length(groups))
@@ -157,12 +150,3 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
   return(experiment)
 }
 
-
-# tabs <- list(r1, r2, r3, r4, r5, r6, r7)
-# tabs <- lapply(tabs, function(x) cbind('chr22', x))
-# groups <- c(1, 1, 1, 2, 2, 2, 2)
-# covariates <- data.frame(enzyme = c('mobi', 'mboi', 'mboi', 'dpnii', 'dpnii', 'dpnii', 'dpnii'), batch = c(1, 2, 1, 2, 1, 2, 2))
-# 
-# hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
-# 
-# devtools::use_data(hicexp, compress = 'xz', overwrite = TRUE)

@@ -9,7 +9,9 @@ make_hicexp(..., data_list = NA, groups, covariates = NULL,
 }
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 
-format with 4 columns: chr, region1, region2, IF.}
+format with 4 columns: chr, region1, region2, IF or
+in 7 column BEDPE format with columns chr1, start1, 
+end1, chr2, start2, end2, IF.}
 
 \item{data_list}{Alternate way to enter data. If you have
 your Hi-C data in the form of a list already with each

@@ -71,7 +71,6 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   hicexp@normalized <- TRUE
   
   # plot
-  # plot
   if (Plot) {
     MD.hicexp(hicexp)
   }
@@ -79,7 +78,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   return(hicexp)
 }
 
-# bacground functions
+# background functions
 
 # perform fastlo on a condition
 .fastlo_condition <- function(hic_table, iterations, span, parallel, verbose, max.pool) {
@@ -100,20 +99,6 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   return(hic_table)
 }
 
-# # This is the old version where only the last 75% (85%) of distances are pooled
-# # make list of tables by distance
-# .get_dist_tables <- function(chr_table) {
-#   all_dist <- sort(unique(chr_table$D))
-#   dist_85 <- ceiling(0.75 * length(all_dist))
-#   table_by_dist <- list()
-#   idx <- 1
-#   for(i in all_dist[1:dist_85]) {
-#     table_by_dist[[idx]] <- chr_table[D == i,]
-#     idx <- idx + 1
-#   }
-#   table_by_dist[[idx]] <- chr_table[D > all_dist[dist_85],]
-#   return(table_by_dist)
-# }
 
 ## This is the new version where we use progressive pooling of distances
 # make list of tables by distance pool
@@ -189,23 +174,6 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   }
 }
 
-# # check to make sure number of rows for each table is not less than min.row
-# # if it is less then throw out those tables
-# .check_tables <- function(table_by_dist) {
-#   min.row <- 500
-#   # get row numbers
-#   row.nums <- lapply(table_by_dist, nrow)
-#   # find which tables have number of rows < min.row
-#   small_D <- which(row.nums < min.row)
-#   # check if any tables have less than min.row
-#   if (length(small_D) > 0) {
-#     table_by_dist[small_D] <- NA
-#     table_by_dist <- table_by_dist[!is.na(table_by_dist)]
-#     return(table_by_dist)
-#   } else {
-#     return(table_by_dist)
-#   }
-# }
 
 
 # perform fastlo on table
