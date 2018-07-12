@@ -46,9 +46,10 @@ This function performs the edgeR exact test on a per distance
     distances.
 }
 \examples{
-\dontrun{
 data("hicexp")
+dontrun{
 hicexp <- fastlo(hicexp)
-hicexp <- hic_exactTest(hicexp)
 }
+hicexp <- hic_exactTest(hicexp)
+
 }

@@ -32,12 +32,13 @@
 #' @importFrom qqman manhattan
 #' @export
 #' @examples
-#' \dontrun{ 
 #' data("hicexp")
+#' \dontrun{
 #' hicexp <- fastlo(hicexp)
+#' }
 #' hicexp <- hic_exactTest(hicexp)
 #' manhattan_hicexp(hicexp)
-#' }
+
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   # check input

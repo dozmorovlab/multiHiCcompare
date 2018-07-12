@@ -26,8 +26,8 @@
 #' @importFrom HiCcompare MD.plot1
 #' @importFrom data.table rbindlist
 #' @examples 
-#' \dontrun{
-#' data("hicexp")
+#' #' data("hicexp")
+#' \dontrun
 #' hicexp <- cyclic_loess(hicexp)
 #' }
 
