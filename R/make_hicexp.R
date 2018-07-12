@@ -5,7 +5,9 @@
 #' @import data.table
 #' 
 #' @param ... Hi-C data. Data must in sparse upper triangular 
-#'     format with 4 columns: chr, region1, region2, IF.
+#'     format with 4 columns: chr, region1, region2, IF or
+#'     in 7 column BEDPE format with columns chr1, start1, 
+#'     end1, chr2, start2, end2, IF.
 #' @param data_list Alternate way to enter data. If you have
 #'     your Hi-C data in the form of a list already with each
 #'     entry of the list representing a sample use this option.
@@ -44,6 +46,18 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     tabs <- data_list
   } else {
     tabs <- list(...)
+  }
+  # check number of columns of input data
+  if(ncol(tabs[[1]]) != 4 &  ncol(tabs[[1]]) != 7) {
+    stop("You must enter data in 4 column sparse matrix format
+         or in 7 column BEDPE format.")
+  }
+  # if BEDPE pull out only columns we need
+  if (ncol(tabs[[1]]) == 7) {
+    tabs <- lapply(tabs, function(x) {
+      new.x <- x[, c(1,2,5,7)]
+      return(new.x)
+    })
   }
   # set column names of data 
   tabs <- lapply(tabs, function(x) {
