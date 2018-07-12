@@ -29,12 +29,11 @@ biocLite(c("BiocParallel", "HiCcompare", "edgeR"))
 To install HiCcompare from bioconductor open R and enter the following commands. Currently it is recommended to use the GitHub release or the development version of the bioconductor release.
 
 ```
-# Bioconductor development version and Github Release contain major changes for difference detection
-# it is recommended to use the github release until the next Bioconductor update
+# It is recommended to use the github release until the next Bioconductor update
 ## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite("HiCcompare2")
-library(HiCcompare2)
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("HiCcompare2")
+# library(HiCcompare2)
 ```
 
 Or to install the latest version of HiCcompare directly from the github release open R and enter the following commands.
