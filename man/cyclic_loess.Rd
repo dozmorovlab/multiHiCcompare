@@ -41,8 +41,6 @@ This function performs cyclic loess normalization
    all unique pairs and then repeated until convergence.
 }
 \examples{
-#' data("hicexp")
-\dontrun{
-hicexp <- cyclic_loess(hicexp)
-}
+#' data("hicexp2")
+hicexp2 <- cyclic_loess(hicexp2, span = 0.7)
 }

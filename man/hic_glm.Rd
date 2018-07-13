@@ -71,9 +71,8 @@ This function performs the specified edgeR GLM based test
     option.
 }
 \examples{
-data("hicexp")
-hicexp <- fastlo(hicexp)
-d <- model.matrix(~factor(hicexp@metadata$group) + factor(hicexp@metadata$batch))
-hicexp <- hic_glm(hicexp, design = d, coef = 2)
+data("hicexp_diff")
+d <- model.matrix(~factor(hicexp_diff@metadata$group) + factor(c(1,2,1,2)))
+hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)
 
 }

@@ -1,8 +1,7 @@
-#' hicexp object with 7 samples from two groups.  
+#' hicexp object with 4 samples from two groups.  
 #'
-#' A hicexp object with a hic_table slot containing 42,035 rows
-#'     and a metadata slot containing 3 covariates. Data from
-#'     chr22 at 100KB resolution.
+#' A hicexp object with a hic_table slot containing 666 rows
+#'     from chromosome 22 at 1MB resolution.
 #'
 #' @source Data from Rao 2017. See their website at
 #'     \url{http://www.aidenlab.org/}
@@ -10,4 +9,4 @@
 #'     \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104888}
 #'
 #' @return A hicexp object
-"hicexp"
+"hicexp2"

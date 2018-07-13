@@ -38,8 +38,8 @@
 #' @importFrom dplyr %>% left_join
 #' @importFrom data.table rbindlist
 #' @examples 
-#' data("hicexp")
-#' hicexp <- fastlo(hicexp)
+#' data("hicexp2")
+#' hicexp2 <- fastlo(hicexp2)
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
   # check if data already normalized

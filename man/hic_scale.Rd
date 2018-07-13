@@ -27,7 +27,7 @@ This function will perform library scaling
     on library size.
 }
 \examples{
-data("hicexp")
-hicexp <- hic_scale(hicexp)
+data("hicexp2")
+hicexp2 <- hic_scale(hicexp2)
 
 }

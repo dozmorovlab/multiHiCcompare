@@ -54,6 +54,6 @@ This function performs the fast loess (fastlo)
    for full description.
 }
 \examples{
-data("hicexp")
-hicexp <- fastlo(hicexp)
+data("hicexp2")
+hicexp2 <- fastlo(hicexp2)
 }

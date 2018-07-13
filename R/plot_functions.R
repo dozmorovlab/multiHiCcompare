@@ -81,12 +81,8 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
 #'     will be plotted. 
 #' @return An MD plot
 #' @examples 
-#' data("hicexp")
-#' \dontrun{
-#' hicexp <- fastlo(hicexp)
-#' }
-#' hicexp <- hic_exactTest(hicexp)
-#' MD.composite(hicexp)
+#' data("hicexp_diff")
+#' MD.composite(hicexp_diff)
 #' @export
 
 

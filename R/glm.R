@@ -31,11 +31,8 @@
 #' @import edgeR
 #' @importFrom dplyr %>%
 #' @examples 
-#' data("hicexp")
-#' \dontrun{
-#' hicexp <- fastlo(hicexp)
-#' }
-#' hicexp <- hic_exactTest(hicexp)
+#' data("hicexp_diff")
+#' hicexp_diff <- hic_exactTest(hicexp_diff)
 #' 
 
 hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE, max.pool = 0.7) {
@@ -148,12 +145,10 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @importFrom dplyr %>%
 #' @export
 #' @examples 
-#' data("hicexp")
-#' hicexp <- fastlo(hicexp)
-#' d <- model.matrix(~factor(hicexp@metadata$group) + factor(hicexp@metadata$batch))
-#' hicexp <- hic_glm(hicexp, design = d, coef = 2)
+#' data("hicexp_diff")
+#' d <- model.matrix(~factor(hicexp_diff@metadata$group) + factor(c(1,2,1,2)))
+#' hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)
 #' 
-
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
   # match method
   method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), several.ok = FALSE)

@@ -32,12 +32,8 @@
 #' @importFrom qqman manhattan
 #' @export
 #' @examples
-#' data("hicexp")
-#' \dontrun{
-#' hicexp <- fastlo(hicexp)
-#' }
-#' hicexp <- hic_exactTest(hicexp)
-#' manhattan_hicexp(hicexp)
+#' data("hicexp_diff")
+#' manhattan_hicexp(hicexp_diff)
 
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {

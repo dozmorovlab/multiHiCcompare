@@ -47,10 +47,6 @@ This function is used to create a manhattan
     analysis.
 }
 \examples{
-data("hicexp")
-\dontrun{
-hicexp <- fastlo(hicexp)
-}
-hicexp <- hic_exactTest(hicexp)
-manhattan_hicexp(hicexp)
+data("hicexp_diff")
+manhattan_hicexp(hicexp_diff)
 }

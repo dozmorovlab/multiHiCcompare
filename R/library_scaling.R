@@ -15,8 +15,8 @@
 #' @export
 #' @return A hicexp object.
 #' @examples 
-#' data("hicexp")
-#' hicexp <- hic_scale(hicexp)
+#' data("hicexp2")
+#' hicexp2 <- hic_scale(hicexp2)
 #' 
 hic_scale <- function(hicexp) {
   # check if data already normalized

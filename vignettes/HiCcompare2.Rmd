@@ -1,13 +1,13 @@
 ---
 title: "HiCcompare2 Vignette"
 author: "John C. Stansfield & Mikhail G. Dozmorov"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-fig_width: 6 
-fig_height: 4 
+package: HiCcompare2
+output: 
+  BiocStyle::html_document
 vignette: >
+  %\VignetteIndexEntry{HiCcompare2 Vignette}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteEncoding{UTF-8}  
 ---
 
 ```{r setup, include = FALSE}
