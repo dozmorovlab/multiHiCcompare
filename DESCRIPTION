@@ -1,6 +1,6 @@
 Package: HiCcompare2
 Title: Normalize and detect differences between Hi-C datasets when replicates of each experimental condition are available
-Version: 0.99.6
+Version: 0.99.7
 Authors@R: c(person("John", "Stansfield", email = "stansfieldjc@vcu.edu", role = c("aut", "cre")), 
     person("Mikhail", "Dozmorov", email = "mikhail.dozmorov@vcuhealth.org", role = c("aut")))
 Description: HiCcompare2 provides functions for joint normalization and difference detection in multiple Hi-C datasets. This extension of

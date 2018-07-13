@@ -1,10 +1,8 @@
 test_that('cyclic_loess works', {
   library(testthat)
   library(HiCcompare2)
-  data("r1", "r2", "r3", "r4", "hicexp")
-  groups <- c(1, 1, 2, 2)
-  hicexp_new <- make_hicexp(r1, r2, r3, r4, groups = groups)
-  hicexp_new <- cyclic_loess(hicexp_new, span = 0.5, verbose = FALSE, Plot = FALSE)
+  data("hicexp2")
+  hicexp_new <- cyclic_loess(hicexp2, span = 0.5, verbose = FALSE, Plot = FALSE)
   expect_equal(hicexp_new@normalized, TRUE)
   
   # test for errors on wrong input
@@ -17,10 +15,8 @@ test_that('cyclic_loess works', {
 test_that('fastlo works', {
   library(testthat)
   library(HiCcompare2)
-  data("r1", "r2", "r3", "r4", "hicexp")
-  groups <- c(1, 1, 2, 2)
-  hicexp_new <- make_hicexp(r1, r2, r3, r4,groups = groups)
-  hicexp_new <- fastlo(hicexp_new, verbose = FALSE, Plot = FALSE)
+  data("hicexp2")
+  hicexp_new <- fastlo(hicexp2, verbose = FALSE, Plot = FALSE)
   expect_equal(hicexp_new@normalized, TRUE)
   
   # test for errors on wrong input
