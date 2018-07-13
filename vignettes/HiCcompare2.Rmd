@@ -196,10 +196,10 @@ The cyclic loess algorithm proceeds through the following steps.
 To perform cyclic loess on your Hi-C data you will need to use the `cyclic_loess()` function as shown below:
 
 ```{r}
-hicexp1 <- cyclic_loess(hicexp1, verbose = FALSE, Plot = TRUE, parallel = FALSE)
+hicexp1 <- cyclic_loess(hicexp1, verbose = FALSE, Plot = TRUE, parallel = FALSE, span = 0.2)
 ```
 
-As can be seen in the above MD plots, the data for each sample has been jointly normalized with all other samples. The `hic_table` slot in the `hicexp` object has also been updated with the normalized IFs.
+As can be seen in the above MD plots, the data for each sample has been jointly normalized with all other samples. Note that the span option can be set by the user. A user set span will run quicker than the default option of automatically calculating the span. It is best to use the automatic span calculation if you have not worked with the data before, but if you are familiar with it then setting the span is a way to speed up processing. The `hic_table` slot in the `hicexp` object has also been updated with the normalized IFs.
 
 ```{r}
 hicexp1@hic_table
@@ -220,12 +220,19 @@ In addition to the standard cyclic loess method, `HiCcompare2` also implements t
 
 You can perform fastlo normalization on your data as follows:
 
-```{r}
+```{r, eval=FALSE, echo=FALSE}
 # remake the original hicexp object
 hicexp2 <- make_hicexp(r1, r2, r3, r4, groups = c(0, 0, 1, 1))
 # perform fastlo normalization
 hicexp2 <- fastlo(hicexp2, verbose = FALSE, Plot = TRUE, parallel = FALSE)
 ```
+
+```{r}
+data("hicexp2")
+# perform fastlo normalization
+hicexp2 <- fastlo(hicexp2, verbose = FALSE, Plot = TRUE, parallel = FALSE)
+```
+
 
 Again, the above MD plots show the normalized data. `fastlo()` can also make use of parallelization to speed up computation speeds by setting the `parallel` option to `TRUE`. The results of `fastlo()` and `cyclic_loess()` may be slightly different, but both should result in the removal of biases between Hi-C datasets. `fastlo()` will have quicker run times compared to `cyclic_loess()`, but `cyclic_loess()` will likely give a slightly better normalization.  
 
@@ -267,11 +274,10 @@ d <- model.matrix(~factor(hicexp2@metadata$group) + factor(batch))
 
 The design matrix should contain the covariates of interest. Any categorical variables should be entered as factors. Next, the comparison of interest will need to be specified using either the `contrast` or the `coef` option. For this example we are interested in the group difference thus we can set `coef = 2` to test if the group effect is equal to 0. For more information on using `contrast` and `coef` please see the `edgeR` user manual. Now we are ready to perform the comparison.
 
-```{r}
-hicexp2 <- hic_glm(hicexp2, design = d, coef = 2, method = "QLFTest", p.method = "fdr", parallel = FALSE, Plot = TRUE)
+```{r, eval=FALSE}
+hicexp2 <- hic_glm(hicexp2, design = d, coef = 2, method = "QLFTest", p.method = "fdr", parallel = FALSE, Plot = FALSE)
 ```
 
-The above composite MD plot displays where the significant differences were detected. 
 
 There are 3 methods by which `hic_glm()` can be performed. The default method is to the use the `QLFTest` which makes use of the quasi-likelihood model. Additionally there is the `LRTest` which conducts a likelihood ratio test. The final method is the `Treat` method which conducts a test relative to a specified fold change threshold. For this option the `M` option will need to be used to specify the log2 fold change threshold.
 
@@ -286,7 +292,7 @@ hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "Treat", M = 0.5, p.met
 There are several other functions included in `HiCcompare2`. `manhattan_hicexp()` produces a Manhattan plot for the results of a comparison to identify "hotspot" regions of the genome where large numbers of significant differences are found.
 
 ```{r}
-manhattan_hicexp(hicexp2, method = "standard")
+manhattan_hicexp(hicexp1, method = "standard")
 ```
 
 There are also the MD plotting functions `MD.hicexp()` which will plot MD plots for each unique pair of samples in the `hicexp` object.
@@ -298,7 +304,7 @@ MD.hicexp(hicexp1, prow = 2, pcol = 3)
 The `MD.composite()` function will plot a composite MD plot of the results of a comparison where the significant differences are highlighted.
 
 ```{r}
-MD.composite(hicexp2)
+MD.composite(hicexp1)
 ```
 
 
