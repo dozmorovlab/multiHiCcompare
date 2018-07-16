@@ -139,32 +139,34 @@ Say we have data from 2 experimental conditions with 2 samples each. We can make
 
 ```{r}
 data("r1", "r2", "r3", "r4")
-hicexp1 <- make_hicexp(r1, r2, r3, r4, groups = c(0, 0, 1, 1))
+hicexp1 <- make_hicexp(r1, r2, r3, r4, groups = c(0, 0, 1, 1), zero.p = 0.8, A.min = 5, filter = TRUE)
 hicexp1
 ```
 
 The `groups` option specifies the experimental groups. You must enter a vector the length of the number of Hi-C matrices with indicators for which group each matrix belongs to. An optional covariate `data.frame` with rows corresponding the Hi-C matrices and columns for each additional covariate can be provided with the `covariates` option. 
+
+Filtering can be performed when creating a `hicexp` object using the `zero.p` and `A.min` options in the `make_hicexp` function. The `zero.p` option allows for filtering by the proportion of zero IFs for an interaction. The `A.min` allows for filtering by a minimum average IF value. These options can be used together or individually to filter your data. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of `HiCcompare2`. If for some reason you do not want to filter the data simply set `filter = FALSE`.
 
 
 ### The `hicexp` object
 
 The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
 
-## Filtering
+<!-- ## Filtering -->
 
-Filtering can be performed on a `hicexp` object using the `hic_filter()` function. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of `HiCcompare2`. Filtering can be performed either before normalization or after normalization. You can filter your data as shown below:
+<!-- Filtering can be performed on a `hicexp` object using the `hic_filter()` function. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of `HiCcompare2`. Filtering can be performed either before normalization or after normalization. You can filter your data as shown below: -->
 
-```{r}
-# load data
-data("hicexp")
-hicexp@hic_table
+<!-- ```{r} -->
+<!-- # load data -->
+<!-- data("hicexp") -->
+<!-- hicexp@hic_table -->
 
-hicexp <- hic_filter(hicexp, zero.p = 0.8, A.min = 5)
+<!-- hicexp <- hic_filter(hicexp, zero.p = 0.8, A.min = 5) -->
 
-hicexp@hic_table
-```
+<!-- hicexp@hic_table -->
+<!-- ``` -->
 
-As you can see the settings used above filters out about 17,000 interactions. The `zero.p` option allows for filtering by the proportion of zero IFs for an interaction. The `A.min` allows for filtering by a minimum average IF value. These options can be used together or individually to filter your data. See `?hic_filter()` for more information.
+<!-- As you can see the settings used above filters out about 17,000 interactions. The `zero.p` option allows for filtering by the proportion of zero IFs for an interaction. The `A.min` allows for filtering by a minimum average IF value. These options can be used together or individually to filter your data. See `?hic_filter()` for more information. -->
 
 
 ## Normalization

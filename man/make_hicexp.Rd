@@ -5,7 +5,7 @@
 \title{Make Hi-C experiment object from data}
 \usage{
 make_hicexp(..., data_list = NA, groups, covariates = NULL,
-  remove_zeros = FALSE)
+  remove_zeros = FALSE, zero.p = 0.8, A.min = 5, filter = TRUE)
 }
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 
@@ -31,6 +31,33 @@ to covariates.}
 
 \item{remove_zeros}{Logical, should rows with 1 or more
 zero IF values be removed?}
+
+\item{zero.p}{The proportion of zeros in a row to filter by. 
+If the proportion of zeros in a row is <= zero.p
+the row will be filtered out, i.e. zero.p = 1 means
+nothing is filtered based on zeros and zero.p = 0 
+will filter rows that have any zeros.}
+
+\item{A.min}{The minimum average expression value
+(row mean) for an interaction pair. If the 
+interaction pair has an average expression 
+value less than A.min the row will be filtered
+out.}
+
+\item{filter}{Logical, should filtering be performed?
+Defaults to TRUE. If TRUE it will filter out
+the interactions that have low average IFs
+or large numbers of 0 IF values. As these
+interactions are not very interesting and
+are commonly false positives during difference
+detection it is better to remove them from
+the dataset. Additionally, filtering will
+help speed up the run time of HiCcompare2. 
+Filtering can be performed before or after 
+normalization, however the best computational
+speed gain will occur when filtering is done
+before normalization. Filtering parameters
+are controlled by the zero.p and A.min options.}
 }
 \value{
 A hicexp object.
@@ -40,7 +67,10 @@ Make Hi-C experiment object from data
 }
 \details{
 Use this function to create a hicexp object for
-    analysis in HiCcompare2.
+    analysis in HiCcompare2. Filtering can also be 
+    performed in this step if the filter option is 
+    set to TRUE. Filtering parameters are controlled
+    by the zero.p and A.min options.
 }
 \examples{
 # load data in sparse upper triangular format

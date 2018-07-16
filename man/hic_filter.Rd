@@ -30,7 +30,9 @@ Perform filtering on a Hi-C experiment
 \details{
 This function is used to filter out
     the interactions that have low average IFs
-    or large numbers of 0 IF values. As these
+    or large numbers of 0 IF values. If you have
+    already performed filtering when making your
+    hicexp object do not use this again. As these
     interactions are not very interesting and
     are commonly false positives during difference
     detection it is better to remove them from

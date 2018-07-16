@@ -23,8 +23,35 @@
 #'     to covariates. 
 #' @param remove_zeros Logical, should rows with 1 or more
 #'     zero IF values be removed?
+#' @param zero.p The proportion of zeros in a row to filter by. 
+#'     If the proportion of zeros in a row is <= zero.p
+#'     the row will be filtered out, i.e. zero.p = 1 means
+#'     nothing is filtered based on zeros and zero.p = 0 
+#'     will filter rows that have any zeros.
+#' @param A.min The minimum average expression value
+#'     (row mean) for an interaction pair. If the 
+#'     interaction pair has an average expression 
+#'     value less than A.min the row will be filtered
+#'     out.
+#' @param filter Logical, should filtering be performed?
+#'     Defaults to TRUE. If TRUE it will filter out
+#'     the interactions that have low average IFs
+#'     or large numbers of 0 IF values. As these
+#'     interactions are not very interesting and
+#'     are commonly false positives during difference
+#'     detection it is better to remove them from
+#'     the dataset. Additionally, filtering will
+#'     help speed up the run time of HiCcompare2. 
+#'     Filtering can be performed before or after 
+#'     normalization, however the best computational
+#'     speed gain will occur when filtering is done
+#'     before normalization. Filtering parameters
+#'     are controlled by the zero.p and A.min options.
 #' @details Use this function to create a hicexp object for
-#'     analysis in HiCcompare2.
+#'     analysis in HiCcompare2. Filtering can also be 
+#'     performed in this step if the filter option is 
+#'     set to TRUE. Filtering parameters are controlled
+#'     by the zero.p and A.min options.
 #'     
 #' @return A hicexp object.
 #' @examples 
@@ -41,7 +68,8 @@
 #' hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
 
 
-make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_zeros = FALSE) {
+make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_zeros = FALSE,
+                        zero.p = 0.8, A.min = 5, filter = TRUE) {
   if (!is.na(data_list[1])) {
     tabs <- data_list
   } else {
@@ -91,6 +119,12 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     if (nrow(covariates) != length(tabs)) {
       stop("Number of rows in covariates should correspond to number of Hi-C data objects entered")
     }
+  }
+  if (zero.p < 0 | zero.p > 1) {
+    stop("zero.p must be in [0,1]")
+  }
+  if (A.min < 0) {
+    stop("A.min must be >= 0")
   }
   
   # cycle through groups to create a table for each experimental condition
@@ -147,6 +181,12 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
   
   # put into hicexp object
   experiment <- new("hicexp", hic_table = hic_table, comparison = data.table::data.table(), metadata = metadata, resolution = resolution, normalized = FALSE)
+  
+  # filter
+  if (filter) {
+    experiment <- hic_filter(experiment, zero.p = zero.p, A.min = A.min)
+  }
+  
   return(experiment)
 }
 
