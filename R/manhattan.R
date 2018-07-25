@@ -88,6 +88,8 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     
     stouffer_liptak_aggregate <- cbind(read.table(text = stouffer_liptak_aggregate$Group.1, sep = ":"), stouffer_liptak_aggregate$x)
     colnames(stouffer_liptak_aggregate) <- c("CHR", "BP", "P")
+    # make sure there are no zero p-values
+    stouffer_liptak_aggregate$P[stouffer_liptak_aggregate$P == 0] <- .Machine$double.xmin
     
     suppressWarnings(qqman::manhattan(stouffer_liptak_aggregate))
     
