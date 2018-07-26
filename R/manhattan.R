@@ -10,7 +10,9 @@
 #'     the p-values for each region which are then plotted.
 #'     "stouffer" uses the Stouffer-Liptak method for 
 #'     combining p-values for each region which are then 
-#'     plotted. 
+#'     plotted. "count" produces a plot where the y-values
+#'     are the -log10(1 / S) where S is the number of times
+#'     the region was found significant. 
 #' @param return_df Logical, should the data.frame used to
 #'     generate the plot be returned?
 #' @details This function is used to create a manhattan
@@ -22,7 +24,10 @@
 #'     be visualized with \code{method = "standard"}. 
 #'     Alternatively the p-values for all these interactions
 #'     can be combined using either Fisher's method or the
-#'     Stouffer-Liptak method of combining p-values. The 
+#'     Stouffer-Liptak method of combining p-values. Additionally
+#'     the "count" option will plot based on the number of times
+#'     each region was found to be involved in a signficantly 
+#'     different interaction. The 
 #'     manhattan plot can be used to identify "hotspot"
 #'     regions of the genome where major differences
 #'     seem to be located based on the results of a HiCcompare2
@@ -33,12 +38,12 @@
 #' @export
 #' @examples
 #' data("hicexp_diff")
-#' manhattan_hicexp(hicexp_diff)
+#' manhattan_hicexp(hicexp_diff, method = "standard")
 
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   # check input
-  method <- match.arg(method, c("standard", "fisher", "stouffer"), several.ok = FALSE)
+  method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), several.ok = FALSE)
   # check that data has been compared
   if (nrow(hicexp@comparison) < 1) {
     stop("Differences must be detected before making a manhattan plot.")
@@ -94,6 +99,30 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     suppressWarnings(qqman::manhattan(stouffer_liptak_aggregate))
     
     man.df <- stouffer_liptak_aggregate
+  }
+  
+  
+  if (method == 'count') {
+    # make aggregate count for regions
+    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1), paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
+    p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
+    count <- ifelse(p.values < 0.05, 1, 0)
+    
+    ## Fisher method
+    count_aggregate <- aggregate(count, by = list(regions), FUN = function(cnt) {
+      c.sum <- sum(cnt)
+      c.pval <- 1 / c.sum
+      return(c.pval)
+    })
+    
+    count_aggregate$x[is.infinite(count_aggregate$x)] <- 1 # replace any regions that had counts of 0 significant with pseudo-pval of 1
+    count_aggregate <- cbind(read.table(text = count_aggregate$Group.1, sep = ":"), count_aggregate$x)
+    colnames(count_aggregate) <- c("CHR", "BP", "P")
+    
+    # plot combined p-value manahttan plots
+    suppressWarnings(qqman::manhattan(count_aggregate, ylab = "-log10(1/S)"))
+    
+    man.df <- count_aggregate
   }
   
   

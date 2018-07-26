@@ -167,3 +167,83 @@ MD.composite <- function(hicexp, plot.chr = NA) {
 }
 
 
+
+
+#' Function to visualize p-values from HiCcompare2 results
+#' 
+#' @param hicexp A hicexp object that has been
+#'     normalized and has had differences detected.
+#' @param alpha The alpha level at which you will 
+#'     call a p-value significant. If this is set to
+#'     a numeric value then any p-values >= alpha will
+#'     be set to 1 for the visualization in the heatmap.
+#'     Defaults to NA for visualization of all p-values.
+#' @param chr The numeric value for the chromosome that 
+#'     you want to plot. Set to 0 to plot all chromosomes
+#'     in the dataset.
+#' @details The goal of this function is to visualize
+#'     where in the Hi-C matrix the differences are
+#'     occuring between two experimental conditions.
+#'     The function will produce a heatmap of the
+#'     -log10(p-values) * sign(logFC) 
+#'     to visualize where the
+#'     significant differences between the datasets
+#'     are occuring on the genome. 
+#' @return A heatmap
+#' @examples 
+#' data("hicexp_diff")
+#' pval_heatmap(hicexp_diff, chr = 22)
+#' @importFrom pheatmap pheatmap
+#' @export
+
+pval_heatmap <- function(hicexp, alpha = NA, chr = 0) {
+  # check input
+  if (nrow(hicexp@comparison) < 1) {
+    stop("You must compare the hicexp first.")
+  }
+  if (!is.numeric(chr)) {
+    stop("chr should be a numeric value")
+  }
+  if (chr != 0 & sum(chr == as.numeric(unique(hicexp@comparison$chr))) < 1) {
+    stop("The value of chr selected does not appear in the hicexp")
+  }
+  
+  # if chr = 0 split data up by chr
+  if (chr == 0) {
+    chr.list <- split(hicexp@comparison, hicexp@comparison$chr)
+  } else {
+    # otherwise subset data to just the selected chr
+    chr.list <- list(subset(hicexp@comparison[chr == chr,]))
+  }
+  
+  # convert to sparse matrix
+  m <- lapply(chr.list, function(x) {
+    new.table <- cbind(x$region1, x$region2, x$p.adj)
+    return(new.table)
+  })
+  
+  # convert to full matrix
+  m <- lapply(m, HiCcompare::sparse2full) 
+  
+  # get fold change
+  fc<- lapply(chr.list, function(x) {
+    new.table <- cbind(x$region1, x$region2, x$logFC)
+    return(new.table)
+  })
+  fc <- lapply(fc, HiCcompare::sparse2full)
+  # remove non significant values from matrix if alpha is set to a value
+  if (!is.na(alpha)) {
+    for (i in 1:length(m)) {
+      m[[i]][m[[i]] >= alpha] <- 1
+    }
+  }
+  # plot heatmap
+  mapply(function(m, fc) {
+    pheatmap::pheatmap(-log10(m) * sign(fc), cluster_rows = FALSE, 
+                       cluster_cols = FALSE, show_rownames = FALSE, 
+                       show_colnames = FALSE)
+    }, 
+    m, fc, SIMPLIFY = FALSE)
+  
+  
+}

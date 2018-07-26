@@ -18,7 +18,9 @@ Fisher's method for combining p-values to combine
 the p-values for each region which are then plotted.
 "stouffer" uses the Stouffer-Liptak method for 
 combining p-values for each region which are then 
-plotted.}
+plotted. "count" produces a plot where the y-values
+are the -log10(1 / S) where S is the number of times
+the region was found significant.}
 
 \item{return_df}{Logical, should the data.frame used to
 generate the plot be returned?}
@@ -40,7 +42,10 @@ This function is used to create a manhattan
     be visualized with \code{method = "standard"}. 
     Alternatively the p-values for all these interactions
     can be combined using either Fisher's method or the
-    Stouffer-Liptak method of combining p-values. The 
+    Stouffer-Liptak method of combining p-values. Additionally
+    the "count" option will plot based on the number of times
+    each region was found to be involved in a signficantly 
+    different interaction. The 
     manhattan plot can be used to identify "hotspot"
     regions of the genome where major differences
     seem to be located based on the results of a HiCcompare2
@@ -48,5 +53,5 @@ This function is used to create a manhattan
 }
 \examples{
 data("hicexp_diff")
-manhattan_hicexp(hicexp_diff)
+manhattan_hicexp(hicexp_diff, method = "standard")
 }
