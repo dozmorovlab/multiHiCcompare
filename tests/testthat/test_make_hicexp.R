@@ -1,6 +1,6 @@
 test_that('make_hicexp works', {
   library(testthat)
-  library(HiCcompare2)
+  library(multiHiCcompare)
   data("sparse_mat")
   data("r1", "r2", "r3", "r4", "r5","r6", "r7", "hicexp")
   groups <- c(1, 1, 1, 2, 2, 2, 2)

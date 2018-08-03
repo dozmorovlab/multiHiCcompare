@@ -2,7 +2,7 @@
 % Please edit documentation in R/manhattan.R
 \name{manhattan_hicexp}
 \alias{manhattan_hicexp}
-\title{Manhattan plot function for results of HiCcompare2}
+\title{Manhattan plot function for results of multiHiCcompare}
 \usage{
 manhattan_hicexp(hicexp, method = "standard", return_df = FALSE)
 }
@@ -30,7 +30,7 @@ A manhattan plot and optionally the data.frame used
     to generate the manhattan plot.
 }
 \description{
-Manhattan plot function for results of HiCcompare2
+Manhattan plot function for results of multiHiCcompare
 }
 \details{
 This function is used to create a manhattan
@@ -48,7 +48,7 @@ This function is used to create a manhattan
     different interaction. The 
     manhattan plot can be used to identify "hotspot"
     regions of the genome where major differences
-    seem to be located based on the results of a HiCcompare2
+    seem to be located based on the results of a multiHiCcompare
     analysis.
 }
 \examples{

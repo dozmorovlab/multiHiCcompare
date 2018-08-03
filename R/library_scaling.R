@@ -6,7 +6,7 @@
 #'     separately for each chromosome. This is an 
 #'     alternative normalization method to the
 #'     cyclic loess and fastlo methods also
-#'     provided in HiCcompare2. Use this normalization
+#'     provided in multiHiCcompare. Use this normalization
 #'     method if for some reason you do not want to remove
 #'     trends in the data and only want to normalize based
 #'     on library size.

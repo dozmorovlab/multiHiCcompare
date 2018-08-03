@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_functions.R
 \name{pval_heatmap}
 \alias{pval_heatmap}
-\title{Function to visualize p-values from HiCcompare2 results}
+\title{Function to visualize p-values from multiHiCcompare results}
 \usage{
 pval_heatmap(hicexp, alpha = NA, chr = 0)
 }
@@ -24,7 +24,7 @@ in the dataset.}
 A heatmap
 }
 \description{
-Function to visualize p-values from HiCcompare2 results
+Function to visualize p-values from multiHiCcompare results
 }
 \details{
 The goal of this function is to visualize

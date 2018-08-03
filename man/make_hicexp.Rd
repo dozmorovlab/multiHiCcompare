@@ -52,7 +52,7 @@ interactions are not very interesting and
 are commonly false positives during difference
 detection it is better to remove them from
 the dataset. Additionally, filtering will
-help speed up the run time of HiCcompare2. 
+help speed up the run time of multiHiCcompare. 
 Filtering can be performed before or after 
 normalization, however the best computational
 speed gain will occur when filtering is done
@@ -67,7 +67,7 @@ Make Hi-C experiment object from data
 }
 \details{
 Use this function to create a hicexp object for
-    analysis in HiCcompare2. Filtering can also be 
+    analysis in multiHiCcompare. Filtering can also be 
     performed in this step if the filter option is 
     set to TRUE. Filtering parameters are controlled
     by the zero.p and A.min options.

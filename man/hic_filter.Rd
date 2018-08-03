@@ -37,7 +37,7 @@ This function is used to filter out
     are commonly false positives during difference
     detection it is better to remove them from
     the dataset. Additionally, filtering will
-    help speed up the run time of HiCcompare2. 
+    help speed up the run time of multiHiCcompare. 
     Filtering can be performed before or after 
     normalization, however the best computational
     speed gain will occur when filtering is done

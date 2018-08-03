@@ -1,6 +1,6 @@
 test_that('cyclic_loess works', {
   library(testthat)
-  library(HiCcompare2)
+  library(multiHiCcompare)
   data("hicexp2")
   hicexp_new <- cyclic_loess(hicexp2, span = 0.5, verbose = FALSE, Plot = FALSE)
   expect_equal(hicexp_new@normalized, TRUE)
@@ -14,7 +14,7 @@ test_that('cyclic_loess works', {
 
 test_that('fastlo works', {
   library(testthat)
-  library(HiCcompare2)
+  library(multiHiCcompare)
   data("hicexp2")
   hicexp_new <- fastlo(hicexp2, verbose = FALSE, Plot = FALSE)
   expect_equal(hicexp_new@normalized, TRUE)

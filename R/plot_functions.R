@@ -70,7 +70,7 @@ MD.hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
 
 #' Plot a composite MD plot with the results of a comparison
 #' @param hicexp A hicexp object which has 
-#'     had a HiCcompare2 comparison step performed on it.
+#'     had a multiHiCcompare comparison step performed on it.
 #' @param plot.chr A specific chromosome or 
 #'     set of chromosome which you want to plot.
 #'     This should be a numeric value, i.e. to
@@ -169,7 +169,7 @@ MD.composite <- function(hicexp, plot.chr = NA) {
 
 
 
-#' Function to visualize p-values from HiCcompare2 results
+#' Function to visualize p-values from multiHiCcompare results
 #' 
 #' @param hicexp A hicexp object that has been
 #'     normalized and has had differences detected.

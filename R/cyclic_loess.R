@@ -12,7 +12,7 @@
 #' @param Plot Logical. Should MD plots be printed?
 #' 
 #' @details This function performs cyclic loess normalization
-#'    on a Hi-C experiment. HiCcompare2's cyclic loess procedure
+#'    on a Hi-C experiment. multiHiCcompare's cyclic loess procedure
 #'    is a modified version of Ballman's (2004) cyclic loess and
 #'    the joint loess normalization used in the original HiCcompare.
 #'    For each unique pair of samples in the hicexp object an MD plot

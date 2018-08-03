@@ -4,8 +4,8 @@
 \alias{hic_exactTest}
 \title{Perform exact test based difference detection on a Hi-C experiment}
 \usage{
-hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE,
-  max.pool = 0.7)
+hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr",
+  Plot = TRUE, max.pool = 0.7)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}

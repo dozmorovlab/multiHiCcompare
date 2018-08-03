@@ -1,6 +1,6 @@
 test_that('exact test works', {
   library(testthat)
-  library(HiCcompare2)
+  library(multiHiCcompare)
   data("hicexp2")
   hicexp_new <- fastlo(hicexp2, verbose = FALSE, Plot = FALSE)
   hicexp_new <- hic_exactTest(hicexp_new, Plot = FALSE)
@@ -16,7 +16,7 @@ test_that('exact test works', {
 
 test_that('glm works', {
   library(testthat)
-  library(HiCcompare2)
+  library(multiHiCcompare)
   data("hicexp2")
   hicexp_new <- fastlo(hicexp2, verbose = FALSE, Plot = FALSE)
   d <- model.matrix(~factor(hicexp_new@metadata$group))

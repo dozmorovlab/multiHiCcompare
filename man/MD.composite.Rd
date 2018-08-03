@@ -8,7 +8,7 @@ MD.composite(hicexp, plot.chr = NA)
 }
 \arguments{
 \item{hicexp}{A hicexp object which has 
-had a HiCcompare2 comparison step performed on it.}
+had a multiHiCcompare comparison step performed on it.}
 
 \item{plot.chr}{A specific chromosome or 
 set of chromosome which you want to plot.

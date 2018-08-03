@@ -1,4 +1,4 @@
-#' Manhattan plot function for results of HiCcompare2
+#' Manhattan plot function for results of multiHiCcompare
 #' 
 #' @param hicexp A hicexp object that has had differences
 #'     detected
@@ -30,7 +30,7 @@
 #'     different interaction. The 
 #'     manhattan plot can be used to identify "hotspot"
 #'     regions of the genome where major differences
-#'     seem to be located based on the results of a HiCcompare2
+#'     seem to be located based on the results of a multiHiCcompare
 #'     analysis.
 #' @return A manhattan plot and optionally the data.frame used
 #'     to generate the manhattan plot.
