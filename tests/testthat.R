@@ -1,4 +1,4 @@
 library(testthat)
-library(HiCcompare2)
+library(multiHiCcompare)
 
-test_check("HiCcompare2")
+test_check("multiHiCcompare")
