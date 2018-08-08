@@ -42,7 +42,8 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   }
   # check to make sure there are only 2 groups
   if (hicexp@metadata$group %>% unique() %>% length() != 2) {
-    stop("If you are making a comparison where the number of groups is not 2 or you have covariates use hic_glm() instead.")
+    stop("If you are making a comparison where the number of groups is not 2 
+         or you have covariates use hic_glm() instead.")
   }
   # First need to split up hic_table by chr and then by distance
   # split up data by chr
@@ -57,15 +58,20 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   # check number of samples per group
   if (hicexp@metadata$group %>% length() == 2) { # IF no replicates use edgeR's recommended method to estimate dispersion
     if (parallel) {
-      dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateGLMCommonDisp, method="deviance", robust=TRUE, subset=NULL)
+      dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateGLMCommonDisp,
+                                         method="deviance", robust=TRUE, 
+                                         subset=NULL)
     } else {
-      dge_list <- lapply(dge_list, edgeR::estimateGLMCommonDisp, method="deviance", robust=TRUE, subset=NULL)
+      dge_list <- lapply(dge_list, edgeR::estimateGLMCommonDisp,
+                         method="deviance", robust=TRUE, subset=NULL)
     }
   } else { # If replicates for condition then use standard way for estimating dispersion
     if (parallel) {
-      dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
+      dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, 
+                                         design=model.matrix(~hicexp@metadata$group))
     } else {
-      dge_list <- lapply(dge_list, edgeR::estimateDisp, design=model.matrix(~hicexp@metadata$group))
+      dge_list <- lapply(dge_list, edgeR::estimateDisp, 
+                         design=model.matrix(~hicexp@metadata$group))
       
     }
   }
@@ -74,7 +80,8 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   et <- lapply(dge_list, edgeR::exactTest)
   
   # reformat results back into hicexp object
-  comparison <- mapply(.et_reformat, et, table_list, SIMPLIFY = FALSE, MoreArgs = list(p.method = p.method))
+  comparison <- mapply(.et_reformat, et, table_list, SIMPLIFY = FALSE, 
+                       MoreArgs = list(p.method = p.method))
   comparison <- data.table::rbindlist(comparison)
   # sort comparison table
   comparison <- comparison[order(chr, region1, region2),]
@@ -82,7 +89,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   
   # plot
   if (Plot) {
-    MD.composite(hicexp)
+    MD_composite(hicexp)
   }
   
   # return results
@@ -149,9 +156,12 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' d <- model.matrix(~factor(hicexp_diff@metadata$group) + factor(c(1,2,1,2)))
 #' hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)
 #' 
-hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest", M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
+hic_glm <- function(hicexp, design, contrast = NA, coef = NA, 
+                    method = "QLFTest", M = 1, p.method = "fdr", 
+                    parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
   # match method
-  method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), several.ok = FALSE)
+  method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), 
+                      several.ok = FALSE)
   # check to make sure hicexp is normalized
   if (!hicexp@normalized) {
     warning("You should normalize the data before entering it into hic_glm")
@@ -171,10 +181,12 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   # combine list of lists into single list of tables
   table_list <- do.call(c, table_list)
   # input each of the chr-distance tables into a DGElist object for edgeR
-  dge_list <- lapply(table_list, .hictable2DGEList, covariates = hicexp@metadata)
+  dge_list <- lapply(table_list, .hictable2DGEList, 
+                     covariates = hicexp@metadata)
   # estimate dispersion for data
   if (parallel) {
-    dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, design = design)
+    dge_list <- BiocParallel::bplapply(dge_list, 
+                                       edgeR::estimateDisp, design = design)
   } else {
     dge_list <- lapply(dge_list, edgeR::estimateDisp, design = design)
   }
@@ -191,25 +203,31 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
     # QL F-test test
     if (method == "QLFTest") {
       if (is.na(coef)) {
-        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, contrast = contrast)
+        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest,
+                                         contrast = contrast)
       } else {
-        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, coef = coef)
+        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, 
+                                         coef = coef)
       }
     }
     # Likelihood Ratio Test
     if (method == "LRTest") {
       if (is.na(coef)) {
-        result <- BiocParallel::bplapply(fit, edgeR::glmLRT, contrast = contrast)
+        result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
+                                         contrast = contrast)
       } else {
-        result <- BiocParallel::bplapply(fit, edgeR::glmLRT, coef = coef)
+        result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
+                                         coef = coef)
       }
     }
     # TREAT Analysis based on a minimum log2 fold change specified as M
     if (method == "Treat") {
       if (is.na(coef)) {
-        result <- BiocParallel::bplapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
+        result <- BiocParallel::bplapply(fit, edgeR::glmTreat, 
+                                         contrast = contrast, lfc = M)
       } else {
-        result <- BiocParallel::bplapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
+        result <- BiocParallel::bplapply(fit, edgeR::glmTreat,
+                                         coef = coef, lfc = M)
       }
     }
   } else {
@@ -241,14 +259,15 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA, method = "QLFTest"
   
   
   # format results for differentially interacting regions
-  result <- mapply(.glm_reformat, result, table_list, MoreArgs = list(p.method = p.method), SIMPLIFY = FALSE)
+  result <- mapply(.glm_reformat, result, table_list,
+                   MoreArgs = list(p.method = p.method), SIMPLIFY = FALSE)
   result <- data.table::rbindlist(result)
   # sort comparison table
   result <- result[order(chr, region1, region2),]
   hicexp@comparison <- result
   
   if (Plot) {
-    MD.composite(hicexp)
+    MD_composite(hicexp)
   }
   
   return(hicexp)

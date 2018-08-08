@@ -25,11 +25,15 @@
 #'     typically to 0.5 or 0.6. 
 #' 
 #' @details This function performs the fast loess (fastlo)
-#'    normalization procedure on a hicexp object. the fast linear loess ("fastlo") method 
-#'    of Ballman (2004) that is adapted to Hi-C data on a per-distance basis. To perform 
-#'    "fastlo" on Hi-C data we first split the data into p pooled matrices. The
-#'    "progressive pooling" is used to split up the Hi-C matrix by unit distance. Fastlo
-#'    is then performed on the MA plots for each distance pool. See Stansfield et al (2018)
+#'    normalization procedure on a hicexp object. the fast linear 
+#'    loess ("fastlo") method 
+#'    of Ballman (2004) that is adapted to Hi-C data on a per-distance basis.
+#'     To perform 
+#'    "fastlo" on Hi-C data we first split the data into p pooled matrices. 
+#'    The "progressive pooling" is used to split up the Hi-C matrix by unit 
+#'    distance. Fastlo
+#'    is then performed on the MA plots for each distance pool. 
+#'    See Stansfield et al (2018)
 #'    for full description. 
 #'   
 #' @return A hicexp object that is normalized.
@@ -41,7 +45,8 @@
 #' data("hicexp2")
 #' hicexp2 <- fastlo(hicexp2)
 
-fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
+fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, 
+                   verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
   # check if data already normalized
   if (hicexp@normalized) {
     stop("Data has already been normalized.")
@@ -56,14 +61,16 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
     }
   }
   # check iterations input
-  if (iterations < 2) {
-    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
+  if (iterations != 3L) {
+    warning("Typically it takes about 3 iterations for 
+            cyclic loess to converge.")
   }
-  if (iterations > 4) {
-    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
-  }
+
   # input conditions to fastlo
-  normalized <- .fastlo_condition(hicexp@hic_table, iterations = iterations, span = span, parallel = parallel, verbose = verbose, max.pool = max.pool)
+  normalized <- .fastlo_condition(hicexp@hic_table, 
+                                  iterations = iterations, span = span, 
+                                  parallel = parallel, verbose = verbose, 
+                                  max.pool = max.pool)
   # sort hic_table
   normalized <- normalized[order(chr, region1, region2),]
   # put back into hicexp object
@@ -72,7 +79,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   
   # plot
   if (Plot) {
-    MD.hicexp(hicexp)
+    MD_hicexp(hicexp)
   }
   
   return(hicexp)
@@ -81,7 +88,8 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
 # background functions
 
 # perform fastlo on a condition
-.fastlo_condition <- function(hic_table, iterations, span, parallel, verbose, max.pool) {
+.fastlo_condition <- function(hic_table, iterations, span, 
+                              parallel, verbose, max.pool) {
   # split up data by chr
   table_list <- split(hic_table, hic_table$chr)
   # for each chr create list of distance matrices
@@ -90,9 +98,11 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
   table_list <- do.call(c, table_list)
   # apply fastlo to list
   if (parallel) {
-    normalized <- BiocParallel::bplapply(table_list, .fastlo, span = span, iterations = iterations)
+    normalized <- BiocParallel::bplapply(table_list, .fastlo, span = span, 
+                                         iterations = iterations)
   } else {
-    normalized <- lapply(table_list, .fastlo, span = span, iterations = iterations)
+    normalized <- lapply(table_list, .fastlo, span = span, 
+                         iterations = iterations)
   }
   # recombine list of tables
   hic_table <- rbindlist(normalized)
@@ -197,12 +207,14 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, verbose
         f <- .loess.as(x = A, y = M, degree = degree, 
                        criterion = loess.criterion,
                        control = loess.control(surface = "interpolate",
-                                               statistics = "approximate", trace.hat = "approximate"))
+                                               statistics = "approximate",
+                                               trace.hat = "approximate"))
       } else {
         f <- .loess.as(x = A, y = M, degree = degree, user.span = span,
                        criterion = loess.criterion,
                        control = loess.control(surface = "interpolate",
-                                               statistics = "approximate", trace.hat = "approximate"))
+                                               statistics = "approximate",
+                                               trace.hat = "approximate"))
       }
       # adjust 
       IF_mat[,j] <- IF_mat[,j] - f$fitted

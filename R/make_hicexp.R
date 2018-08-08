@@ -65,10 +65,12 @@
 #' covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi',
 #'  'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
 #' # make the hicexp object
-#' hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, covariates = covariates)
+#' hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, 
+#'   covariates = covariates)
 
 
-make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_zeros = FALSE,
+make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, 
+                        remove_zeros = FALSE,
                         zero.p = 0.8, A.min = 5, filter = TRUE) {
   if (!is.na(data_list[1])) {
     tabs <- data_list
@@ -109,7 +111,8 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     stop("Length of groups must equal the number of Hi-C data objects entered")
   }
   if (sum(num_per_group < 2) > 0) {
-    warning("Each experimental condition should have at least 2 samples. If you have less than 2 samples per group use HiCcompare instead")
+    warning("Each experimental condition should have at least 2 samples. 
+            If you have less than 2 samples per group use HiCcompare instead")
   }
   if (!is.null(covariates)) {
     # check for data.frame
@@ -117,7 +120,8 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
       stop("Enter a data.frame for covariates")
     }
     if (nrow(covariates) != length(tabs)) {
-      stop("Number of rows in covariates should correspond to number of Hi-C data objects entered")
+      stop("Number of rows in covariates should correspond to number 
+           of Hi-C data objects entered")
     }
   }
   if (zero.p < 0 | zero.p > 1) {
@@ -129,10 +133,15 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
   
   # cycle through groups to create a table for each experimental condition
 
-    tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
+    tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], 
+                                  by = c('chr' = 'chr', 'region1' = 'region1',
+                                         'region2' = 'region2'))
     if (length(tabs) > 2) {
       for(j in 3:length(tabs)) {
-        tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], by = c('chr' = 'chr', 'region1' = 'region1', 'region2' = 'region2'))
+        tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], 
+                                      by = c('chr' = 'chr', 
+                                             'region1' = 'region1',
+                                             'region2' = 'region2'))
       }
     }
     # rename table columns & replace NA IFs with 0
@@ -147,7 +156,8 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
     tmp_table <- data.table::as.data.table(tmp_table)
     tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
     # rearrange columns
-    tmp_table <- tmp_table[, c(1, 2, 3, ncol(tmp_table), 4:(ncol(tmp_table) - 1)), with = FALSE]
+    tmp_table <- tmp_table[, c(1, 2, 3, ncol(tmp_table),
+                               4:(ncol(tmp_table) - 1)), with = FALSE]
     
     # set table in place on condition list
     hic_table <- tmp_table
@@ -180,7 +190,10 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, remove_z
   }
   
   # put into hicexp object
-  experiment <- new("hicexp", hic_table = hic_table, comparison = data.table::data.table(), metadata = metadata, resolution = resolution, normalized = FALSE)
+  experiment <- new("Hicexp", hic_table = hic_table, 
+                    comparison = data.table::data.table(), 
+                    metadata = metadata, resolution = resolution, 
+                    normalized = FALSE)
   
   # filter
   if (filter) {

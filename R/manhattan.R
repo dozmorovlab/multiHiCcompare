@@ -43,7 +43,8 @@
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   # check input
-  method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), several.ok = FALSE)
+  method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), 
+                      several.ok = FALSE)
   # check that data has been compared
   if (nrow(hicexp@comparison) < 1) {
     stop("Differences must be detected before making a manhattan plot.")
@@ -51,25 +52,32 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   
   if (method == "standard") {
     # make data.frame for plotting
-    man.df <- data.frame(BP = c(hicexp@comparison$region1, hicexp@comparison$region2), CHR = as.numeric(c(hicexp@comparison$chr, hicexp@comparison$chr)), 
-                         P = c(hicexp@comparison$p.adj, hicexp@comparison$p.adj))
+    man.df <- data.frame(BP = c(hicexp@comparison$region1, 
+                                hicexp@comparison$region2),
+                         CHR = as.numeric(c(hicexp@comparison$chr, 
+                                            hicexp@comparison$chr)), 
+                         P = c(hicexp@comparison$p.adj, 
+                               hicexp@comparison$p.adj))
     # plot
     suppressWarnings(qqman::manhattan(man.df))
   }
   
   if (method == "fisher") {
     # make aggregate p-value for regions
-    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1), paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
+    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1),
+                 paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
     p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
     
     ## Fisher method
-    fisher_aggregate <- aggregate(p.values, by = list(regions), FUN = function(p) {
+    fisher_aggregate <- aggregate(p.values, by = list(regions), 
+                                  FUN = function(p) {
       combined <- -2 * sum(log(p))
       c.pval <- pchisq(combined, df = 2 * length(p))
       return(c.pval)
     })
     
-    fisher_aggregate <- cbind(read.table(text = fisher_aggregate$Group.1, sep = ":"), fisher_aggregate$x)
+    fisher_aggregate <- cbind(read.table(text = fisher_aggregate$Group.1, 
+                                         sep = ":"), fisher_aggregate$x)
     colnames(fisher_aggregate) <- c("CHR", "BP", "P")
     
     # plot combined p-value manahttan plots
@@ -80,18 +88,21 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   
   if (method == "stouffer") {
     # make aggregate p-value for regions
-    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1), paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
+    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1),
+                 paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
     p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
     
     ## Stouffer-Liptak method
-    stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), FUN = function(p) {
+    stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), 
+                                           FUN = function(p) {
       zi <- qnorm(p/2)
       Z <- sum(zi) / sqrt(length(p))
       c.pval <- pnorm(Z)
       return(c.pval)
     })
     
-    stouffer_liptak_aggregate <- cbind(read.table(text = stouffer_liptak_aggregate$Group.1, sep = ":"), stouffer_liptak_aggregate$x)
+    stouffer_liptak_aggregate <- cbind(read.table(text = stouffer_liptak_aggregate$Group.1,
+                                                  sep = ":"), stouffer_liptak_aggregate$x)
     colnames(stouffer_liptak_aggregate) <- c("CHR", "BP", "P")
     # make sure there are no zero p-values
     stouffer_liptak_aggregate$P[stouffer_liptak_aggregate$P == 0] <- .Machine$double.xmin
@@ -104,19 +115,22 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   
   if (method == 'count') {
     # make aggregate count for regions
-    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1), paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
+    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1),
+                 paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
     p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
     count <- ifelse(p.values < 0.05, 1, 0)
     
     ## Fisher method
-    count_aggregate <- aggregate(count, by = list(regions), FUN = function(cnt) {
+    count_aggregate <- aggregate(count, by = list(regions), 
+                                 FUN = function(cnt) {
       c.sum <- sum(cnt)
       c.pval <- 1 / c.sum
       return(c.pval)
     })
     
     count_aggregate$x[is.infinite(count_aggregate$x)] <- 1 # replace any regions that had counts of 0 significant with pseudo-pval of 1
-    count_aggregate <- cbind(read.table(text = count_aggregate$Group.1, sep = ":"), count_aggregate$x)
+    count_aggregate <- cbind(read.table(text = count_aggregate$Group.1, sep = ":"),
+                             count_aggregate$x)
     colnames(count_aggregate) <- c("CHR", "BP", "P")
     
     # plot combined p-value manahttan plots

@@ -30,7 +30,8 @@
 #' hicexp2 <- cyclic_loess(hicexp2, span = 0.7)
 
 
-cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, verbose = FALSE, Plot = TRUE) {
+cyclic_loess <- function(hicexp, iterations = 3, span = NA, 
+                         parallel = FALSE, verbose = FALSE, Plot = TRUE) {
   # check if data already normalized
   if (hicexp@normalized) {
     stop("Data has already been normalized.")
@@ -45,14 +46,14 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
     }
   }
   # check iterations input
-  if (iterations < 2) {
-    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
-  }
-  if (iterations > 4) {
-    warning("Typically it takes about 3 iterations for cyclic loess to converge.")
+  if (iterations != 3L) {
+    warning("Typically it takes about 3 iterations for cyclic 
+            loess to converge.")
   }
   # split up data by condition and perform cyclic loess
-  normalized <- .loess_condition(hicexp@hic_table, iterations = iterations, parallel = parallel, verbose = verbose, span = span)
+  normalized <- .loess_condition(hicexp@hic_table, 
+                                 iterations = iterations, parallel = parallel, 
+                                 verbose = verbose, span = span)
   # sort hic_table
   normalized <- normalized[order(chr, region1, region2),]
   # put back into hicexp object
@@ -61,7 +62,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   
   # plot
   if (Plot) {
-    MD.hicexp(hicexp)
+    MD_hicexp(hicexp)
   }
   
   return(hicexp)
@@ -77,9 +78,12 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
   table_list <- split(hic_table, hic_table$chr)
   # plug into parallelized loess function
   if (parallel) {
-    normalized <- BiocParallel::bplapply(table_list, .cloess, iterations = iterations, verbose = verbose, span = span)
+    normalized <- BiocParallel::bplapply(table_list, .cloess, 
+                                         iterations = iterations, 
+                                         verbose = verbose, span = span)
   } else {
-    normalized <- lapply(table_list, .cloess, iterations = iterations, verbose = verbose, span = span)
+    normalized <- lapply(table_list, .cloess, iterations = iterations, 
+                         verbose = verbose, span = span)
   }
   # recombine tables
   normalized <- data.table::rbindlist(normalized)
@@ -87,7 +91,8 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
 }
 
 # perform cyclic loess on a table 
-.cloess <- function(tab, iterations, verbose, span, degree = 1, loess.criterion = "gcv") {
+.cloess <- function(tab, iterations, verbose, span, degree = 1, 
+                    loess.criterion = "gcv") {
   # make matrix of IFs
   IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
   # make index matrix
@@ -112,12 +117,14 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
           l <- .loess.as(x = D, y = M, degree = degree, 
                          criterion = loess.criterion,
                          control = loess.control(surface = "interpolate",
-                                                 statistics = "approximate", trace.hat = "approximate"))
+                                                 statistics = "approximate", 
+                                                 trace.hat = "approximate"))
         } else {
           l <- .loess.as(x = D, y = M, degree = degree, user.span = span,
                          criterion = loess.criterion,
                          control = loess.control(surface = "interpolate",
-                                                 statistics = "approximate", trace.hat = "approximate"))
+                                                 statistics = "approximate", 
+                                                 trace.hat = "approximate"))
         }
         # calculate gcv and AIC
         traceL <- l$trace.hat
@@ -187,8 +194,8 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA, parallel = FALSE, ve
     names(data.bind) <- c("x1", "x2", "y")
   }
   
-  opt.span <- function(model, criterion = c("aicc", "gcv"), span.range = c(0.01,
-                                                                           0.9)) {
+  opt.span <- function(model, criterion = c("aicc", "gcv"),
+                       span.range = c(0.01, 0.9)) {
     as.crit <- function(x) {
       span <- x$pars$span
       traceL <- x$trace.hat

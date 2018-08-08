@@ -1,6 +1,13 @@
-# Set up data classes
+#' An S4 class for working with Hi-C data 
+#' 
+#' @slot hic_table A data.table containing the sparse upper triangular matrix 
+#'     for your Hi-C data.
+#' @slot comparison The results of a multiHiCcompare comparison.
+#' @slot metadata Data.frame for covariate information.
+#' @slot resolution The resolution of the dataset.
+#' @slot normalized Indicator for if data has been normalized.
 
-setClass("hicexp",
+setClass("Hicexp",
          representation(
            hic_table = "data.table",
            comparison = "data.frame",
@@ -11,7 +18,7 @@ setClass("hicexp",
 )
 
 
-setMethod("show", "hicexp", function(object) {
+setMethod("show", "Hicexp", function(object) {
   # get unique groups
   uniq_groups <- length(unique(object@metadata$group))
   # get number samples per groups

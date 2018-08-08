@@ -297,16 +297,16 @@ There are several other functions included in `multiHiCcompare`. `manhattan_hice
 manhattan_hicexp(hicexp1, method = "standard")
 ```
 
-There are also the MD plotting functions `MD.hicexp()` which will plot MD plots for each unique pair of samples in the `hicexp` object.
+There are also the MD plotting functions `MD_hicexp()` which will plot MD plots for each unique pair of samples in the `hicexp` object.
 
 ```{r}
-MD.hicexp(hicexp1, prow = 2, pcol = 3)
+MD_hicexp(hicexp1, prow = 2, pcol = 3)
 ```
 
-The `MD.composite()` function will plot a composite MD plot of the results of a comparison where the significant differences are highlighted.
+The `MD_composite()` function will plot a composite MD plot of the results of a comparison where the significant differences are highlighted.
 
 ```{r}
-MD.composite(hicexp1)
+MD_composite(hicexp1)
 ```
 
 
