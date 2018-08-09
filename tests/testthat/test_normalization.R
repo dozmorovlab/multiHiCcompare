@@ -7,9 +7,10 @@ test_that('cyclic_loess works', {
   # test for errors on wrong input
   expect_error(cyclic_loess(hicexp_new), 
                "Data has already been normalized.")
-  expect_error(cyclic_loess(hicexp, span = 0),
+  data('hicexp2')
+  expect_error(cyclic_loess(hicexp2, span = 0),
                "span must be set to NA or a value between 0 and 1")
-  expect_error(cyclic_loess(hicexp, span = 2), 
+  expect_error(cyclic_loess(hicexp2, span = 2), 
                "span must be set to NA or a value between 0 and 1")
 })
 
@@ -22,9 +23,10 @@ test_that('fastlo works', {
   # test for errors on wrong input
   expect_error(fastlo(hicexp_new),
                "Data has already been normalized.")
-  expect_error(fastlo(hicexp, span = 0), 
+  data('hicexp2')
+  expect_error(fastlo(hicexp2, span = 0), 
                "span must be set to NA or a value between 0 and 1")
-  expect_error(fastlo(hicexp, span = 2), 
+  expect_error(fastlo(hicexp2, span = 2), 
                "span must be set to NA or a value between 0 and 1") 
 })
 

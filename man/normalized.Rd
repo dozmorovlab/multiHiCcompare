@@ -21,6 +21,6 @@ Hicexp class information
 Print the indicator for if the data is normalized
 }
 \examples{
-data('hicexp')
-normalized(hicexp)
+data('hicexp2')
+normalized(hicexp2)
 }

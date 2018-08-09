@@ -56,17 +56,20 @@
 #' @return A hicexp object.
 #' @examples 
 #' # load data in sparse upper triangular format
-#' data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4", "HCT116_r5", "HCT116_r6", "HCT116_r7")
+#' data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4", 
+#'     "HCT116_r5", "HCT116_r6", "HCT116_r7")
 #' # need to add chromosome column to the matrices
-#' tabs <- list(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, HCT116_r5, HCT116_r6, HCT116_r7)
+#' tabs <- list(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, 
+#'     HCT116_r5, HCT116_r6, HCT116_r7)
 #' tabs <- lapply(tabs, function(x) cbind('22', x))
 #' # make groups & covariate input
 #' groups <- factor(c(1, 1, 1, 2, 2, 2, 2))
 #' covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi',
 #'  'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
 #' # make the hicexp object
-#' hicexp <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, HCT116_r5, HCT116_r6, HCT116_r7, groups = groups, 
-#'   covariates = covariates)
+#' hicexp <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4,
+#'      HCT116_r5, HCT116_r6, HCT116_r7, groups = groups, 
+#'      covariates = covariates)
 
 
 make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, 
@@ -175,7 +178,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   }
     # remove rows with 0's
     if (remove_zeros) {
-      IFs <- hic_table[, 5:(ncol(hic_table)), with = FALSE] %>% as.matrix()
+      IFs <- as.matrix(hic_table[, 5:(ncol(hic_table)), with = FALSE])
       IFs <- IFs == 0 # matrix of TRUE where zeros occur
       keep <- rowSums(IFs) == 0 # if row has no zeros it will sum to 0
       hic_table <- hic_table[keep,]

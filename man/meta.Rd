@@ -21,6 +21,6 @@ Hicexp class information
 Print the metadata
 }
 \examples{
-data('hicexp')
-meta(hicexp)
+data('hicexp2')
+meta(hicexp2)
 }

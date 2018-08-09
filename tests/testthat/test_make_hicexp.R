@@ -1,6 +1,5 @@
 test_that('make_hicexp works', {
-  data("sparse_mat")
-  data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4", "HCT116_r5","HCT116_r6", "HCT116_r7", "hicexp")
+  data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4", "HCT116_r5","HCT116_r6", "HCT116_r7")
   groups <- c(1, 1, 1, 2, 2, 2, 2)
   covariates <- data.frame(enzyme = c('mobi', 'mboi', 'mboi', 'dpnii',
                                       'dpnii', 'dpnii', 'dpnii'), 

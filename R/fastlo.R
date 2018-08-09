@@ -38,7 +38,7 @@
 #' @return A hicexp object that is normalized.
 #' @export
 #' @importFrom BiocParallel bplapply
-#' @importFrom dplyr %>% left_join
+#' @importFrom dplyr left_join
 #' @importFrom data.table rbindlist
 #' @examples 
 #' data("hicexp2")
@@ -118,20 +118,20 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   if (max.pool > 0.7) {
     warning("Setting max.pool > 0.7 may cause issues")
   }
-  D <- chr_table$D %>% unique() %>% sort()
+  D <- sort(unique(chr_table$D)) 
   # use triangular number series to solve for number of pools
   x <- length(D)
   n <- (sqrt((8 * x) + 1) - 1) / 2
   n <- ceiling(n)
   pools <- rep(D[1:n], 1:n)[1:x]
   # add the pools column to the data.table corresponding to the distances
-  id.df <- cbind(D, pools) %>% as.data.frame()
+  id.df <- as.data.frame(cbind(D, pools))
   # get maximum distance
   dist_max <- ceiling(max.pool * nrow(id.df))
   # combine pools for everything at or above maximum distance
   pool_max <- id.df[dist_max,2] 
   id.df[id.df$pools >= pool_max,2] <- pool_max
-  table_by_dist <- left_join(chr_table, id.df, by = c("D" = "D")) %>% data.table::as.data.table()
+  table_by_dist <- data.table::as.data.table(left_join(chr_table, id.df, by = c("D" = "D")))
   # split up tables by pool
   table_by_dist <- split(table_by_dist, table_by_dist$pools)
   # drop pools column
@@ -181,7 +181,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
 # perform fastlo on table
 .fastlo <- function(tab, span, iterations, loess.criterion = "gcv", degree = 1) {
   # make matrix of IFs
-  IF_mat <- tab[, 5:(ncol(tab)), with = FALSE] %>% as.matrix()
+  IF_mat <- as.matrix(tab[, 5:(ncol(tab)), with = FALSE])
   # make indicator matrix
   idx_mat <- IF_mat
   idx_mat[idx_mat != 0] <- 1

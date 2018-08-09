@@ -28,7 +28,6 @@
 #'
 #' @export
 #' @import edgeR
-#' @importFrom dplyr %>%
 #' @examples 
 #' data("hicexp_diff")
 #' hicexp_diff <- hic_exactTest(hicexp_diff)
@@ -40,7 +39,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool =
     warning("You should normalize the data before entering it into hic_glm")
   }
   # check to make sure there are only 2 groups
-  if (meta(hicexp)$group %>% unique() %>% length() != 2) {
+  if ( length(unique(meta(hicexp)$group)) != 2) {
     stop("If you are making a comparison where the number of groups is not 2 
          or you have covariates use hic_glm() instead.")
   }
@@ -55,7 +54,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool =
   dge_list <- lapply(table_list, .hictable2DGEList, covariates = meta(hicexp))
   # estimate dispersion for data
   # check number of samples per group
-  if (meta(hicexp)$group %>% length() == 2) { # IF no replicates use edgeR's recommended method to estimate dispersion
+  if ( length(meta(hicexp)$group) == 2) { # IF no replicates use edgeR's recommended method to estimate dispersion
     if (parallel) {
       dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateGLMCommonDisp,
                                          method="deviance", robust=TRUE, 
@@ -141,7 +140,6 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool =
 #' @return A hicexp object with a filled in comparison slot.
 #' @import edgeR
 #' @importFrom data.table rbindlist
-#' @importFrom dplyr %>%
 #' @export
 #' @examples 
 #' data("hicexp_diff")
@@ -275,7 +273,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   # adjust p-values
   result$p.adj <- p.adjust(result$p.value, method = p.method)
   # convert logFC from natural log to log2
-  result$logFC <- exp(result$logFC) %>% log2()
+  result$logFC <- log2(exp(result$logFC))
   return(result)
 }
 
@@ -288,7 +286,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   # adjust p-values
   result$p.adj <- p.adjust(result$p.value, method = p.method)
   # convert logFC from natural log to log2
-  result$logFC <- exp(result$logFC) %>% log2()
+  result$logFC <- log2(exp(result$logFC))
   return(result)
 }
 
@@ -297,7 +295,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
 # function to convert hic_table to a DGEList object
 .hictable2DGEList <- function(hic_table, covariates) {
   # convert IFs into a matrix
-  IFs <- hic_table[, 5:(ncol(hic_table)), with = FALSE] %>% as.matrix
+  IFs <- as.matrix(hic_table[, 5:(ncol(hic_table)), with = FALSE])
   # create DGEList 
   dge <- DGEList(counts = IFs, samples = covariates)
   return(dge)

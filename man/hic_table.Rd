@@ -21,6 +21,6 @@ Hicexp class information
 Print the hic_table
 }
 \examples{
-data('hicexp')
-hic_table(hicexp)
+data('hicexp2')
+hic_table(hicexp2)
 }

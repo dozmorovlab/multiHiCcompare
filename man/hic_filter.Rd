@@ -44,6 +44,6 @@ This function is used to filter out
     before normalization.
 }
 \examples{
-data("hicexp")
-hicexp <- hic_filter(hicexp)
+data("hicexp2")
+hicexp2 <- hic_filter(hicexp2)
 }

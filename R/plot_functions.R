@@ -17,11 +17,10 @@
 #' @return A set of MD plots.
 #' 
 #'
-#' @importFrom dplyr %>%
 #' @export
 #' @examples
-#' data("hicexp")
-#' MD_hicexp(hicexp)
+#' data("hicexp2")
+#' MD_hicexp(hicexp2)
 
 
 

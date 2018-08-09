@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{A Hicexp object}
 }
+\value{
+HiCexp information
+}
 \description{
 Print information about a HiCexp object
 }

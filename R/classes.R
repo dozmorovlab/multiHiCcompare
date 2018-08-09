@@ -10,8 +10,8 @@
 #' @import methods
 #' @return Hicexp class 
 #' @examples 
-#' data('hicexp')
-#' hicexp
+#' data('hicexp2')
+#' hicexp2
 
 setClass("Hicexp",
          representation(
@@ -28,6 +28,7 @@ setClass("Hicexp",
 #' @aliases show,character,ANY-method
 #' @exportMethod show
 #' @param object A Hicexp object
+#' @return HiCexp information
 setMethod("show", "Hicexp", function(object) {
   # get unique groups
   uniq_groups <- length(unique(object@metadata$group))
@@ -83,8 +84,8 @@ setGeneric("normalized", function(x) {
 #' @param x The Hicexp object
 #' @return Hicexp class information
 #' @examples 
-#' data('hicexp')
-#' hic_table(hicexp)
+#' data('hicexp2')
+#' hic_table(hicexp2)
 setMethod("hic_table", "Hicexp", function(x) x@hic_table)
 
 #' Print the results
@@ -94,8 +95,8 @@ setMethod("hic_table", "Hicexp", function(x) x@hic_table)
 #' @param x The Hicexp object
 #' @return Hicexp class information
 #' @examples 
-#' data('hicexp')
-#' results(hicexp)
+#' data('hicexp2')
+#' results(hicexp2)
 setMethod("results", "Hicexp", function(x) x@comparison)
 
 #' Print the metadata
@@ -105,8 +106,8 @@ setMethod("results", "Hicexp", function(x) x@comparison)
 #' @param x The Hicexp object
 #' @return Hicexp class information
 #' @examples 
-#' data('hicexp')
-#' meta(hicexp)
+#' data('hicexp2')
+#' meta(hicexp2)
 setMethod("meta", "Hicexp", function(x) x@metadata)
 
 #' Print the resolution
@@ -116,8 +117,8 @@ setMethod("meta", "Hicexp", function(x) x@metadata)
 #' @param x The Hicexp object
 #' @return Hicexp class information
 #' @examples 
-#' data('hicexp')
-#' resolution(hicexp)
+#' data('hicexp2')
+#' resolution(hicexp2)
 setMethod("resolution", "Hicexp", function(x) x@resolution)
 
 #' Print the indicator for if the data is normalized
@@ -127,6 +128,6 @@ setMethod("resolution", "Hicexp", function(x) x@resolution)
 #' @param x The Hicexp object
 #' @return Hicexp class information
 #' @examples 
-#' data('hicexp')
-#' normalized(hicexp)
+#' data('hicexp2')
+#' normalized(hicexp2)
 setMethod("normalized", "Hicexp", function(x) x@normalized)

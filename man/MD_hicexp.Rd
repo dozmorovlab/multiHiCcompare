@@ -31,6 +31,6 @@ A set of MD plots.
 Make MD plots for all combinations of a condition
 }
 \examples{
-data("hicexp")
-MD_hicexp(hicexp)
+data("hicexp2")
+MD_hicexp(hicexp2)
 }

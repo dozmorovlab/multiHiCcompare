@@ -21,6 +21,6 @@ Hicexp class information
 Print the results
 }
 \examples{
-data('hicexp')
-results(hicexp)
+data('hicexp2')
+results(hicexp2)
 }

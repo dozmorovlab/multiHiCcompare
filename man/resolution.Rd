@@ -21,6 +21,6 @@ Hicexp class information
 Print the resolution
 }
 \examples{
-data('hicexp')
-resolution(hicexp)
+data('hicexp2')
+resolution(hicexp2)
 }

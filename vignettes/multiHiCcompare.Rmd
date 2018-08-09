@@ -165,8 +165,8 @@ The `hicexp` S4 class has several slots which can be accessed with the accessor 
 The simplest form of normalization for the purpose of comparing Hi-C data is library scaling. `multiHiCcompare` provides the `hic_scale()` function to scale the Hi-C libraries from each sample to the size of the smallest library. If you believe that any trends present in your data are important differences and not due to bias then you can use library scaling for normalizing your data. Otherwise it is recommended to use either cyclic loess or fast loess. You can perform library scaling as follows.
 
 ```{r, eval=FALSE}
-data("hicexp")
-hicexp <- hic_scale(hicexp)
+data("hicexp2")
+hicexp2 <- hic_scale(hicexp2)
 ```
 
 

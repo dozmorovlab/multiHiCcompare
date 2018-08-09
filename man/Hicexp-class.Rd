@@ -26,6 +26,6 @@ for your Hi-C data.}
 }}
 
 \examples{
-data('hicexp')
-hicexp
+data('hicexp2')
+hicexp2
 }

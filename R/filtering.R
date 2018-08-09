@@ -28,8 +28,8 @@
 #' @return A hicexp object.
 #' @export
 #' @examples 
-#' data("hicexp")
-#' hicexp <- hic_filter(hicexp)
+#' data("hicexp2")
+#' hicexp2 <- hic_filter(hicexp2)
 
 hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
   if (zero.p < 0 | zero.p > 1) {
@@ -39,7 +39,7 @@ hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
     stop("A.min must be >= 0")
   }
   # make matrix of IFs
-  IF_mat <- hic_table(hicexp)[, 5:ncol(hic_table(hicexp)), with = FALSE] %>% as.matrix()
+  IF_mat <- as.matrix(hic_table(hicexp)[, 5:ncol(hic_table(hicexp)), with = FALSE])
   # get row Avg expression
   A <- apply(IF_mat, 1, mean)
   # filter by Avg expression of interacting pair

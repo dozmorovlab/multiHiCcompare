@@ -10,7 +10,6 @@
 #'     method if for some reason you do not want to remove
 #'     trends in the data and only want to normalize based
 #'     on library size.
-#' @importFrom dplyr %>%
 #' @importFrom data.table rbindlist
 #' @export
 #' @return A hicexp object.
@@ -41,9 +40,9 @@ hic_scale <- function(hicexp) {
 # internal function for scaling each chr
 .scale_chr <- function(tab) {
   # extract IF matrix
-  IFs <- tab[, 5:ncol(tab)] %>% as.matrix()
+  IFs <- as.matrix(tab[, 5:ncol(tab)])
   # get min library size
-  min.lib <- colSums(IFs) %>% min()
+  min.lib <- min(colSums(IFs)) 
   # perform scaling based on min lib size
   scaled_IFs <- apply(IFs, 2, function(x) {
     scale.factor <- sum(x) / min.lib
