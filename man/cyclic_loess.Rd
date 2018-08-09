@@ -5,7 +5,7 @@
 \title{Cyclic Loess normalization for Hi-C data}
 \usage{
 cyclic_loess(hicexp, iterations = 3, span = NA, parallel = FALSE,
-  verbose = FALSE, Plot = TRUE)
+  verbose = FALSE)
 }
 \arguments{
 \item{hicexp}{A hicexp object}
@@ -21,8 +21,6 @@ using generalized cross validation.}
 
 \item{verbose}{Logical. Should messages about loess normalization
 be printed to the screen.}
-
-\item{Plot}{Logical. Should MD plots be printed?}
 }
 \value{
 A hicexp object that has been normalized.

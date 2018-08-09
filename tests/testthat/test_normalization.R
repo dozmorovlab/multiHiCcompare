@@ -1,7 +1,7 @@
 test_that('cyclic_loess works', {
   data("hicexp2")
   hicexp_new <- cyclic_loess(hicexp2, 
-                             span = 0.5, verbose = FALSE, Plot = FALSE)
+                             span = 0.5, verbose = FALSE)
   expect_equal(hicexp_new@normalized, TRUE)
   
   # test for errors on wrong input
@@ -16,7 +16,7 @@ test_that('cyclic_loess works', {
 
 test_that('fastlo works', {
   data("hicexp2")
-  hicexp_new <- fastlo(hicexp2, verbose = FALSE, Plot = FALSE)
+  hicexp_new <- fastlo(hicexp2, verbose = FALSE)
   expect_equal(hicexp_new@normalized, TRUE)
   
   # test for errors on wrong input

@@ -5,8 +5,7 @@
 \title{Function to perform GLM differential analysis on Hi-C experiment}
 \usage{
 hic_glm(hicexp, design, contrast = NA, coef = NA, method = "QLFTest",
-  M = 1, p.method = "fdr", parallel = FALSE, Plot = TRUE,
-  max.pool = 0.7)
+  M = 1, p.method = "fdr", parallel = FALSE, max.pool = 0.7)
 }
 \arguments{
 \item{hicexp}{A hicexp object,}
@@ -29,9 +28,6 @@ coefficients of the linear model are to be tested equal to zero.}
 to "fdr". See ?p.adjust for other adjustment options.}
 
 \item{parallel}{Logical, Should parallel processing be used?}
-
-\item{Plot}{Logical, Should a composite MD plot be made for 
-the results?}
 
 \item{max.pool}{The proportion of unit distances after
 which all further distances will be pooled. Distances

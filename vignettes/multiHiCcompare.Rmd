@@ -187,7 +187,9 @@ To perform cyclic loess on your Hi-C data you will need to use the `cyclic_loess
 
 ```{r}
 hicexp1 <- cyclic_loess(hicexp1, verbose = FALSE, 
-                        Plot = TRUE, parallel = FALSE, span = 0.2)
+                        parallel = FALSE, span = 0.2)
+# make MD plot
+MD_hicexp(hicexp1)
 ```
 
 As can be seen in the above MD plots, the data for each sample has been jointly normalized with all other samples. Note that the span option can be set by the user. A user set span will run quicker than the default option of automatically calculating the span. It is best to use the automatic span calculation if you have not worked with the data before, but if you are familiar with it then setting the span is a way to speed up processing. The `hic_table` slot in the `hicexp` object has also been updated with the normalized IFs.
@@ -211,18 +213,13 @@ In addition to the standard cyclic loess method, `multiHiCcompare` also implemen
 
 You can perform fastlo normalization on your data as follows:
 
-```{r, eval=FALSE, echo=FALSE}
-# remake the original hicexp object
-hicexp2 <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, 
-                       HCT116_r4, groups = c(0, 0, 1, 1))
-# perform fastlo normalization
-hicexp2 <- fastlo(hicexp2, verbose = FALSE, Plot = TRUE, parallel = FALSE)
-```
 
 ```{r}
 data("hicexp2")
 # perform fastlo normalization
-hicexp2 <- fastlo(hicexp2, verbose = FALSE, Plot = TRUE, parallel = FALSE)
+hicexp2 <- fastlo(hicexp2, verbose = FALSE, parallel = FALSE)
+# make MD plot
+MD_hicexp(hicexp2)
 ```
 
 
@@ -244,7 +241,10 @@ For simple Hi-C experiments the `hic_exactTest()` function can be used as shown 
 
 ```{r}
 hicexp1 <- hic_exactTest(hicexp1, p.method = 'fdr', 
-                         Plot = TRUE, parallel = FALSE)
+                         parallel = FALSE)
+
+# plot results
+MD_composite(hicexp1)
 ```
 
 The above composite MD plot displays where any significant differences are detected between the two groups. This function can also be sped up by using the `parallel` option. The results of the comparison are then saved in the `comparison` slot of the `hicexp` object.
@@ -268,7 +268,7 @@ d <- model.matrix(~factor(meta(hicexp2)$group) + factor(batch))
 The design matrix should contain the covariates of interest. Any categorical variables should be entered as factors. Next, the comparison of interest will need to be specified using either the `contrast` or the `coef` option. For this example we are interested in the group difference thus we can set `coef = 2` to test if the group effect is equal to 0. For more information on using `contrast` and `coef` please see the `edgeR` user manual. Now we are ready to perform the comparison.
 
 ```{r, eval=FALSE}
-hicexp2 <- hic_glm(hicexp2, design = d, coef = 2, method = "QLFTest", p.method = "fdr", parallel = FALSE, Plot = FALSE)
+hicexp2 <- hic_glm(hicexp2, design = d, coef = 2, method = "QLFTest", p.method = "fdr", parallel = FALSE)
 ```
 
 
@@ -277,7 +277,7 @@ There are 3 methods by which `hic_glm()` can be performed. The default method is
 ```{r, eval=FALSE}
 # use Treat option
 hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "Treat", 
-                  M = 0.5, p.method = "fdr", parallel = FALSE, Plot = FALSE)
+                  M = 0.5, p.method = "fdr", parallel = FALSE)
 ```
 
 

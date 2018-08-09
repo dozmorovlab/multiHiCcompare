@@ -9,7 +9,6 @@
 #' @param parallel Logical. Should parallel processing be used?
 #' @param verbose Logical. Should messages about loess normalization
 #'     be printed to the screen.
-#' @param Plot Logical. Should MD plots be printed?
 #' 
 #' @details This function performs cyclic loess normalization
 #'    on a Hi-C experiment. multiHiCcompare's cyclic loess procedure
@@ -31,7 +30,7 @@
 
 
 cyclic_loess <- function(hicexp, iterations = 3, span = NA, 
-                         parallel = FALSE, verbose = FALSE, Plot = TRUE) {
+                         parallel = FALSE, verbose = FALSE) {
   # check if data already normalized
   if (normalized(hicexp)) {
     stop("Data has already been normalized.")
@@ -57,10 +56,6 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   slot(hicexp, "hic_table") <- normalized
   slot(hicexp, "normalized") <- TRUE
   
-  # plot
-  if (Plot) {
-    MD_hicexp(hicexp)
-  }
   
   return(hicexp)
 }

@@ -5,7 +5,7 @@
 \title{Perform exact test based difference detection on a Hi-C experiment}
 \usage{
 hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr",
-  Plot = TRUE, max.pool = 0.7)
+  max.pool = 0.7)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}
@@ -14,8 +14,6 @@ hic_exactTest(hicexp, parallel = FALSE, p.method = "fdr",
 
 \item{p.method}{Charact string to be input into p.adjust()
 as the method for multiple testing correction. Defaults to "fdr".}
-
-\item{Plot}{Logical, should a composite MD plot be made for the results.}
 
 \item{max.pool}{The proportion of unit distances after
 which all further distances will be pooled. Distances

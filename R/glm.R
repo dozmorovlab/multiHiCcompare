@@ -4,7 +4,6 @@
 #' @param parallel Logical, should parallel processing be used?
 #' @param p.method Charact string to be input into p.adjust()
 #'    as the method for multiple testing correction. Defaults to "fdr".
-#' @param Plot Logical, should a composite MD plot be made for the results.
 #' @param max.pool The proportion of unit distances after
 #'     which all further distances will be pooled. Distances
 #'     before this value will be progressively pooled and
@@ -35,7 +34,7 @@
 #' hicexp_diff <- hic_exactTest(hicexp_diff)
 #' 
 
-hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE, max.pool = 0.7) {
+hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool = 0.7) {
   # check to make sure hicexp is normalized
   if (!normalized(hicexp)) {
     warning("You should normalize the data before entering it into hic_glm")
@@ -87,11 +86,6 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   comparison <- comparison[order(chr, region1, region2),]
   slot(hicexp, "comparison") <- data.table::as.data.table(comparison)
   
-  # plot
-  if (Plot) {
-    MD_composite(hicexp)
-  }
-  
   # return results
   return(hicexp)
 }
@@ -114,8 +108,6 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @param p.method p-value adjustment method to be used. Defaults
 #'     to "fdr". See ?p.adjust for other adjustment options.
 #' @param parallel Logical, Should parallel processing be used?
-#' @param Plot Logical, Should a composite MD plot be made for 
-#'     the results?
 #' @param max.pool The proportion of unit distances after
 #'     which all further distances will be pooled. Distances
 #'     before this value will be progressively pooled and
@@ -158,7 +150,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' 
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, 
                     method = "QLFTest", M = 1, p.method = "fdr", 
-                    parallel = FALSE, Plot = TRUE, max.pool = 0.7) {
+                    parallel = FALSE, max.pool = 0.7) {
   # match method
   method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), 
                       several.ok = FALSE)
@@ -265,9 +257,6 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   result <- result[order(chr, region1, region2),]
   slot(hicexp, "comparison") <- data.table::as.data.table(result)
   
-  if (Plot) {
-    MD_composite(hicexp)
-  }
   
   return(hicexp)
 }

@@ -5,7 +5,7 @@
 \title{Perform fast loess normalization on a Hi-C experiment}
 \usage{
 fastlo(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
-  verbose = TRUE, Plot = TRUE, max.pool = 0.7)
+  verbose = TRUE, max.pool = 0.7)
 }
 \arguments{
 \item{hicexp}{A hicexp object}
@@ -23,8 +23,6 @@ used?}
 
 \item{verbose}{Logical, should messages about
 the normalization be printed?}
-
-\item{Plot}{Logical, should MD plots be printed?}
 
 \item{max.pool}{The proportion of unit distances after
 which all further distances will be pooled. Distances

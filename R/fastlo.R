@@ -11,7 +11,6 @@
 #'     used?
 #' @param verbose Logical, should messages about
 #'     the normalization be printed?
-#' @param Plot Logical, should MD plots be printed?
 #' @param max.pool The proportion of unit distances after
 #'     which all further distances will be pooled. Distances
 #'     before this value will be progressively pooled and
@@ -46,7 +45,7 @@
 #' hicexp2 <- fastlo(hicexp2)
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, 
-                   verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
+                   verbose = TRUE, max.pool = 0.7) {
   # check if data already normalized
   if (normalized(hicexp)) {
     stop("Data has already been normalized.")
@@ -74,10 +73,6 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   slot(hicexp, "hic_table") <- normalized
   slot(hicexp, "normalized") <- TRUE
 
-  # plot
-  if (Plot) {
-    MD_hicexp(hicexp)
-  }
   
   return(hicexp)
 }
