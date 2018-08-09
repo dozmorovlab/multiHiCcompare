@@ -10,8 +10,8 @@ make_hicexp(..., data_list = NA, groups, covariates = NULL,
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 
 format with 4 columns: chr, region1, region2, IF or
-in 7 column BEDPE format with columns chr1, start1, 
-end1, chr2, start2, end2, IF.}
+in 7 column BEDPE format with columns chHCT116_r1, start1, 
+end1, chHCT116_r2, start2, end2, IF.}
 
 \item{data_list}{Alternate way to enter data. If you have
 your Hi-C data in the form of a list already with each
@@ -74,15 +74,15 @@ Use this function to create a hicexp object for
 }
 \examples{
 # load data in sparse upper triangular format
-data("r1", "r2", "r3", "r4", "r5", "r6", "r7")
+data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4", "HCT116_r5", "HCT116_r6", "HCT116_r7")
 # need to add chromosome column to the matrices
-tabs <- list(r1, r2, r3, r4, r5, r6, r7)
+tabs <- list(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, HCT116_r5, HCT116_r6, HCT116_r7)
 tabs <- lapply(tabs, function(x) cbind('22', x))
 # make groups & covariate input
 groups <- factor(c(1, 1, 1, 2, 2, 2, 2))
 covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi',
  'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
 # make the hicexp object
-hicexp <- make_hicexp(r1, r2, r3, r4, r5, r6, r7, groups = groups, 
+hicexp <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, HCT116_r5, HCT116_r6, HCT116_r7, groups = groups, 
   covariates = covariates)
 }

@@ -14,6 +14,13 @@ hic_table(x)
 \arguments{
 \item{x}{The Hicexp object}
 }
+\value{
+Hicexp class information
+}
 \description{
 Print the hic_table
+}
+\examples{
+data('hicexp')
+hic_table(hicexp)
 }

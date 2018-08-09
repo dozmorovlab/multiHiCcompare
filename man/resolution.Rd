@@ -14,6 +14,13 @@ resolution(x)
 \arguments{
 \item{x}{The Hicexp object}
 }
+\value{
+Hicexp class information
+}
 \description{
 Print the resolution
+}
+\examples{
+data('hicexp')
+resolution(hicexp)
 }

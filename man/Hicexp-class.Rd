@@ -4,6 +4,9 @@
 \name{Hicexp-class}
 \alias{Hicexp-class}
 \title{An S4 class for working with Hi-C data}
+\value{
+Hicexp class
+}
 \description{
 An S4 class for working with Hi-C data
 }
@@ -22,3 +25,7 @@ for your Hi-C data.}
 \item{\code{normalized}}{Indicator for if data has been normalized.}
 }}
 
+\examples{
+data('hicexp')
+hicexp
+}

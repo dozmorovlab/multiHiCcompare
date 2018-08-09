@@ -53,10 +53,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   }
   # check span input
   if (!is.na(span)) {
-    if (!is.numeric(span)) {
-      stop("span must be set to NA or a value between 0 and 1")
-    }
-    if (span <= 0 | span > 1) {
+    if (!is.numeric(span) | span <= 0 | span > 1) {
       stop("span must be set to NA or a value between 0 and 1")
     }
   }
@@ -197,10 +194,10 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   IF_mat <- log2(IF_mat + 1)
   n <- ncol(IF_mat)
   # outer loop for number of cycles
-  for (i in 1:iterations) {
+  for (i in seq(from = 1, to = iterations)) {
     # calculate rowmeans (A) 
     A <- rowMeans(IF_mat, na.rm = TRUE)
-    for (j in 1:n) {
+    for (j in seq(from = 1, to = n)) {
       M <- IF_mat[,j] - A
       # fit loess curve
       if (is.na(span)) {

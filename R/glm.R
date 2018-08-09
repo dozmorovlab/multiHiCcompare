@@ -167,12 +167,11 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
     warning("You should normalize the data before entering it into hic_glm")
   }
   # contrast & coef input
-  if (is.na(contrast[1]) & is.na(coef[1])) {
+  if ( (is.na(contrast[1]) & is.na(coef[1])) | 
+       (!is.na(contrast[1]) & !is.na(coef[1])) ) {
     stop("You must enter a value for contrast or a coef, but not both")
   }
-  if (!is.na(contrast[1]) & !is.na(coef[1])) {
-    stop("Please enter either a value for contrast or coef but NOT both.")
-  }
+  
   # First need to split up hic_table by chr and then by distance
   # split up data by chr
   table_list <- split(hic_table(hicexp), hic_table(hicexp)$chr)

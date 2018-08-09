@@ -38,10 +38,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   }
   # check span input
   if (!is.na(span)) {
-    if (!is.numeric(span)) {
-      stop("span must be set to NA or a value between 0 and 1")
-    }
-    if (span <= 0 | span > 1) {
+    if (!is.numeric(span) | span <= 0 | span > 1) {
       stop("span must be set to NA or a value between 0 and 1")
     }
   }
@@ -102,9 +99,9 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   IF_mat <- log2(IF_mat + 1)
   n <- ncol(IF_mat)
   # begin cyclic loess
-  for (i in 1:iterations) {
-    for(j in 1:(n-1)) {
-      for (k in (j+1):n) {
+  for (i in seq(from = 1, to = iterations)) {
+    for(j in seq(from = 1, to = (n-1))) {
+      for (k in seq(from = (j+1), to = n)) {
         # # get rows with zeros
         # zeros1 <-  IF_mat[,k] == 0
         # zeros2 <- IF_mat[,j] == 0

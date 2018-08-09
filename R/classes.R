@@ -8,6 +8,10 @@
 #' @slot normalized Indicator for if data has been normalized.
 #' @exportClass Hicexp
 #' @import methods
+#' @return Hicexp class 
+#' @examples 
+#' data('hicexp')
+#' hicexp
 
 setClass("Hicexp",
          representation(
@@ -77,6 +81,10 @@ setGeneric("normalized", function(x) {
 #' @rdname hic_table
 #' @aliases hic_table,character,ANY-method
 #' @param x The Hicexp object
+#' @return Hicexp class information
+#' @examples 
+#' data('hicexp')
+#' hic_table(hicexp)
 setMethod("hic_table", "Hicexp", function(x) x@hic_table)
 
 #' Print the results
@@ -84,6 +92,10 @@ setMethod("hic_table", "Hicexp", function(x) x@hic_table)
 #' @rdname results
 #' @aliases results,character,ANY-method
 #' @param x The Hicexp object
+#' @return Hicexp class information
+#' @examples 
+#' data('hicexp')
+#' results(hicexp)
 setMethod("results", "Hicexp", function(x) x@comparison)
 
 #' Print the metadata
@@ -91,6 +103,10 @@ setMethod("results", "Hicexp", function(x) x@comparison)
 #' @rdname meta
 #' @aliases meta,character,ANY-method
 #' @param x The Hicexp object
+#' @return Hicexp class information
+#' @examples 
+#' data('hicexp')
+#' meta(hicexp)
 setMethod("meta", "Hicexp", function(x) x@metadata)
 
 #' Print the resolution
@@ -98,6 +114,10 @@ setMethod("meta", "Hicexp", function(x) x@metadata)
 #' @rdname resolution
 #' @aliases resolution,character,ANY-method
 #' @param x The Hicexp object
+#' @return Hicexp class information
+#' @examples 
+#' data('hicexp')
+#' resolution(hicexp)
 setMethod("resolution", "Hicexp", function(x) x@resolution)
 
 #' Print the indicator for if the data is normalized
@@ -105,4 +125,8 @@ setMethod("resolution", "Hicexp", function(x) x@resolution)
 #' @rdname normalized
 #' @aliases normalized,character,ANY-method
 #' @param x The Hicexp object
+#' @return Hicexp class information
+#' @examples 
+#' data('hicexp')
+#' normalized(hicexp)
 setMethod("normalized", "Hicexp", function(x) x@normalized)

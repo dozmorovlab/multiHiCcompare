@@ -2,7 +2,7 @@
 #'
 #' A hicexp object with a hic_table slot containing 42,035 rows
 #'     and a metadata slot containing 3 covariates. Data from
-#'     chr22 at 100KB resolution.
+#'     chHCT116_r22 at 100KB resolution.
 #'
 #' @source Data from Rao 2017. See their website at
 #'     \url{http://www.aidenlab.org/}

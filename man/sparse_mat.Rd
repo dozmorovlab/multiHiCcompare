@@ -18,6 +18,8 @@ sparse_mat
 A matrix
 }
 \description{
-A matrix object with 3 columns and 56603 rows.
+A matrix object with 3 columns and 56603 rows. 
+    This is the same data as HCT116_r1, just
+    without the chromosome column.
 }
 \keyword{datasets}

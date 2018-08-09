@@ -20,6 +20,6 @@ A hicexp object
 \description{
 A hicexp object with a hic_table slot containing 42,035 rows
     and a metadata slot containing 3 covariates. Data from
-    chr22 at 100KB resolution.
+    chHCT116_r22 at 100KB resolution.
 }
 \keyword{datasets}

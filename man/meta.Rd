@@ -14,6 +14,13 @@ meta(x)
 \arguments{
 \item{x}{The Hicexp object}
 }
+\value{
+Hicexp class information
+}
 \description{
 Print the metadata
+}
+\examples{
+data('hicexp')
+meta(hicexp)
 }

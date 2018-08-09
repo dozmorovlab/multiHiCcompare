@@ -14,6 +14,13 @@ results(x)
 \arguments{
 \item{x}{The Hicexp object}
 }
+\value{
+Hicexp class information
+}
 \description{
 Print the results
+}
+\examples{
+data('hicexp')
+results(hicexp)
 }

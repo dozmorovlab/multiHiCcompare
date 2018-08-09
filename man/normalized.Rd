@@ -14,6 +14,13 @@ normalized(x)
 \arguments{
 \item{x}{The Hicexp object}
 }
+\value{
+Hicexp class information
+}
 \description{
 Print the indicator for if the data is normalized
+}
+\examples{
+data('hicexp')
+normalized(hicexp)
 }
