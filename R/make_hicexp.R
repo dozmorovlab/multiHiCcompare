@@ -57,18 +57,14 @@
 #' @examples 
 #' # load data in sparse upper triangular format
 #' data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4", 
-#'     "HCT116_r5", "HCT116_r6", "HCT116_r7")
-#' # need to add chromosome column to the matrices
-#' tabs <- list(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, 
-#'     HCT116_r5, HCT116_r6, HCT116_r7)
-#' tabs <- lapply(tabs, function(x) cbind('22', x))
+#'     "HCT116_r5", "HCT116_r6")
 #' # make groups & covariate input
-#' groups <- factor(c(1, 1, 1, 2, 2, 2, 2))
+#' groups <- factor(c(1, 1, 1, 2, 2, 2))
 #' covariates <- data.frame(enzyme = factor(c('mobi', 'mboi', 'mboi',
-#'  'dpnii', 'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2, 2))
+#'  'dpnii', 'dpnii', 'dpnii')), batch = c(1, 2, 1, 2, 1, 2))
 #' # make the hicexp object
 #' hicexp <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4,
-#'      HCT116_r5, HCT116_r6, HCT116_r7, groups = groups, 
+#'      HCT116_r5, HCT116_r6, groups = groups, 
 #'      covariates = covariates)
 
 
