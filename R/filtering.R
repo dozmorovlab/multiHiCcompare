@@ -39,7 +39,7 @@ hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
     stop("A.min must be >= 0")
   }
   # make matrix of IFs
-  IF_mat <- hicexp@hic_table[, 5:ncol(hicexp@hic_table), with = FALSE] %>% as.matrix()
+  IF_mat <- hic_table(hicexp)[, 5:ncol(hic_table(hicexp)), with = FALSE] %>% as.matrix()
   # get row Avg expression
   A <- apply(IF_mat, 1, mean)
   # filter by Avg expression of interacting pair
@@ -50,6 +50,6 @@ hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
   # final keep vector
   keep <- keep.A & keep.z
   # filter table
-  hicexp@hic_table <- hicexp@hic_table[keep,]
+  slot(hicexp, "hic_table") <- hic_table(hicexp)[keep,]
   return(hicexp)
 }

@@ -28,8 +28,8 @@
 
 MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
   # check if more than one chromosome then split
-  if (length(unique(hicexp@hic_table$chr)) > 1) {
-    chr_table <- split(hicexp@hic_table, hicexp@hic_table$chr)
+  if (length(unique(hic_table(hicexp)$chr)) > 1) {
+    chr_table <- split(hic_table(hicexp), hic_table(hicexp)$chr)
     # check if chr to plot is specified
     if (!is.na(plot.chr[1])) {
       chrs.to.plot <- which(as.numeric(names(chr_table)) %in% plot.chr)
@@ -44,7 +44,7 @@ MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
     }
   } else {
     # if only a single chr just plot
-    .MD.hicexp.chr(hicexp@hic_table, prow = prow, pcol = pcol)
+    .MD.hicexp.chr(hic_table(hicexp), prow = prow, pcol = pcol)
   }
   
 }
@@ -94,14 +94,14 @@ MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
 
 MD_composite <- function(hicexp, plot.chr = NA) {
   # check to make sure data has been compared
-  if (nrow(hicexp@comparison) < 1) {
+  if (nrow(results(hicexp)) < 1) {
     stop("You must compare the Hi-C data first before using 
          this plot function")
   }
   
   # check if more than one chromosome then split
-  if (length(unique(hicexp@comparison$chr)) > 1) {
-    chr_table <- split(hicexp@comparison, hicexp@comparison$chr)
+  if (length(unique(results(hicexp)$chr)) > 1) {
+    chr_table <- split(results(hicexp), results(hicexp)$chr)
     # check if chr to plot is specified
     if (!is.na(plot.chr[1])) {
       chrs.to.plot <- which(as.numeric(names(chr_table)) %in% plot.chr)
@@ -119,8 +119,8 @@ MD_composite <- function(hicexp, plot.chr = NA) {
     }
   } else {
     # if only a single chr just plot
-    .MD.smooth(M = hicexp@comparison$logFC, D = hicexp@comparison$D, 
-               p.val = hicexp@comparison$p.adj, 
+    .MD.smooth(M = results(hicexp)$logFC, D = results(hicexp)$D, 
+               p.val = results(hicexp)$p.adj, 
                title = "Composite MD Plot")
   }
 }
@@ -213,22 +213,22 @@ MD_composite <- function(hicexp, plot.chr = NA) {
 
 pval_heatmap <- function(hicexp, alpha = NA, chr = 0) {
   # check input
-  if (nrow(hicexp@comparison) < 1) {
+  if (nrow(results(hicexp)) < 1) {
     stop("You must compare the hicexp first.")
   }
   if (!is.numeric(chr)) {
     stop("chr should be a numeric value")
   }
-  if (chr != 0 & sum(chr == as.numeric(unique(hicexp@comparison$chr))) < 1) {
+  if (chr != 0 & sum(chr == as.numeric(unique(results(hicexp)$chr))) < 1) {
     stop("The value of chr selected does not appear in the hicexp")
   }
   
   # if chr = 0 split data up by chr
   if (chr == 0) {
-    chr.list <- split(hicexp@comparison, hicexp@comparison$chr)
+    chr.list <- split(results(hicexp), results(hicexp)$chr)
   } else {
     # otherwise subset data to just the selected chr
-    chr.list <- list(subset(hicexp@comparison[chr == chr,]))
+    chr.list <- list(subset(results(hicexp)[chr == chr,]))
   }
   
   # convert to sparse matrix

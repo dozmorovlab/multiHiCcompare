@@ -150,7 +150,7 @@ Filtering can be performed when creating a `hicexp` object using the `zero.p` an
 
 ### The `hicexp` object
 
-The `hicexp` S4 class has several slots which can be accessed with the `@` operator. The `hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. The `metadata` slot contains the `data.frame` of covariates for the experiment. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
+The `hicexp` S4 class has several slots which can be accessed with the accessor functions `hic_table()`, `results()`, and `meta()`. The `hic_table` slot contains the Hi-C matrix in sparse format. The first four columns are the chromosome, region1 start location, region2 start location, and unit distance. All following chromosomes represent the IFs for that interacting pair from each sample. The `comparison` slot is empty at creation, but will be filled following use of one of the comparison functions. It contains the same first four columns as the `hic_table` slot, but also has the logFC - log fold change between conditions, logCPM - log counts per million, p.value, and p.adj - multiple testing corrected p-value columns which indicate the significance of the difference for each interacting pair of regions between the conditions. Access the `comparison` slot using `results()`. The `metadata` slot contains the `data.frame` of covariates for the experiment. Access the `metadata` slot by using `meta()`. The other slots are mainly for internal use and the typical user does not need to be concerned with them. 
 
 <!-- ## Filtering -->
 
@@ -204,7 +204,7 @@ hicexp1 <- cyclic_loess(hicexp1, verbose = FALSE, Plot = TRUE, parallel = FALSE,
 As can be seen in the above MD plots, the data for each sample has been jointly normalized with all other samples. Note that the span option can be set by the user. A user set span will run quicker than the default option of automatically calculating the span. It is best to use the automatic span calculation if you have not worked with the data before, but if you are familiar with it then setting the span is a way to speed up processing. The `hic_table` slot in the `hicexp` object has also been updated with the normalized IFs.
 
 ```{r}
-hicexp1@hic_table
+hic_table(hicexp1)
 ```
 
 The run time of cyclic loess can be decreased when multiple processors are available by setting the `parallel` option to `TRUE`. This option splits up the data by chromosome and sends each chromosome's data to a parallel processor. 
@@ -259,7 +259,7 @@ hicexp1 <- hic_exactTest(hicexp1, p.method = 'fdr', Plot = TRUE, parallel = FALS
 The above composite MD plot displays where any significant differences are detected between the two groups. This function can also be sped up by using the `parallel` option. The results of the comparison are then saved in the `comparison` slot of the `hicexp` object.
 
 ```{r}
-hicexp1@comparison
+results(hicexp1)
 ```
 
 In this `data.table` the first 3 columns represent the identity of the interaction, then followed by the unit genomic distance (`D`), the log fold change difference between the groups (`logFC`), the log counts per million for the interaction (`logCPM`), the p-value and finally the multiple testing correction p-value (`p.adj`). The type of multiple testing applied can be changed using the `p.method` option. To view what other adjustment methods are available look at the help for `?p.adjust`. 
@@ -271,7 +271,7 @@ For more complex Hi-C experiments the `hic_glm()` function must be used. In orde
 ```{r}
 batch <- c(1,2,1,2)
 # produce design matrix
-d <- model.matrix(~factor(hicexp2@metadata$group) + factor(batch))
+d <- model.matrix(~factor(meta(hicexp2)$group) + factor(batch))
 ```
 
 The design matrix should contain the covariates of interest. Any categorical variables should be entered as factors. Next, the comparison of interest will need to be specified using either the `contrast` or the `coef` option. For this example we are interested in the group difference thus we can set `coef = 2` to test if the group effect is equal to 0. For more information on using `contrast` and `coef` please see the `edgeR` user manual. Now we are ready to perform the comparison.

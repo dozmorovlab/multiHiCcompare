@@ -33,7 +33,7 @@
 cyclic_loess <- function(hicexp, iterations = 3, span = NA, 
                          parallel = FALSE, verbose = FALSE, Plot = TRUE) {
   # check if data already normalized
-  if (hicexp@normalized) {
+  if (normalized(hicexp)) {
     stop("Data has already been normalized.")
   }
   # check span input
@@ -51,14 +51,14 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
             loess to converge.")
   }
   # split up data by condition and perform cyclic loess
-  normalized <- .loess_condition(hicexp@hic_table, 
+  normalized <- .loess_condition(hic_table(hicexp), 
                                  iterations = iterations, parallel = parallel, 
                                  verbose = verbose, span = span)
   # sort hic_table
   normalized <- normalized[order(chr, region1, region2),]
   # put back into hicexp object
-  hicexp@hic_table <- normalized
-  hicexp@normalized <- TRUE
+  slot(hicexp, "hic_table") <- normalized
+  slot(hicexp, "normalized") <- TRUE
   
   # plot
   if (Plot) {

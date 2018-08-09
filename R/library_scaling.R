@@ -20,19 +20,19 @@
 #' 
 hic_scale <- function(hicexp) {
   # check if data already normalized
-  if (hicexp@normalized) {
+  if (normalized(hicexp)) {
     stop("Data has already been normalized.")
   }
   # extract hic_table
-  tab <- hicexp@hic_table
+  tab <- hic_table(hicexp)
   # split up by chromosome
   tab <- split(tab, f = tab$chr)
   # scale each chr
   new_tab <- lapply(tab, .scale_chr)
   # recombine
   new_tab <- data.table::rbindlist(new_tab)
-  hicexp@hic_table <- new_tab
-  hicexp@normalized <- TRUE
+  slot(hicexp, "hic_table") <- new_tab
+  slot(hicexp, "normalized") <- TRUE
   return(hicexp)
 }
 

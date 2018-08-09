@@ -72,7 +72,7 @@ This function performs the specified edgeR GLM based test
 }
 \examples{
 data("hicexp_diff")
-d <- model.matrix(~factor(hicexp_diff@metadata$group) + factor(c(1,2,1,2)))
+d <- model.matrix(~factor(meta(hicexp_diff)$group) + factor(c(1,2,1,2)))
 hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)
 
 }

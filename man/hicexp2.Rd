@@ -4,7 +4,7 @@
 \name{hicexp2}
 \alias{hicexp2}
 \title{hicexp object with 4 samples from two groups.}
-\format{An object of class \code{hicexp} of length 1.}
+\format{An object of class \code{Hicexp} of length 1.}
 \source{
 Data from Rao 2017. See their website at
     \url{http://www.aidenlab.org/}

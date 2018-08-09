@@ -46,27 +46,27 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), 
                       several.ok = FALSE)
   # check that data has been compared
-  if (nrow(hicexp@comparison) < 1) {
+  if (nrow(results(hicexp)) < 1) {
     stop("Differences must be detected before making a manhattan plot.")
   }
   
   if (method == "standard") {
     # make data.frame for plotting
-    man.df <- data.frame(BP = c(hicexp@comparison$region1, 
-                                hicexp@comparison$region2),
-                         CHR = as.numeric(c(hicexp@comparison$chr, 
-                                            hicexp@comparison$chr)), 
-                         P = c(hicexp@comparison$p.adj, 
-                               hicexp@comparison$p.adj))
+    man.df <- data.frame(BP = c(results(hicexp)$region1, 
+                                results(hicexp)$region2),
+                         CHR = as.numeric(c(results(hicexp)$chr, 
+                                            results(hicexp)$chr)), 
+                         P = c(results(hicexp)$p.adj, 
+                               results(hicexp)$p.adj))
     # plot
     suppressWarnings(qqman::manhattan(man.df))
   }
   
   if (method == "fisher") {
     # make aggregate p-value for regions
-    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1),
-                 paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
-    p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
+    regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
+                 paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
+    p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     
     ## Fisher method
     fisher_aggregate <- aggregate(p.values, by = list(regions), 
@@ -88,9 +88,9 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   
   if (method == "stouffer") {
     # make aggregate p-value for regions
-    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1),
-                 paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
-    p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
+    regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
+                 paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
+    p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     
     ## Stouffer-Liptak method
     stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), 
@@ -115,9 +115,9 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   
   if (method == 'count') {
     # make aggregate count for regions
-    regions <- c(paste0(hicexp@comparison$chr, ':', hicexp@comparison$region1),
-                 paste0(hicexp@comparison$chr, ':', hicexp@comparison$region2))
-    p.values <- c(hicexp@comparison$p.adj, hicexp@comparison$p.adj)
+    regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
+                 paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
+    p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     count <- ifelse(p.values < 0.05, 1, 0)
     
     ## Fisher method

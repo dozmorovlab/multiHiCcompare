@@ -48,7 +48,7 @@
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, 
                    verbose = TRUE, Plot = TRUE, max.pool = 0.7) {
   # check if data already normalized
-  if (hicexp@normalized) {
+  if (normalized(hicexp)) {
     stop("Data has already been normalized.")
   }
   # check span input
@@ -67,16 +67,16 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   }
 
   # input conditions to fastlo
-  normalized <- .fastlo_condition(hicexp@hic_table, 
+  normalized <- .fastlo_condition(hic_table(hicexp), 
                                   iterations = iterations, span = span, 
                                   parallel = parallel, verbose = verbose, 
                                   max.pool = max.pool)
   # sort hic_table
   normalized <- normalized[order(chr, region1, region2),]
   # put back into hicexp object
-  hicexp@hic_table <- normalized
-  hicexp@normalized <- TRUE
-  
+  slot(hicexp, "hic_table") <- normalized
+  slot(hicexp, "normalized") <- TRUE
+
   # plot
   if (Plot) {
     MD_hicexp(hicexp)

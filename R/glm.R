@@ -37,26 +37,26 @@
 
 hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRUE, max.pool = 0.7) {
   # check to make sure hicexp is normalized
-  if (!hicexp@normalized) {
+  if (!normalized(hicexp)) {
     warning("You should normalize the data before entering it into hic_glm")
   }
   # check to make sure there are only 2 groups
-  if (hicexp@metadata$group %>% unique() %>% length() != 2) {
+  if (meta(hicexp)$group %>% unique() %>% length() != 2) {
     stop("If you are making a comparison where the number of groups is not 2 
          or you have covariates use hic_glm() instead.")
   }
   # First need to split up hic_table by chr and then by distance
   # split up data by chr
-  table_list <- split(hicexp@hic_table, hicexp@hic_table$chr)
+  table_list <- split(hic_table(hicexp), hic_table(hicexp)$chr)
   # for each chr create list of distance matrices
   table_list <- lapply(table_list, .get_dist_tables, max.pool = max.pool)
   # combine list of lists into single list of tables
   table_list <- do.call(c, table_list)
   # input each of the chr-distance tables into a DGElist object for edgeR
-  dge_list <- lapply(table_list, .hictable2DGEList, covariates = hicexp@metadata)
+  dge_list <- lapply(table_list, .hictable2DGEList, covariates = meta(hicexp))
   # estimate dispersion for data
   # check number of samples per group
-  if (hicexp@metadata$group %>% length() == 2) { # IF no replicates use edgeR's recommended method to estimate dispersion
+  if (meta(hicexp)$group %>% length() == 2) { # IF no replicates use edgeR's recommended method to estimate dispersion
     if (parallel) {
       dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateGLMCommonDisp,
                                          method="deviance", robust=TRUE, 
@@ -68,10 +68,10 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   } else { # If replicates for condition then use standard way for estimating dispersion
     if (parallel) {
       dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, 
-                                         design=model.matrix(~hicexp@metadata$group))
+                                         design=model.matrix(~meta(hicexp)$group))
     } else {
       dge_list <- lapply(dge_list, edgeR::estimateDisp, 
-                         design=model.matrix(~hicexp@metadata$group))
+                         design=model.matrix(~meta(hicexp)$group))
       
     }
   }
@@ -85,7 +85,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
   comparison <- data.table::rbindlist(comparison)
   # sort comparison table
   comparison <- comparison[order(chr, region1, region2),]
-  hicexp@comparison <- comparison
+  slot(hicexp, "comparison") <- data.table::as.data.table(comparison)
   
   # plot
   if (Plot) {
@@ -153,7 +153,7 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", Plot = TRU
 #' @export
 #' @examples 
 #' data("hicexp_diff")
-#' d <- model.matrix(~factor(hicexp_diff@metadata$group) + factor(c(1,2,1,2)))
+#' d <- model.matrix(~factor(meta(hicexp_diff)$group) + factor(c(1,2,1,2)))
 #' hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)
 #' 
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, 
@@ -163,7 +163,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   method <- match.arg(method, c("LRTest", "QLFTest", "Treat"), 
                       several.ok = FALSE)
   # check to make sure hicexp is normalized
-  if (!hicexp@normalized) {
+  if (!normalized(hicexp)) {
     warning("You should normalize the data before entering it into hic_glm")
   }
   # contrast & coef input
@@ -175,14 +175,14 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   }
   # First need to split up hic_table by chr and then by distance
   # split up data by chr
-  table_list <- split(hicexp@hic_table, hicexp@hic_table$chr)
+  table_list <- split(hic_table(hicexp), hic_table(hicexp)$chr)
   # for each chr create list of distance matrices
   table_list <- lapply(table_list, .get_dist_tables, max.pool = max.pool)
   # combine list of lists into single list of tables
   table_list <- do.call(c, table_list)
   # input each of the chr-distance tables into a DGElist object for edgeR
   dge_list <- lapply(table_list, .hictable2DGEList, 
-                     covariates = hicexp@metadata)
+                     covariates = meta(hicexp))
   # estimate dispersion for data
   if (parallel) {
     dge_list <- BiocParallel::bplapply(dge_list, 
@@ -264,7 +264,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   result <- data.table::rbindlist(result)
   # sort comparison table
   result <- result[order(chr, region1, region2),]
-  hicexp@comparison <- result
+  slot(hicexp, "comparison") <- data.table::as.data.table(result)
   
   if (Plot) {
     MD_composite(hicexp)
