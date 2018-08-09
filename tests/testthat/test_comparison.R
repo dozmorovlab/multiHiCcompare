@@ -5,7 +5,9 @@ test_that('exact test works', {
   expect_gt(nrow(hicexp_new@comparison), 1)
   
   # test for errors on wrong input
-  hicexp_new <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, HCT116_r5, HCT116_r6, groups = c(1,1,2,2,3,3))
+  hicexp_new <- suppressWarnings(make_hicexp(HCT116_r1, 
+                                             HCT116_r2, HCT116_r3,
+                                             HCT116_r4, groups = c(1,2,3,3)))
   hicexp_new <- fastlo(hicexp_new, verbose = FALSE)
   expect_error(hic_exactTest(hicexp_new))
   

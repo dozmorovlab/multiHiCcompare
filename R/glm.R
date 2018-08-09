@@ -29,8 +29,9 @@
 #' @export
 #' @import edgeR
 #' @examples 
+#' \dontrun{
 #' data("hicexp_diff")
-#' hicexp_diff <- hic_exactTest(hicexp_diff)
+#' hicexp_diff <- hic_exactTest(hicexp_diff)}
 #' 
 
 hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool = 0.7) {
