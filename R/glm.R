@@ -142,9 +142,10 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool =
 #' @importFrom data.table rbindlist
 #' @export
 #' @examples 
+#' \dontrun{
 #' data("hicexp_diff")
 #' d <- model.matrix(~factor(meta(hicexp_diff)$group) + factor(c(1,2,1,2)))
-#' hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)
+#' hicexp_diff <- hic_glm(hicexp_diff, design = d, coef = 2)}
 #' 
 hic_glm <- function(hicexp, design, contrast = NA, coef = NA, 
                     method = "QLFTest", M = 1, p.method = "fdr", 
