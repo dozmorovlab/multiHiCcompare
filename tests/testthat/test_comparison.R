@@ -1,14 +1,14 @@
 test_that('exact test works', {
-  data("hicexp2")
-  hicexp_new <- fastlo(hicexp2, verbose = FALSE)
-  hicexp_new <- hic_exactTest(hicexp_new)
+  data("hicexp_diff", "HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4")
+  hicexp_new <- hic_exactTest(hicexp_diff)
   expect_gt(nrow(hicexp_new@comparison), 1)
   
   # test for errors on wrong input
   hicexp_new <- suppressWarnings(make_hicexp(HCT116_r1, 
                                              HCT116_r2, HCT116_r3,
                                              HCT116_r4, groups = c(1,2,3,3)))
-  hicexp_new <- fastlo(hicexp_new, verbose = FALSE)
+  slot(hicexp_new, "normalized") <- TRUE
+  # hicexp_new <- fastlo(hicexp_new, verbose = FALSE)
   expect_error(hic_exactTest(hicexp_new))
   
 })
@@ -22,13 +22,13 @@ test_that('glm works', {
                         method = "QLFTest")
   expect_gt(nrow(hicexp_new@comparison), 1)
   
-  hicexp_new <- hic_glm(hicexp_new, design = d, coef = 2, 
-                        method = "LRTest")
-  expect_gt(nrow(hicexp_new@comparison), 1)
-  
-  hicexp_new <- hic_glm(hicexp_new, design = d, coef = 2, 
-                        method = "Treat")
-  expect_gt(nrow(hicexp_new@comparison), 1)
+  # hicexp_new <- hic_glm(hicexp_new, design = d, coef = 2, 
+  #                       method = "LRTest")
+  # expect_gt(nrow(hicexp_new@comparison), 1)
+  # 
+  # hicexp_new <- hic_glm(hicexp_new, design = d, coef = 2, 
+  #                       method = "Treat")
+  # expect_gt(nrow(hicexp_new@comparison), 1)
   
   # test for errors on wrong input
   expect_error(hic_glm(hicexp_new, design = d, coef = 2,contrast = 1, 
