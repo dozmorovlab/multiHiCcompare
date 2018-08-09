@@ -125,11 +125,10 @@ where `numCores` is the user-set number of processing cores to be used. For para
 A sparse matrix format represents a relatively compact and human-readable way to store pair-wise interactions. It is a tab-delimited text format containing three columns: "region1" - a start coordinate (in bp) of the first region, "region2" a start coordinate of the second region, and "IF" - the interaction frequency between them (IFs). Zero IFs are dropped (hence, the _sparse_ format). Since the full matrix of chromatin interactions is symmetric, only the upper triangular portion, including the diagonal, is stored. Typically matrices in this format are stored in their own separate text files for each chromosome. For use in `multiHiCcompare` you will need to add an additional column for the chromosome number. The chromosome number should be entered as just the number. Chromosomes such as X, Y, etc. should be entered as 23, 24, etc. If you are planning to analyze data for more than a single chromosome you will need to concatenate these matrices together. A sparse Hi-C matrix ready to be input into `multiHiCcompare` should look like the following:
 
 ```{r}
-data("sparse_mat") # load example sparse matrix
-head(sparse_mat)
-sparse_mat <- cbind('22', sparse_mat) # add chromosome column
-colnames(sparse_mat) <- c('chr', 'region1', 'region2', 'IF') # rename columns
-head(sparse_mat) # matrix ready to be input into multiHiCcompare
+data("HCT116_r1") # load example sparse matrix
+head(HCT116_r1)
+colnames(HCT116_r1) <- c('chr', 'region1', 'region2', 'IF') # rename columns
+head(HCT116_r1) # matrix ready to be input into multiHiCcompare
 ```
 
 
