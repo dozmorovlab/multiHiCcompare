@@ -91,13 +91,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   # apply fastlo to list
   normalized <- smartApply(parallel, table_list, .fastlo, span = span, 
                                       iterations = iterations)
-  # if (parallel) {
-  #   normalized <- BiocParallel::bplapply(table_list, .fastlo, span = span, 
-  #                                        iterations = iterations)
-  # } else {
-  #   normalized <- lapply(table_list, .fastlo, span = span, 
-  #                        iterations = iterations)
-  # }
+  
   # recombine list of tables
   hic_table <- rbindlist(normalized)
   return(hic_table)

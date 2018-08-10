@@ -56,23 +56,13 @@ hic_exactTest <- function(hicexp, parallel = FALSE, p.method = "fdr", max.pool =
   # estimate dispersion for data
   # check number of samples per group
   if ( length(meta(hicexp)$group) == 2) { # IF no replicates use edgeR's recommended method to estimate dispersion
-    if (parallel) {
-      dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateGLMCommonDisp,
-                                         method="deviance", robust=TRUE, 
-                                         subset=NULL)
-    } else {
-      dge_list <- lapply(dge_list, edgeR::estimateGLMCommonDisp,
-                         method="deviance", robust=TRUE, subset=NULL)
-    }
+    dge_list <- smartApply(parallel, dge_list, edgeR::estimateGLMCommonDisp,
+                                                          method="deviance", robust=TRUE, 
+                                                          subset=NULL)
   } else { # If replicates for condition then use standard way for estimating dispersion
-    if (parallel) {
-      dge_list <- BiocParallel::bplapply(dge_list, edgeR::estimateDisp, 
-                                         design=model.matrix(~meta(hicexp)$group))
-    } else {
-      dge_list <- lapply(dge_list, edgeR::estimateDisp, 
-                         design=model.matrix(~meta(hicexp)$group))
-      
-    }
+    dge_list <- smartApply(parallel, dge_list, edgeR::estimateDisp, 
+                           design=model.matrix(~meta(hicexp)$group))
+
   }
   
   # perform exact test when the only factor is group
@@ -177,21 +167,11 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   # estimate dispersion for data
   dge_list <- smartApply(parallel, dge_list, edgeR::estimateDisp, 
                          design = design)
-  # if (parallel) {
-  #   dge_list <- BiocParallel::bplapply(dge_list, 
-  #                                      edgeR::estimateDisp, design = design)
-  # } else {
-  #   dge_list <- lapply(dge_list, edgeR::estimateDisp, design = design)
-  # }
-  # 
+
   
   # fit the GLM
   fit <- smartApply(parallel, dge_list, edgeR::glmQLFit, design = design)
-  # if (parallel) {
-  #   fit <- BiocParallel::bplapply(dge_list, edgeR::glmQLFit, design = design)
-  # } else {
-  #   fit <- lapply(dge_list, edgeR::glmQLFit, design = design)
-  # }
+
   
   ## Perform test based on method and contrast/coef specified 
   
@@ -225,68 +205,6 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
                                          coef = coef, lfc = M)
       }
     }
-  
-  
-  
-  
-  # if (parallel) {
-  #   # QL F-test test
-  #   if (method == "QLFTest") {
-  #     if (is.na(coef)) {
-  #       result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest,
-  #                                        contrast = contrast)
-  #     } else {
-  #       result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, 
-  #                                        coef = coef)
-  #     }
-  #   }
-  #   # Likelihood Ratio Test
-  #   if (method == "LRTest") {
-  #     if (is.na(coef)) {
-  #       result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
-  #                                        contrast = contrast)
-  #     } else {
-  #       result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
-  #                                        coef = coef)
-  #     }
-  #   }
-  #   # TREAT Analysis based on a minimum log2 fold change specified as M
-  #   if (method == "Treat") {
-  #     if (is.na(coef)) {
-  #       result <- BiocParallel::bplapply(fit, edgeR::glmTreat, 
-  #                                        contrast = contrast, lfc = M)
-  #     } else {
-  #       result <- BiocParallel::bplapply(fit, edgeR::glmTreat,
-  #                                        coef = coef, lfc = M)
-  #     }
-  #   }
-  # } else {
-  #   # QL F-test test
-  #   if (method == "QLFTest") {
-  #     if (is.na(coef)) {
-  #       result <- lapply(fit, edgeR::glmQLFTest, contrast = contrast)
-  #     } else {
-  #       result <- lapply(fit, edgeR::glmQLFTest, coef = coef)
-  #     }
-  #   }
-  #   # Likelihood Ratio Test
-  #   if (method == "LRTest") {
-  #     if (is.na(coef)) {
-  #       result <- lapply(fit, edgeR::glmLRT, contrast = contrast)
-  #     } else {
-  #       result <- lapply(fit, edgeR::glmLRT, coef = coef)
-  #     }
-  #   }
-  #   # TREAT Analysis based on a minimum log2 fold change specified as M
-  #   if (method == "Treat") {
-  #     if (is.na(coef)) {
-  #       result <- lapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
-  #     } else {
-  #       result <- lapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
-  #     }
-  #   }
-  # }
-  
   
   # format results for differentially interacting regions
   result <- mapply(.glm_reformat, result, table_list,
