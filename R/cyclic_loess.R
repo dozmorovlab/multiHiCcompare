@@ -68,14 +68,18 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   # split up data by chr
   table_list <- split(hic_table, hic_table$chr)
   # plug into parallelized loess function
-  if (parallel) {
-    normalized <- BiocParallel::bplapply(table_list, .cloess, 
-                                         iterations = iterations, 
-                                         verbose = verbose, span = span)
-  } else {
-    normalized <- lapply(table_list, .cloess, iterations = iterations, 
-                         verbose = verbose, span = span)
-  }
+  normalized <- smartApply(parallel, table_list, .cloess, 
+                           iterations = iterations, verbose = verbose,
+                           span = span)
+  
+  # if (parallel) {
+  #   normalized <- BiocParallel::bplapply(table_list, .cloess, 
+  #                                        iterations = iterations, 
+  #                                        verbose = verbose, span = span)
+  # } else {
+  #   normalized <- lapply(table_list, .cloess, iterations = iterations, 
+  #                        verbose = verbose, span = span)
+  # }
   # recombine tables
   normalized <- data.table::rbindlist(normalized)
   return(normalized)

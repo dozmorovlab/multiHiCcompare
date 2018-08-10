@@ -275,7 +275,7 @@ There are 3 methods by which `hic_glm()` can be performed. The default method is
 
 ```{r, eval=FALSE}
 # use Treat option
-hicexp <- hic_glm(hicexp, design = d, coef = 2, method = "Treat", 
+hicexp2 <- hic_glm(hicexp2, design = d, coef = 2, method = "Treat", 
                   M = 0.5, p.method = "fdr", parallel = FALSE)
 ```
 

@@ -175,78 +175,117 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
   dge_list <- lapply(table_list, .hictable2DGEList, 
                      covariates = meta(hicexp))
   # estimate dispersion for data
-  if (parallel) {
-    dge_list <- BiocParallel::bplapply(dge_list, 
-                                       edgeR::estimateDisp, design = design)
-  } else {
-    dge_list <- lapply(dge_list, edgeR::estimateDisp, design = design)
-  }
+  dge_list <- smartApply(parallel, dge_list, edgeR::estimateDisp, 
+                         design = design)
+  # if (parallel) {
+  #   dge_list <- BiocParallel::bplapply(dge_list, 
+  #                                      edgeR::estimateDisp, design = design)
+  # } else {
+  #   dge_list <- lapply(dge_list, edgeR::estimateDisp, design = design)
+  # }
+  # 
   
   # fit the GLM
-  if (parallel) {
-    fit <- BiocParallel::bplapply(dge_list, edgeR::glmQLFit, design = design)
-  } else {
-    fit <- lapply(dge_list, edgeR::glmQLFit, design = design)
-  }
+  fit <- smartApply(parallel, dge_list, edgeR::glmQLFit, design = design)
+  # if (parallel) {
+  #   fit <- BiocParallel::bplapply(dge_list, edgeR::glmQLFit, design = design)
+  # } else {
+  #   fit <- lapply(dge_list, edgeR::glmQLFit, design = design)
+  # }
   
   ## Perform test based on method and contrast/coef specified 
-  if (parallel) {
+  
     # QL F-test test
     if (method == "QLFTest") {
       if (is.na(coef)) {
-        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest,
+        result <- smartApply(parallel, fit, edgeR::glmQLFTest,
                                          contrast = contrast)
       } else {
-        result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, 
+        result <- smartApply(parallel, fit, edgeR::glmQLFTest,
                                          coef = coef)
       }
     }
     # Likelihood Ratio Test
     if (method == "LRTest") {
       if (is.na(coef)) {
-        result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
+        result <- smartApply(parallel, fit, edgeR::glmLRT,
                                          contrast = contrast)
       } else {
-        result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
+        result <- smartApply(parallel, fit, edgeR::glmLRT,
                                          coef = coef)
       }
     }
     # TREAT Analysis based on a minimum log2 fold change specified as M
     if (method == "Treat") {
       if (is.na(coef)) {
-        result <- BiocParallel::bplapply(fit, edgeR::glmTreat, 
+        result <- smartApply(parallel, fit, edgeR::glmTreat,
                                          contrast = contrast, lfc = M)
       } else {
-        result <- BiocParallel::bplapply(fit, edgeR::glmTreat,
+        result <- smartApply(parallel, fit, edgeR::glmTreat,
                                          coef = coef, lfc = M)
       }
     }
-  } else {
-    # QL F-test test
-    if (method == "QLFTest") {
-      if (is.na(coef)) {
-        result <- lapply(fit, edgeR::glmQLFTest, contrast = contrast)
-      } else {
-        result <- lapply(fit, edgeR::glmQLFTest, coef = coef)
-      }
-    }
-    # Likelihood Ratio Test
-    if (method == "LRTest") {
-      if (is.na(coef)) {
-        result <- lapply(fit, edgeR::glmLRT, contrast = contrast)
-      } else {
-        result <- lapply(fit, edgeR::glmLRT, coef = coef)
-      }
-    }
-    # TREAT Analysis based on a minimum log2 fold change specified as M
-    if (method == "Treat") {
-      if (is.na(coef)) {
-        result <- lapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
-      } else {
-        result <- lapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
-      }
-    }
-  }
+  
+  
+  
+  
+  # if (parallel) {
+  #   # QL F-test test
+  #   if (method == "QLFTest") {
+  #     if (is.na(coef)) {
+  #       result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest,
+  #                                        contrast = contrast)
+  #     } else {
+  #       result <- BiocParallel::bplapply(fit, edgeR::glmQLFTest, 
+  #                                        coef = coef)
+  #     }
+  #   }
+  #   # Likelihood Ratio Test
+  #   if (method == "LRTest") {
+  #     if (is.na(coef)) {
+  #       result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
+  #                                        contrast = contrast)
+  #     } else {
+  #       result <- BiocParallel::bplapply(fit, edgeR::glmLRT,
+  #                                        coef = coef)
+  #     }
+  #   }
+  #   # TREAT Analysis based on a minimum log2 fold change specified as M
+  #   if (method == "Treat") {
+  #     if (is.na(coef)) {
+  #       result <- BiocParallel::bplapply(fit, edgeR::glmTreat, 
+  #                                        contrast = contrast, lfc = M)
+  #     } else {
+  #       result <- BiocParallel::bplapply(fit, edgeR::glmTreat,
+  #                                        coef = coef, lfc = M)
+  #     }
+  #   }
+  # } else {
+  #   # QL F-test test
+  #   if (method == "QLFTest") {
+  #     if (is.na(coef)) {
+  #       result <- lapply(fit, edgeR::glmQLFTest, contrast = contrast)
+  #     } else {
+  #       result <- lapply(fit, edgeR::glmQLFTest, coef = coef)
+  #     }
+  #   }
+  #   # Likelihood Ratio Test
+  #   if (method == "LRTest") {
+  #     if (is.na(coef)) {
+  #       result <- lapply(fit, edgeR::glmLRT, contrast = contrast)
+  #     } else {
+  #       result <- lapply(fit, edgeR::glmLRT, coef = coef)
+  #     }
+  #   }
+  #   # TREAT Analysis based on a minimum log2 fold change specified as M
+  #   if (method == "Treat") {
+  #     if (is.na(coef)) {
+  #       result <- lapply(fit, edgeR::glmTreat, contrast = contrast, lfc = M)
+  #     } else {
+  #       result <- lapply(fit, edgeR::glmTreat, coef = coef, lfc = M)
+  #     }
+  #   }
+  # }
   
   
   # format results for differentially interacting regions
