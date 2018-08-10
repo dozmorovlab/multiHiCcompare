@@ -270,7 +270,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
 ## !!! current p-value adjustment is taking place on per distance basis
 .et_reformat <- function(et_result, hic_table, p.method) {
   # create table of location info and p-value results
-  result <- cbind(hic_table[, 1:4, with = FALSE], et_result$table)
+  result <- cbind(hic_table[, c("chr", "region1", "region2", "D"), with = FALSE], et_result$table)
   colnames(result)[7] <-"p.value"
   # adjust p-values
   result$p.adj <- p.adjust(result$p.value, method = p.method)
@@ -283,7 +283,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
 # reformat results of GLM
 .glm_reformat <- function(result, hic_table, p.method) {
   # create table of location info and p-value results
-  result <- cbind(hic_table[, 1:4, with = FALSE], result$table)
+  result <- cbind(hic_table[, c("chr", "region1", "region2", "D"), with = FALSE], result$table)
   colnames(result)[ncol(result)] <-"p.value"
   # adjust p-values
   result$p.adj <- p.adjust(result$p.value, method = p.method)
@@ -297,7 +297,7 @@ hic_glm <- function(hicexp, design, contrast = NA, coef = NA,
 # function to convert hic_table to a DGEList object
 .hictable2DGEList <- function(hic_table, covariates) {
   # convert IFs into a matrix
-  IFs <- as.matrix(hic_table[, 5:(ncol(hic_table)), with = FALSE])
+  IFs <- as.matrix(hic_table[, -c("chr", "region1", "region2", "D"), with = FALSE])
   # create DGEList 
   dge <- DGEList(counts = IFs, samples = covariates)
   return(dge)

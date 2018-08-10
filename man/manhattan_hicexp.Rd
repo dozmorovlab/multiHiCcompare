@@ -53,5 +53,5 @@ This function is used to create a manhattan
 }
 \examples{
 data("hicexp_diff")
-manhattan_hicexp(hicexp_diff, method = "standard")
+manhattan_hicexp(hicexp_diff, method = "fisher")
 }

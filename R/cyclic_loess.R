@@ -85,7 +85,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
 .cloess <- function(tab, iterations, verbose, span, degree = 1, 
                     loess.criterion = "gcv") {
   # make matrix of IFs
-  IF_mat <- as.matrix(tab[, 5:(ncol(tab)), with = FALSE])
+  IF_mat <- as.matrix(tab[, -c("chr", "region1", "region2", "D"), with = FALSE])
   # make index matrix
   idx_mat <- IF_mat
   idx_mat[idx_mat != 0] <- 1

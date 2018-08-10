@@ -40,7 +40,7 @@ hic_scale <- function(hicexp) {
 # internal function for scaling each chr
 .scale_chr <- function(tab) {
   # extract IF matrix
-  IFs <- as.matrix(tab[, 5:ncol(tab)])
+  IFs <- as.matrix(tab[, -c("chr", "region1", "region2", "D")])
   # get min library size
   min.lib <- min(colSums(IFs)) 
   # perform scaling based on min lib size

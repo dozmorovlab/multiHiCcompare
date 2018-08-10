@@ -35,10 +35,11 @@
 #' @return A manhattan plot and optionally the data.frame used
 #'     to generate the manhattan plot.
 #' @importFrom qqman manhattan
+#' @importFrom metap sumz sumlog
 #' @export
 #' @examples
 #' data("hicexp_diff")
-#' manhattan_hicexp(hicexp_diff, method = "standard")
+#' manhattan_hicexp(hicexp_diff, method = "fisher")
 
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
@@ -69,12 +70,18 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     
     ## Fisher method
-    fisher_aggregate <- aggregate(p.values, by = list(regions), 
-                                  FUN = function(p) {
-      combined <- -2 * sum(log(p))
-      c.pval <- pchisq(combined, df = 2 * length(p))
-      return(c.pval)
-    })
+    # fisher_aggregate <- aggregate(p.values, by = list(regions), 
+    #                               FUN = function(p) {
+    #   combined <- -2 * sum(log(p))
+    #   c.pval <- pchisq(combined, df = 2 * length(p))
+    #   return(c.pval)
+    # })
+    
+    fisher_aggregate <- aggregate(p.values, 
+                                  by = list(regions), 
+                                  FUN = function(x) {
+                                    metap::sumlog(x)$p
+                                    })
     
     fisher_aggregate <- cbind(read.table(text = fisher_aggregate$Group.1, 
                                          sep = ":"), fisher_aggregate$x)
@@ -93,13 +100,19 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     
     ## Stouffer-Liptak method
-    stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), 
-                                           FUN = function(p) {
-      zi <- qnorm(p/2)
-      Z <- sum(zi) / sqrt(length(p))
-      c.pval <- pnorm(Z)
-      return(c.pval)
-    })
+    # stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), 
+    #                                        FUN = function(p) {
+    #   zi <- qnorm(p, lower.tail = FALSE)
+    #   Z <- sum(zi) / sqrt(length(p))
+    #   c.pval <- pnorm(Z, lower.tail = FALSE)
+    #   return(c.pval)
+    # })
+    
+    stouffer_liptak_aggregate <- aggregate(p.values, 
+                                           by = list(regions), 
+                                           FUN = function(x) {
+                                             suppressWarnings(metap::sumz(x)$p)
+                                             })
     
     stouffer_liptak_aggregate <- cbind(read.table(text = stouffer_liptak_aggregate$Group.1,
                                                   sep = ":"), stouffer_liptak_aggregate$x)
@@ -120,7 +133,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     count <- ifelse(p.values < 0.05, 1, 0)
     
-    ## Fisher method
+    ## count method
     count_aggregate <- aggregate(count, by = list(regions), 
                                  FUN = function(cnt) {
       c.sum <- sum(cnt)

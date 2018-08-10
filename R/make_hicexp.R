@@ -174,7 +174,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   }
     # remove rows with 0's
     if (remove_zeros) {
-      IFs <- as.matrix(hic_table[, 5:(ncol(hic_table)), with = FALSE])
+      IFs <- as.matrix(hic_table[, -c("chr", "region1", "region2", "D"), with = FALSE])
       IFs <- IFs == 0 # matrix of TRUE where zeros occur
       keep <- rowSums(IFs) == 0 # if row has no zeros it will sum to 0
       hic_table <- hic_table[keep,]

@@ -181,7 +181,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
 # perform fastlo on table
 .fastlo <- function(tab, span, iterations, loess.criterion = "gcv", degree = 1) {
   # make matrix of IFs
-  IF_mat <- as.matrix(tab[, 5:(ncol(tab)), with = FALSE])
+  IF_mat <- as.matrix(tab[, -c("chr", "region1", "region2", "D"), with = FALSE])
   # make indicator matrix
   idx_mat <- IF_mat
   idx_mat[idx_mat != 0] <- 1
