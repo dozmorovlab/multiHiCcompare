@@ -80,7 +80,11 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     fisher_aggregate <- aggregate(p.values, 
                                   by = list(regions), 
                                   FUN = function(x) {
-                                    metap::sumlog(x)$p
+                                    if (length(x) > 1) {
+                                      metap::sumlog(x)$p
+                                    } else {
+                                      x
+                                    }
                                     })
     
     fisher_aggregate <- cbind(read.table(text = fisher_aggregate$Group.1, 
@@ -111,8 +115,12 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     stouffer_liptak_aggregate <- aggregate(p.values, 
                                            by = list(regions), 
                                            FUN = function(x) {
-                                             suppressWarnings(metap::sumz(x)$p)
-                                             })
+                                             if (length(x) > 1) {
+                                               suppressWarnings(metap::sumz(x)$p) 
+                                             } else {
+                                               x
+                                             }
+                                            })
     
     stouffer_liptak_aggregate <- cbind(read.table(text = stouffer_liptak_aggregate$Group.1,
                                                   sep = ":"), stouffer_liptak_aggregate$x)
@@ -157,7 +165,4 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
   if (return_df) {
     return(man.df)
   } 
-}   
-
-
-
+}
