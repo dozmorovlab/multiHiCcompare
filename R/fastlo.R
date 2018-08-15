@@ -45,7 +45,7 @@
 #' hicexp2 <- fastlo(hicexp2)
 
 fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE, 
-                   verbose = TRUE, max.pool = 0.7) {
+                   verbose = FALSE, max.pool = 0.7) {
   # check if data already normalized
   if (normalized(hicexp)) {
     stop("Data has already been normalized.")
