@@ -52,7 +52,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   }
   # check span input
   if (!is.na(span)) {
-    if (!is.numeric(span) | span <= 0 | span > 1) {
+    if (!is.numeric(span) || span <= 0 || span > 1) {
       stop("span must be set to NA or a value between 0 and 1")
     }
   }
@@ -105,7 +105,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   if (!is.numeric(max.pool)) {
     stop("max.pool must be a numeric value between 0 and 1")
   }
-  if (max.pool < 0 | max.pool > 1) {
+  if (max.pool < 0 || max.pool > 1) {
     stop("max.pool must be between 0 and 1")
   }
   if (max.pool < 0.5) {
@@ -218,6 +218,6 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   IF_mat[is.nan(IF_mat)] <- 0
   IF_mat[is.infinite(IF_mat)] <- 0
   # rebuild table
-  tab <- cbind(tab[, 1:4, with = FALSE], IF_mat)
+  tab <- cbind(tab[, c('chr', 'region1', 'region2', 'D'), with = FALSE], IF_mat)
   return(tab)
 }

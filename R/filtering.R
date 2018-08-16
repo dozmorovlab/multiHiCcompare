@@ -32,7 +32,7 @@
 #' hicexp2 <- hic_filter(hicexp2)
 
 hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5) {
-  if (zero.p < 0 | zero.p > 1) {
+  if (zero.p < 0 || zero.p > 1) {
     stop("zero.p must be in [0,1]")
   }
   if (A.min < 0) {

@@ -36,7 +36,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   }
   # check span input
   if (!is.na(span)) {
-    if (!is.numeric(span) | span <= 0 | span > 1) {
+    if (!is.numeric(span) || span <= 0 || span > 1) {
       stop("span must be set to NA or a value between 0 and 1")
     }
   }
@@ -44,6 +44,10 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   if (iterations != 3L) {
     warning("Typically it takes about 3 iterations for cyclic 
             loess to converge.")
+  }
+  # check for missing values
+  if (any(is.na(hic_table(hicexp)))) {
+    stop("hic_table contains missing values!")
   }
   # split up data by condition and perform cyclic loess
   normalized <- .loess_condition(hic_table(hicexp), 
@@ -156,24 +160,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
   criterion <- match.arg(criterion)
   family <- match.arg(family)
   x <- as.matrix(x)
-  
-  if ((ncol(x) != 1) & (ncol(x) != 2))
-    stop("The predictor 'x' should be one or two dimensional!!")
-  if (!is.numeric(x))
-    stop("argument 'x' must be numeric!")
-  if (!is.numeric(y))
-    stop("argument 'y' must be numeric!")
-  if (any(is.na(x)))
-    stop("'x' contains missing values!")
-  if (any(is.na(y)))
-    stop("'y' contains missing values!")
-  if (!is.null(user.span) && (length(user.span) != 1 || !is.numeric(user.span)))
-    stop("argument 'user.span' must be a numerical number!")
-  if (nrow(x) != length(y))
-    stop("'x' and 'y' have different lengths!")
-  if (length(y) < 3)
-    stop("not enough observations!")
-  
+
   data.bind <- data.frame(x = x, y = y)
   if (ncol(x) == 1) {
     names(data.bind) <- c("x", "y")

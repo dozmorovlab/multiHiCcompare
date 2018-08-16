@@ -84,7 +84,8 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   # if BEDPE pull out only columns we need
   if (ncol(tabs[[1]]) == 7) {
     tabs <- lapply(tabs, function(x) {
-      new.x <- x[, c(1,2,5,7)]
+      colnames(x) <- c('chr1', 'start1', 'end1', 'chr2', 'start2', 'end2', 'IF')
+      new.x <- x[, c('chr1', 'start1', 'start2', 'IF')]
       return(new.x)
     })
   }
@@ -155,8 +156,8 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
     tmp_table <- data.table::as.data.table(tmp_table)
     tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
     # rearrange columns
-    tmp_table <- tmp_table[, c(1, 2, 3, ncol(tmp_table),
-                               4:(ncol(tmp_table) - 1)), with = FALSE]
+    tmp_table <- tmp_table[, c('chr', 'region1', 'region2', 'D',
+                               paste0("IF", 1:(ncol(tmp_table) - 4))), with = FALSE]
     
     # set table in place on condition list
     hic_table <- tmp_table

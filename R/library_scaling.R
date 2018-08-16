@@ -50,7 +50,7 @@ hic_scale <- function(hicexp) {
     return(new.IF)
   })
   # recombine table
-  new_table <- cbind(tab[, 1:4], scaled_IFs)
+  new_table <- cbind(tab[, c('chr', 'region1', 'region2', 'D')], scaled_IFs)
   return(new_table)
 }
 
