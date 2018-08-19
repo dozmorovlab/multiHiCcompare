@@ -17,7 +17,7 @@ Description: multiHiCcompare provides functions for joint normalization
     adapted to jointly normalizing Hi-C data. Additionally, it provides 
     a general linear model (GLM) framework adapting the edgeR package to detect
     differences in Hi-C data in a distance dependent manner. 
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.0.0)
 Imports: data.table,
   dplyr,
   HiCcompare,
