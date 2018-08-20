@@ -4,7 +4,8 @@
 \alias{hic_filter}
 \title{Perform filtering on a Hi-C experiment}
 \usage{
-hic_filter(hicexp, zero.p = 0.8, A.min = 5)
+hic_filter(hicexp, zero.p = 0.8, A.min = 5,
+  remove.regions = hg19_cyto)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}
@@ -20,6 +21,14 @@ will filter rows that have any zeros.}
 interaction pair has an average expression 
 value less than A.min the row will be filtered
 out.}
+
+\item{remove.regions}{A GenomicRanges object indicating
+specific regions to be filtered out. By default
+this is the hg19 centromeric, gvar, and stalk
+regions. Also included in the package is
+hg38_cyto. If your data is not hg19 you will 
+need to substitute this file. To choose not 
+to filter any regions set regions = NULL.}
 }
 \value{
 A hicexp object.

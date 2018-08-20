@@ -5,7 +5,8 @@
 \title{Make Hi-C experiment object from data}
 \usage{
 make_hicexp(..., data_list = NA, groups, covariates = NULL,
-  remove_zeros = FALSE, zero.p = 0.8, A.min = 5, filter = TRUE)
+  remove_zeros = FALSE, zero.p = 0.8, A.min = 5, filter = TRUE,
+  remove.regions = hg19_cyto)
 }
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 
@@ -58,6 +59,17 @@ normalization, however the best computational
 speed gain will occur when filtering is done
 before normalization. Filtering parameters
 are controlled by the zero.p and A.min options.}
+
+\item{remove.regions}{A GenomicRanges object indicating
+specific regions to be filtered out. By default
+this is the hg19 centromeric, gvar, and stalk
+regions. Also included in the package is
+hg38_cyto. If your data is not hg19 you will 
+need to substitute this file. To choose not 
+to filter any regions set regions = NULL. NOTE:
+if you set filter = FALSE these regions will NOT
+be removed. This occurs in conjuction with the 
+filtering step.}
 }
 \value{
 A hicexp object.

@@ -47,6 +47,16 @@
 #'     speed gain will occur when filtering is done
 #'     before normalization. Filtering parameters
 #'     are controlled by the zero.p and A.min options.
+#' @param remove.regions A GenomicRanges object indicating
+#'     specific regions to be filtered out. By default
+#'     this is the hg19 centromeric, gvar, and stalk
+#'     regions. Also included in the package is
+#'     hg38_cyto. If your data is not hg19 you will 
+#'     need to substitute this file. To choose not 
+#'     to filter any regions set regions = NULL. NOTE:
+#'     if you set filter = FALSE these regions will NOT
+#'     be removed. This occurs in conjuction with the 
+#'     filtering step.
 #' @details Use this function to create a hicexp object for
 #'     analysis in multiHiCcompare. Filtering can also be 
 #'     performed in this step if the filter option is 
@@ -70,7 +80,7 @@
 
 make_hicexp <- function(..., data_list = NA, groups, covariates = NULL, 
                         remove_zeros = FALSE,
-                        zero.p = 0.8, A.min = 5, filter = TRUE) {
+                        zero.p = 0.8, A.min = 5, filter = TRUE, remove.regions = hg19_cyto) {
   if (!is.na(data_list[1])) {
     tabs <- data_list
   } else {
@@ -197,7 +207,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   
   # filter
   if (filter) {
-    experiment <- hic_filter(experiment, zero.p = zero.p, A.min = A.min)
+    experiment <- hic_filter(experiment, zero.p = zero.p, A.min = A.min, remove.regions = remove.regions)
   }
   
   return(experiment)
