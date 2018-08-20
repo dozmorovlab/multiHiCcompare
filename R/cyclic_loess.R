@@ -182,7 +182,7 @@ cyclic_loess <- function(hicexp, iterations = 3, span = NA,
     }
     criterion <- match.arg(criterion)
     fn <- function(span) {
-      mod <- update(model, span = span)
+      mod <- stats::update(model, span = span)
       as.crit(mod)[[criterion]]
     }
     result <- optimize(fn, span.range)

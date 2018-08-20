@@ -66,9 +66,9 @@ hic_filter <- function(hicexp, zero.p = 0.8, A.min = 5, remove.regions = hg19_cy
     tab <- hic_table(hicexp)
     # make GRanges object for regions of hic_table
     region1 <- tab[, c('chr', 'region1')]
-    region1[, end := region1 + resolution(hicexp) - 1]
+    region1[, `:=`(end = region1 + resolution(hicexp) - 1)]
     region2 <- tab[, c('chr', 'region2')]
-    region2[, end := region2 + resolution(hicexp) - 1]
+    region2[, `:=`(end = region2 + resolution(hicexp) - 1)]
     region1 <- GenomicRanges::makeGRangesFromDataFrame(region1, seqnames.field = 'chr', start.field = 'region1', end.field = 'end')
     region2 <- GenomicRanges::makeGRangesFromDataFrame(region2, seqnames.field = 'chr', start.field = 'region2', end.field = 'end')
     # overlap
