@@ -1,7 +1,7 @@
 Package: multiHiCcompare
 Title: Normalize and detect differences between Hi-C datasets when replicates 
   of each experimental condition are available
-Version: 0.99.30
+Version: 0.99.31
 Authors@R: c(person("John", "Stansfield", email = "stansfieldjc@vcu.edu", 
     role = c("aut", "cre")), 
     person("Mikhail", "Dozmorov", email = "mikhail.dozmorov@vcuhealth.org",
@@ -17,7 +17,7 @@ Description: multiHiCcompare provides functions for joint normalization
     adapted to jointly normalizing Hi-C data. Additionally, it provides 
     a general linear model (GLM) framework adapting the edgeR package to detect
     differences in Hi-C data in a distance dependent manner. 
-Depends: R (>= 3.0.0)
+Depends: R (>= 3.5.0)
 Imports: data.table,
   dplyr,
   HiCcompare,
