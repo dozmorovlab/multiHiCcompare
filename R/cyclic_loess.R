@@ -24,7 +24,7 @@
 #' @importFrom HiCcompare MD.plot1
 #' @importFrom data.table rbindlist
 #' @importFrom stats aggregate loess loess.control model.matrix 
-#'     optimize p.adjust predict update
+#'     optimize p.adjust predict update D
 #' @importFrom utils combn read.table
 #' @examples 
 #' #' data("hicexp2")

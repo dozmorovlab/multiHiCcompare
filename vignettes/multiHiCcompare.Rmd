@@ -141,7 +141,8 @@ Say we have data from 2 experimental conditions with 2 samples each. We can make
 data("HCT116_r1", "HCT116_r2", "HCT116_r3", "HCT116_r4")
 hicexp1 <- make_hicexp(HCT116_r1, HCT116_r2, HCT116_r3, HCT116_r4, 
                        groups = c(0, 0, 1, 1), 
-                       zero.p = 0.8, A.min = 5, filter = TRUE)
+                       zero.p = 0.8, A.min = 5, filter = TRUE,
+                       remove.regions = hg19_cyto)
 hicexp1
 ```
 

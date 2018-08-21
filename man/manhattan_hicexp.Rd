@@ -4,7 +4,8 @@
 \alias{manhattan_hicexp}
 \title{Manhattan plot function for results of multiHiCcompare}
 \usage{
-manhattan_hicexp(hicexp, method = "standard", return_df = FALSE)
+manhattan_hicexp(hicexp, method = "standard", return_df = FALSE,
+  alpha = 0.05)
 }
 \arguments{
 \item{hicexp}{A hicexp object that has had differences
@@ -24,6 +25,11 @@ the region was found significant.}
 
 \item{return_df}{Logical, should the data.frame used to
 generate the plot be returned?}
+
+\item{alpha}{The p-value cut off to be used for 
+calling an interaction significant. This is
+only used if method = 'count'. Defaults to 
+0.05.}
 }
 \value{
 A manhattan plot and optionally the data.frame used

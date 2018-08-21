@@ -15,6 +15,10 @@
 #'     the region was found significant. 
 #' @param return_df Logical, should the data.frame used to
 #'     generate the plot be returned?
+#' @param alpha The p-value cut off to be used for 
+#'     calling an interaction significant. This is
+#'     only used if method = 'count'. Defaults to 
+#'     0.05.
 #' @details This function is used to create a manhattan
 #'     plot for the significance of all genomic regions 
 #'     in the dataset. These correspond to the rows (or columns)
@@ -42,7 +46,7 @@
 #' manhattan_hicexp(hicexp_diff, method = "fisher")
 
 
-manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
+manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alpha = 0.05) {
   # check input
   method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), 
                       several.ok = FALSE)
@@ -139,13 +143,13 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE) {
     regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
                  paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
-    count <- ifelse(p.values < 0.05, 1, 0)
+    count <- ifelse(p.values < alpha, 1, 0)
     
     ## count method
     count_aggregate <- aggregate(count, by = list(regions), 
                                  FUN = function(cnt) {
       c.sum <- sum(cnt)
-      c.pval <- 1 / c.sum
+      c.pval <- 1 / sqrt(c.sum)
       return(c.pval)
     })
     
