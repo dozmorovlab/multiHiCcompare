@@ -1,7 +1,7 @@
 Package: multiHiCcompare
 Title: Normalize and detect differences between Hi-C datasets when replicates 
   of each experimental condition are available
-Version: 0.99.35
+Version: 0.99.36
 Authors@R: c(person("John", "Stansfield", email = "stansfieldjc@vcu.edu", 
     role = c("aut", "cre")), 
     person("Mikhail", "Dozmorov", email = "mikhail.dozmorov@vcuhealth.org",
@@ -27,7 +27,10 @@ Imports: data.table,
   pheatmap,
   methods,
   metap,
-  GenomicRanges
+  GenomicRanges,
+  graphics,
+  stats,
+  utils
 biocViews: Software,
   HiC, Sequencing, Normalization
 License: MIT + file LICENSE
