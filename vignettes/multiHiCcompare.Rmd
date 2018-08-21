@@ -149,6 +149,9 @@ The `groups` option specifies the experimental groups. You must enter a vector t
 
 Filtering can be performed when creating a `hicexp` object using the `zero.p` and `A.min` options in the `make_hicexp` function. The `zero.p` option allows for filtering by the proportion of zero IFs for an interaction. The `A.min` allows for filtering by a minimum average IF value. These options can be used together or individually to filter your data. Filtering is important to remove interactions with lots of 0 IFs and low average expression. These interactions tend to not be very interesting and can easily become a false positive during difference detection. Additionally, removing these interactions will increase the computational speed of `multiHiCcompare`. If for some reason you do not want to filter the data simply set `filter = FALSE`.
 
+### Filtering by region
+
+- add directions for filtering out centromere / other regions
 
 ### The `hicexp` object
 
