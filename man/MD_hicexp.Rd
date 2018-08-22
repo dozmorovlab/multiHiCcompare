@@ -4,7 +4,8 @@
 \alias{MD_hicexp}
 \title{Make MD plots for all combinations of a condition}
 \usage{
-MD_hicexp(hicexp, prow = 3, pcol = 3, plot.chr = NA)
+MD_hicexp(hicexp, prow = 3, pcol = 3, plot.chr = NA,
+  plot.loess = FALSE)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}
@@ -23,6 +24,11 @@ plot chromosomes 1 and 5 set plot.chr
 = c(1, 5). Defaults to NA indicating that
 all chromosomes present in the hicexp
 will be plotted.}
+
+\item{plot.loess}{Logical, should a loess curve
+be plotted over the MD plots. Note setting
+this to TRUE will increase the computational
+time for plotting.}
 }
 \value{
 A set of MD plots.

@@ -15,6 +15,10 @@
 #'     = c(1, 5). Defaults to NA indicating that
 #'     all chromosomes present in the hicexp
 #'     will be plotted. 
+#' @param plot.loess Logical, should a loess curve
+#'     be plotted over the MD plots. Note setting
+#'     this to TRUE will increase the computational
+#'     time for plotting.
 #'
 #' @return A set of MD plots.
 #' 
@@ -27,7 +31,7 @@
 
 
 
-MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
+MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA, plot.loess = FALSE) {
   # check if more than one chromosome then split
   if (length(unique(hic_table(hicexp)$chr)) > 1) {
     chr_table <- split(hic_table(hicexp), hic_table(hicexp)$chr)
@@ -38,21 +42,21 @@ MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
         stop("Chr selected in plot.chr does not exist in the data")
       }
       tmp <- lapply(chr_table[chrs.to.plot], .MD.hicexp.chr, prow = prow, 
-                    pcol = pcol)
+                    pcol = pcol, plot.loess = plot.loess)
     } else {
       # otherwise plot every chr
-      tmp <- lapply(chr_table, .MD.hicexp.chr, prow = prow, pcol = pcol)
+      tmp <- lapply(chr_table, .MD.hicexp.chr, prow = prow, pcol = pcol, plot.loess = plot.loess)
     }
   } else {
     # if only a single chr just plot
-    .MD.hicexp.chr(hic_table(hicexp), prow = prow, pcol = pcol)
+    .MD.hicexp.chr(hic_table(hicexp), prow = prow, pcol = pcol, plot.loess = plot.loess)
   }
   
 }
 
 
 
-.MD.hicexp.chr <- function(chr_table, prow, pcol) {
+.MD.hicexp.chr <- function(chr_table, prow, pcol, plot.loess) {
   # save par
   old_par <- par()
   # get all unique pairs
@@ -71,7 +75,8 @@ MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA) {
                                                          'Sample ', 
                                                          combinations[1,j] - 4,
                                                          ' vs. ', combinations[2,j] - 4),
-                                                          ylab = '', xlab = '')
+                                                          ylab = '', xlab = '',
+                                                          plot.loess = plot.loess)
   }
   # reset par
   suppressWarnings(par(old_par))
@@ -113,25 +118,28 @@ MD_composite <- function(hicexp, plot.chr = NA) {
         stop("Chr selected in plot.chr does not exist in the data")
       }
       tmp <- lapply(chr_table[chrs.to.plot], function(x) {
-        .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]))
+        .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]),
+                   plot.loess = FALSE)
       })
     } else {
       # otherwise plot every chr
       tmp <- lapply(chr_table, function(x) {
-        .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]))
+        .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]),
+                   plot.loess = FALSE)
       })
     }
   } else {
     # if only a single chr just plot
     .MD.smooth(M = results(hicexp)$logFC, D = results(hicexp)$D, 
                p.val = results(hicexp)$p.adj, 
-               title = "Composite MD Plot")
+               title = "Composite MD Plot",
+               plot.loess = FALSE)
   }
 }
 
 
 .MD.smooth <- function(M, D, p.val = NA, title = 'MD Plot', ylab = 'M', 
-                       xlab = 'Distance') {
+                       xlab = 'Distance', plot.loess = FALSE) {
   # smooth scatter version
   smoothScatter(D, M, xlab = xlab, ylab = ylab, main = title, cex.main = 0.85)
   abline(h = 0)
@@ -143,6 +151,11 @@ MD_composite <- function(hicexp, plot.chr = NA) {
     legend('bottomright', legend = c('P < 0.001', 'P < 0.05'), 
            fill = c('red', 'yellow'), bty = 'n', horiz = TRUE)
   }
+  # add loess fit to plot
+  if (plot.loess) {
+    lines(loess.smooth(D, M, span = 1/2, degree = 1), col = 'red')
+  }
+  
 }
 
 

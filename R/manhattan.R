@@ -106,6 +106,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alp
     regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
                  paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
+    p.values[p.values == 1] <- 0.99999 # change pvalues from 1 so sumz works correctly
     
     ## Stouffer-Liptak method
     # stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), 
