@@ -31,9 +31,7 @@ To install HiCcompare from bioconductor open R and enter the following commands.
 
 ```
 # It is recommended to use the github release until the next Bioconductor update
-## try http:// if https:// URLs are not supported
-# source("https://bioconductor.org/biocLite.R")
-# biocLite("multiHiCcompare")
+# BiocManager::install("multiHiCcompare")
 # library(multiHiCcompare)
 ```
 
