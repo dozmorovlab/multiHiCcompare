@@ -22,8 +22,9 @@ First make sure you have all dependencies installed in R.
 ```
 install.packages(c('dplyr', 'data.table', 'devtools', 'qqman))
 
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("BiocParallel", "HiCcompare", "edgeR"))
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("BiocParallel", "HiCcompare", "edgeR"))
 ```
 
 To install HiCcompare from bioconductor open R and enter the following commands. Currently it is recommended to use the GitHub release or the development version of the bioconductor release.
