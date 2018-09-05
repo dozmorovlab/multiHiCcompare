@@ -94,6 +94,11 @@ MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA, plot.loess = FA
 #'     = c(1, 5). Defaults to NA indicating that
 #'     all chromosomes present in the hicexp
 #'     will be plotted. 
+#' @param D.range Allows for subsetting of the plot by
+#'     Distance. Set to proportion of total distance 
+#'     that you want to be displayed. Value of 1 
+#'     indicates that the entire distance range 
+#'     will be displayed. Defaults to 1.
 #' @return An MD plot
 #' @examples 
 #' data("hicexp_diff")
@@ -101,11 +106,16 @@ MD_hicexp <- function(hicexp, prow = 3, pcol = 3, plot.chr = NA, plot.loess = FA
 #' @export
 
 
-MD_composite <- function(hicexp, plot.chr = NA) {
+MD_composite <- function(hicexp, plot.chr = NA, D.range = 1) {
   # check to make sure data has been compared
   if (nrow(results(hicexp)) < 1) {
     stop("You must compare the Hi-C data first before using 
          this plot function")
+  }
+  
+  # check D.range
+  if (D.range > 1 | D.range <= 0) {
+    stop('D.range must be less than or equal to 1 and greater than 0.')
   }
   
   # check if more than one chromosome then split
@@ -119,13 +129,13 @@ MD_composite <- function(hicexp, plot.chr = NA) {
       }
       tmp <- lapply(chr_table[chrs.to.plot], function(x) {
         .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]),
-                   plot.loess = FALSE)
+                   plot.loess = FALSE, D.range = D.range)
       })
     } else {
       # otherwise plot every chr
       tmp <- lapply(chr_table, function(x) {
         .MD.smooth(x$logFC, x$D, x$p.adj, title = paste0('chr', x$chr[1]),
-                   plot.loess = FALSE)
+                   plot.loess = FALSE, D.range = D.range)
       })
     }
   } else {
@@ -133,13 +143,25 @@ MD_composite <- function(hicexp, plot.chr = NA) {
     .MD.smooth(M = results(hicexp)$logFC, D = results(hicexp)$D, 
                p.val = results(hicexp)$p.adj, 
                title = "Composite MD Plot",
-               plot.loess = FALSE)
+               plot.loess = FALSE, D.range = D.range)
   }
 }
 
 
 .MD.smooth <- function(M, D, p.val = NA, title = 'MD Plot', ylab = 'M', 
-                       xlab = 'Distance', plot.loess = FALSE) {
+                       xlab = 'Distance', plot.loess = FALSE, D.range = 1) {
+  # subset plot by D
+  if (D.range < 1) {
+    max.D <- max(D)
+    cut.point <- ceiling(D.range * max.D)
+    # subset M, D, p.val vectors based on cut.point
+    keep <- D <= cut.point
+    D <- D[keep]
+    M <- M[keep]
+    p.val <- p.val[keep]
+  }
+  
+  
   # smooth scatter version
   smoothScatter(D, M, xlab = xlab, ylab = ylab, main = title, cex.main = 0.85)
   abline(h = 0)

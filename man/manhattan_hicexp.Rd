@@ -5,7 +5,7 @@
 \title{Manhattan plot function for results of multiHiCcompare}
 \usage{
 manhattan_hicexp(hicexp, method = "standard", return_df = FALSE,
-  alpha = 0.05)
+  alpha = 0.05, chr = NA)
 }
 \arguments{
 \item{hicexp}{A hicexp object that has had differences
@@ -13,7 +13,7 @@ detected}
 
 \item{method}{string denoting the p-value method to
 use for plotting. Options are "standard", "fisher",
-and "stouffer". "standard" plots a manhattan plot
+"stouffer", and count. "standard" plots a manhattan plot
 using all individual p-values. "fisher" uses 
 Fisher's method for combining p-values to combine
 the p-values for each region which are then plotted.
@@ -30,6 +30,10 @@ generate the plot be returned?}
 calling an interaction significant. This is
 only used if method = 'count'. Defaults to 
 0.05.}
+
+\item{chr}{A numeric value indicating a specific
+chromosome number to subset the plot to. Defaults
+to NA indicating that all chromosomes will be plotted.}
 }
 \value{
 A manhattan plot and optionally the data.frame used

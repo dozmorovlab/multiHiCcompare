@@ -4,7 +4,7 @@
 #'     detected
 #' @param method string denoting the p-value method to
 #'     use for plotting. Options are "standard", "fisher",
-#'     and "stouffer". "standard" plots a manhattan plot
+#'     "stouffer", and count. "standard" plots a manhattan plot
 #'     using all individual p-values. "fisher" uses 
 #'     Fisher's method for combining p-values to combine
 #'     the p-values for each region which are then plotted.
@@ -19,6 +19,9 @@
 #'     calling an interaction significant. This is
 #'     only used if method = 'count'. Defaults to 
 #'     0.05.
+#' @param chr A numeric value indicating a specific
+#'     chromosome number to subset the plot to. Defaults
+#'     to NA indicating that all chromosomes will be plotted.
 #' @details This function is used to create a manhattan
 #'     plot for the significance of all genomic regions 
 #'     in the dataset. These correspond to the rows (or columns)
@@ -46,10 +49,19 @@
 #' manhattan_hicexp(hicexp_diff, method = "fisher")
 
 
-manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alpha = 0.05) {
+manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, 
+                             alpha = 0.05, chr = NA) {
   # check input
   method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), 
                       several.ok = FALSE)
+  if (!is.na(chr)) {
+    if (!is.numeric(chr)) {
+      stop("chr must be either NA or a numeric value.")
+    }
+    if (!(chr %in% unique(results(hicexp)$chr))) {
+      stop("The chr chosen as a subset must exist in the data object")
+    }
+  }
   # check that data has been compared
   if (nrow(results(hicexp)) < 1) {
     stop("Differences must be detected before making a manhattan plot.")
@@ -63,6 +75,10 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alp
                                             results(hicexp)$chr)), 
                          P = c(results(hicexp)$p.adj, 
                                results(hicexp)$p.adj))
+    # subset by chr is option is not NA
+    if (!is.na(chr)) {
+      man.df <- man.df[man.df$CHR == chr,]
+    }
     # plot
     suppressWarnings(qqman::manhattan(man.df))
   }
@@ -96,6 +112,10 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alp
     colnames(fisher_aggregate) <- c("CHR", "BP", "P")
     fisher_aggregate$P[fisher_aggregate$P == 0] <- 10^-100
     
+    # subset by chr is option is not NA
+    if (!is.na(chr)) {
+      fisher_aggregate <- fisher_aggregate[fisher_aggregate$CHR == chr,]
+    }
     # plot combined p-value manahttan plots
     suppressWarnings(qqman::manhattan(fisher_aggregate))
     
@@ -109,14 +129,6 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alp
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
     p.values[p.values == 1] <- 0.99999 # change pvalues from 1 so sumz works correctly
     
-    ## Stouffer-Liptak method
-    # stouffer_liptak_aggregate <- aggregate(p.values, by = list(regions), 
-    #                                        FUN = function(p) {
-    #   zi <- qnorm(p, lower.tail = FALSE)
-    #   Z <- sum(zi) / sqrt(length(p))
-    #   c.pval <- pnorm(Z, lower.tail = FALSE)
-    #   return(c.pval)
-    # })
     
     stouffer_liptak_aggregate <- aggregate(p.values, 
                                            by = list(regions), 
@@ -133,6 +145,11 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alp
     colnames(stouffer_liptak_aggregate) <- c("CHR", "BP", "P")
     # make sure there are no zero p-values
     stouffer_liptak_aggregate$P[stouffer_liptak_aggregate$P == 0] <- .Machine$double.xmin
+    
+    # subset by chr is option is not NA
+    if (!is.na(chr)) {
+      stouffer_liptak_aggregate <- stouffer_liptak_aggregate[stouffer_liptak_aggregate$CHR == chr,]
+    }
     
     suppressWarnings(qqman::manhattan(stouffer_liptak_aggregate))
     
@@ -160,6 +177,10 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, alp
                              count_aggregate$x)
     colnames(count_aggregate) <- c("CHR", "BP", "P")
     
+    # subset by chr is option is not NA
+    if (!is.na(chr)) {
+      count_aggregate <- count_aggregate[count_aggregate$CHR == chr,]
+    }
     # plot combined p-value manahttan plots
     suppressWarnings(.count_manhattan(count_aggregate, ylab = "Number of times significant"))
     

@@ -4,7 +4,7 @@
 \alias{MD_composite}
 \title{Plot a composite MD plot with the results of a comparison}
 \usage{
-MD_composite(hicexp, plot.chr = NA)
+MD_composite(hicexp, plot.chr = NA, D.range = 1)
 }
 \arguments{
 \item{hicexp}{A hicexp object which has 
@@ -18,6 +18,12 @@ plot chromosomes 1 and 5 set plot.chr
 = c(1, 5). Defaults to NA indicating that
 all chromosomes present in the hicexp
 will be plotted.}
+
+\item{D.range}{Allows for subsetting of the plot by
+Distance. Set to proportion of total distance 
+that you want to be displayed. Value of 1 
+indicates that the entire distance range 
+will be displayed. Defaults to 1.}
 }
 \value{
 An MD plot
