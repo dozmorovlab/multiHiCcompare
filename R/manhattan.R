@@ -19,7 +19,7 @@
 #'     calling an interaction significant. This is
 #'     only used if method = 'count'. Defaults to 
 #'     0.05.
-#' @param chr A numeric value indicating a specific
+#' @param plot.chr A numeric value indicating a specific
 #'     chromosome number to subset the plot to. Defaults
 #'     to NA indicating that all chromosomes will be plotted.
 #' @details This function is used to create a manhattan
@@ -50,15 +50,15 @@
 
 
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, 
-                             alpha = 0.05, chr = NA) {
+                             alpha = 0.05, plot.chr = NA) {
   # check input
   method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), 
                       several.ok = FALSE)
-  if (!is.na(chr)) {
-    if (!is.numeric(chr)) {
-      stop("chr must be either NA or a numeric value.")
+  if (!is.na(plot.chr)) {
+    if (!is.numeric(plot.chr)) {
+      stop("plot.chr must be either NA or a numeric value.")
     }
-    if (!(chr %in% unique(results(hicexp)$chr))) {
+    if (!(plot.chr %in% unique(results(hicexp)$chr))) {
       stop("The chr chosen as a subset must exist in the data object")
     }
   }
@@ -76,11 +76,11 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
                          P = c(results(hicexp)$p.adj, 
                                results(hicexp)$p.adj))
     # subset by chr is option is not NA
-    if (!is.na(chr)) {
-      man.df <- man.df[man.df$CHR == chr,]
+    if (!is.na(plot.chr)) {
+      man.df <- man.df[man.df$CHR == plot.chr,]
     }
     # plot
-    suppressWarnings(qqman::manhattan(man.df))
+    suppressWarnings(qqman::manhattan(man.df, suggestiveline = FALSE, genomewideline = FALSE))
   }
   
   if (method == "fisher") {
@@ -113,11 +113,11 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     fisher_aggregate$P[fisher_aggregate$P == 0] <- 10^-100
     
     # subset by chr is option is not NA
-    if (!is.na(chr)) {
-      fisher_aggregate <- fisher_aggregate[fisher_aggregate$CHR == chr,]
+    if (!is.na(plot.chr)) {
+      fisher_aggregate <- fisher_aggregate[fisher_aggregate$CHR == plot.chr,]
     }
     # plot combined p-value manahttan plots
-    suppressWarnings(qqman::manhattan(fisher_aggregate))
+    suppressWarnings(qqman::manhattan(fisher_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
     
     man.df <- fisher_aggregate
   }
@@ -147,11 +147,11 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     stouffer_liptak_aggregate$P[stouffer_liptak_aggregate$P == 0] <- .Machine$double.xmin
     
     # subset by chr is option is not NA
-    if (!is.na(chr)) {
-      stouffer_liptak_aggregate <- stouffer_liptak_aggregate[stouffer_liptak_aggregate$CHR == chr,]
+    if (!is.na(plot.chr)) {
+      stouffer_liptak_aggregate <- stouffer_liptak_aggregate[stouffer_liptak_aggregate$CHR == plot.chr,]
     }
     
-    suppressWarnings(qqman::manhattan(stouffer_liptak_aggregate))
+    suppressWarnings(qqman::manhattan(stouffer_liptak_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
     
     man.df <- stouffer_liptak_aggregate
   }
@@ -178,8 +178,8 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     colnames(count_aggregate) <- c("CHR", "BP", "P")
     
     # subset by chr is option is not NA
-    if (!is.na(chr)) {
-      count_aggregate <- count_aggregate[count_aggregate$CHR == chr,]
+    if (!is.na(plot.chr)) {
+      count_aggregate <- count_aggregate[count_aggregate$CHR == plot.chr,]
     }
     # plot combined p-value manahttan plots
     suppressWarnings(.count_manhattan(count_aggregate, ylab = "Number of times significant"))
@@ -200,8 +200,8 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
 
 # modified manhattan plot function for counts
 .count_manhattan <- function (x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", col = c("gray10", 
-                                                                                       "gray60"), chrlabs = NULL, suggestiveline = -log10(1e-05), 
-                              genomewideline = -log10(5e-08), highlight = NULL, 
+                                                                                       "gray60"), chrlabs = NULL, suggestiveline = FALSE, 
+                              genomewideline = FALSE, highlight = NULL, 
                               annotatePval = NULL, annotateTop = TRUE, ...) 
 {
   CHR = BP = P = index = NULL

@@ -5,7 +5,7 @@
 \title{Manhattan plot function for results of multiHiCcompare}
 \usage{
 manhattan_hicexp(hicexp, method = "standard", return_df = FALSE,
-  alpha = 0.05, chr = NA)
+  alpha = 0.05, plot.chr = NA)
 }
 \arguments{
 \item{hicexp}{A hicexp object that has had differences
@@ -31,7 +31,7 @@ calling an interaction significant. This is
 only used if method = 'count'. Defaults to 
 0.05.}
 
-\item{chr}{A numeric value indicating a specific
+\item{plot.chr}{A numeric value indicating a specific
 chromosome number to subset the plot to. Defaults
 to NA indicating that all chromosomes will be plotted.}
 }
