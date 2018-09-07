@@ -16,9 +16,9 @@
 #' @export
 #' @examples 
 #' data('hicexp_diff')
-#' filter_results(hicexp_diff)
+#' top_dirs(hicexp_diff)
 
-filter_results <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p_cutoff = 0.01,
+top_dirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p_cutoff = 0.01,
                            alpha = 0.05, return_df = "pairedbed") {
   # check that data has been compared
   if (nrow(results(hicexp)) < 1) {
@@ -46,13 +46,15 @@ filter_results <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p_cutoff
   
   # if BED need to aggregate regions
   if (return_df == "bed") {
+    # subset to only significant interactions
+    res <- res[p.adj < alpha, ]
     # make vector of regions and p-values
-    regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
-                 paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
-    p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
-    dist <- c(results(hicexp)$D, results(hicexp)$D)
-    logfc <- c(results(hicexp)$logFC, results(hicexp)$logFC)
-    logcpm <- c(results(hicexp)$logCPM, results(hicexp)$logCPM)
+    regions <- c(paste0(res$chr, ':', res$region1),
+                 paste0(res$chr, ':', res$region2))
+    p.values <- c(res$p.adj, res$p.adj)
+    dist <- c(res$D, res$D)
+    logfc <- c(res$logFC, res$logFC)
+    logcpm <- c(res$logCPM, res$logCPM)
     
     
     # aggregate into fisher pvalue
@@ -112,6 +114,7 @@ filter_results <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p_cutoff
     colnames(res) <- c('chr', 'start', 'count', 'avgDistance', 'avgLogFC', 'avgLogCPM', 'stoufferPValue', 'fisherPValue', 'end')
     res <- res[, c('chr', 'start', 'end', 'count', 'avgDistance', 'avgLogFC', 'avgLogCPM', 'stoufferPValue', 'fisherPValue')]
     res <- data.table::as.data.table(res)
+    res <- res[order(res$count, decreasing = TRUE), ]
     
     # filter
     res <- res[avgLogCPM >= logcpm_cutoff & abs(avgLogFC) >= logfc_cutoff & stoufferPValue <= p_cutoff, ]
