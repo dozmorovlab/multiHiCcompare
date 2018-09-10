@@ -197,6 +197,83 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
 
 
 
+#' Plot the p-value results from topDirs
+#' 
+#' @export
+#' @param dirs The output of the topDirs function when the return_df 
+#'     option is set to "bed". 
+#' @param plot.chr A numeric value indicating a specific
+#'     chromosome number to subset the plot to. Defaults
+#'     to NA indicating that all chromosomes will be plotted.
+#' @return A plot.
+#' @examples 
+#' data('hicexp_diff')
+#' dirs <- topDirs(hicexp_diff, return_df = 'bed')
+#' plot_pvals(dirs)
+
+plot_pvals <- function(dirs, plot.chr = NA) {
+  # check input
+  if (ncol(dirs) != 8) {
+    stop("Use only the output of topDirs() where return_df = 'bed' for this function")
+  }
+  if (!is.na(plot.chr)) {
+    if (!is.numeric(plot.chr)) {
+      stop("plot.chr must be either NA or a numeric value.")
+    }
+    if (!(paste0('chr', plot.chr) %in% unique(dirs$chr))) {
+      stop("The chr chosen as a subset must exist in the data object")
+    }
+  }
+  # make dataframe for plotting
+  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = dirs$avgP.adj)
+  # subset if plot.chr is not NA
+  if(!is.na(plot.chr[1])) {
+    df <- df[df$CHR == plot.chr,]
+  }
+  # plot combined p-value manahttan plots
+  suppressWarnings(qqman::manhattan(df, suggestiveline = FALSE, genomewideline = FALSE))
+}
+
+
+#' Plot the count results from topDirs
+#' 
+#' @export
+#' @param dirs The output of the topDirs function when the return_df 
+#'     option is set to "bed". 
+#' @param plot.chr A numeric value indicating a specific
+#'     chromosome number to subset the plot to. Defaults
+#'     to NA indicating that all chromosomes will be plotted.
+#' @return A plot.
+#' @examples 
+#' data('hicexp_diff')
+#' dirs <- topDirs(hicexp_diff, return_df = 'bed')
+#' plot_counts(dirs)
+
+plot_counts <- function(dirs, plot.chr = NA) {
+  # check input
+  if (ncol(dirs) != 8) {
+    stop("Use only the output of topDirs() where return_df = 'bed' for this function")
+  }
+  if (!is.na(plot.chr)) {
+    if (!is.numeric(plot.chr)) {
+      stop("plot.chr must be either NA or a numeric value.")
+    }
+    if (!(paste0('chr', plot.chr) %in% unique(dirs$chr))) {
+      stop("The chr chosen as a subset must exist in the data object")
+    }
+  }
+  # make dataframe for plotting
+  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = dirs$count)
+  # subset if plot.chr is not NA
+  if(!is.na(plot.chr[1])) {
+    df <- df[df$CHR == plot.chr,]
+  }
+  # plot
+  suppressWarnings(.count_manhattan(df, ylab = "Number of times significant"))
+}
+
+
+
 
 # modified manhattan plot function for counts
 .count_manhattan <- function (x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", col = c("gray10", 
