@@ -80,6 +80,7 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     
     fisher_aggregate <- cbind(read.table(text = fisher_aggregate$Group.1, 
                                          sep = ":"), fisher_aggregate$x)
+    fisher_aggregate$`fisher_aggregate$x`[fisher_aggregate$`fisher_aggregate$x` == 0] <- .Machine$double.xmin
     # # aggregate into stouffer pvalue
     # p.values[p.values == 1] <- 0.99999 # change pvalues from 1 so sumz works correctly
     # stouffer_liptak_aggregate <- aggregate(p.values, 
