@@ -225,7 +225,7 @@ plot_pvals <- function(dirs, plot.chr = NA) {
     }
   }
   # make dataframe for plotting
-  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = dirs$avgP.adj)
+  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = as.numeric(dirs$avgP.adj))
   # subset if plot.chr is not NA
   if(!is.na(plot.chr[1])) {
     df <- df[df$CHR == plot.chr,]

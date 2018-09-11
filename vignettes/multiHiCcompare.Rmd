@@ -292,6 +292,36 @@ hicexp2 <- hic_glm(hicexp2, design = d, coef = 2, method = "Treat",
                   M = 0.5, p.method = "fdr", parallel = FALSE)
 ```
 
+## Downstream analysis
+
+For downstream analysis of the results of `multiHiCcompare` you may want to filter the results. This can be accomplished by using the `topDirs` function. Setting the `return_df = 'pairedbed'` will return a table of of the interacting pairs filtered by your specifications.
+
+```{r}
+td <- topDirs(hicexp1, logfc_cutoff = 0.5, logcpm_cutoff = 0.5,
+        p.adj_cutoff = 0.2, return_df = 'pairedbed')
+head(td)
+```
+
+Additionally you can summarize the regions that were detected as significant at least once by setting `return_df = 'bed'`.
+
+```{r}
+counts <- topDirs(hicexp1, logfc_cutoff = 0.5, logcpm_cutoff = 0.5, p.adj_cutoff = 0.2, alpha = 0.1, return_df = 'bed')
+head(counts)
+```
+
+The resulting table when `return_df = 'bed'` is used can be input into the following plot function to visualize the p-values of the top differentially interacting regions (DIRs).
+
+```{r}
+plot_pvals(counts)
+```
+
+Or to visualize the counts of the top DIRs.
+
+```{r}
+plot_counts(counts)
+```
+
+
 
 ## Other functions
 
