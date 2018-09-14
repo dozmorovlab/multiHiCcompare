@@ -5,17 +5,17 @@
 #' @param method string denoting the p-value method to
 #'     use for plotting. Options are "standard", "fisher",
 #'     "stouffer", and count. "standard" plots a manhattan plot
-#'     using all individual p-values. "fisher" uses 
-#'     Fisher's method for combining p-values to combine
-#'     the p-values for each region which are then plotted.
-#'     "stouffer" uses the Stouffer-Liptak method for 
-#'     combining p-values for each region which are then 
-#'     plotted. "count" produces a plot where the y-values
-#'     are the -log10(1 / S) where S is the number of times
-#'     the region was found significant. 
+#'     using all individual p-values (very slow, use with caution).  
+#'     "fisher" or "stouffer" methods use the Fisher's method or
+#'     the Stouffer-Liptak method, respectively, for combining p-values
+#'     for each region which are then plotted on the -log10(p-value) Y-axis.
+#'     "count" summarizes the number of times a region was detected as 
+#'     significant (see "alpha" parameter), plotted on Y-axis. The higher
+#'     the dots are, the more sighificant/more frequent a region was 
+#'     detected as significantly differentially interacting.
 #' @param return_df Logical, should the data.frame used to
 #'     generate the plot be returned?
-#' @param alpha The p-value cut off to be used for 
+#' @param alpha The adjusted p-value cutoff to be used for 
 #'     calling an interaction significant. This is
 #'     only used if method = 'count'. Defaults to 
 #'     0.05.
