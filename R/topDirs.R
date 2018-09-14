@@ -14,7 +14,7 @@
 #'    by the function. Options are "bed" and "pairedbed".
 #' @param alpha The p-value cutoff for determining the count
 #'     of number of times a region is significant. Used to calculate
-#'     counts of times a region was detected as significantly interacting. 
+#'     the number of times a region was detected as significantly interacting. 
 #'     Defaults to 0.05.
 #' @details This function is meant to filter the results of
 #'     multiHiCcompare. The top differentially interacting 
@@ -52,6 +52,9 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     res$end2 <- res$region2 + resolution(hicexp) - 1
     res <- res[, c("chr1", "region1", "end1", 'chr2', 'region2', 'end2', 'D', 'logFC', 'logCPM', 'p.value', 'p.adj')]
     colnames(res)[c(2,5)] <- c('start1', 'start2')
+    # make p-values in scientific notation
+    res$p.value <- formatC(res$p.value, digits = 4, format = "E")
+    res$p.adj <- formatC(res$p.adj, digits = 4, format = "E")
   }
   
   # if BED need to aggregate regions
@@ -129,6 +132,9 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     
     # filter
     res <- res[avgLogCPM >= logcpm_cutoff & abs(avgLogFC) >= logfc_cutoff & avgP.adj <= p.adj_cutoff & avgD >= D_cutoff, ]
+    
+    # format pvalues
+    res$avgP.adj <- formatC(res$avgP.adj, digits = 4, format = "E")
   }
   
   return(res)
