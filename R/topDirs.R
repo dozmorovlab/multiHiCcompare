@@ -55,6 +55,9 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     # make p-values in scientific notation
     res$p.value <- formatC(res$p.value, digits = 4, format = "E")
     res$p.adj <- formatC(res$p.adj, digits = 4, format = "E")
+    # round logFc and logCPM
+    res$logCPM <- round(res$logCPM, digits = 4)
+    res$logFC <- round(res$logFC, digits = 4)
   }
   
   # if BED need to aggregate regions
@@ -135,6 +138,9 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     
     # format pvalues
     res$avgP.adj <- formatC(res$avgP.adj, digits = 4, format = "E")
+    # round logFc and logCPM
+    res$avgLogCPM <- round(res$avgLogCPM, digits = 4)
+    res$avgLogFC <- round(res$avgLogFC, digits = 4)
   }
   
   return(res)
