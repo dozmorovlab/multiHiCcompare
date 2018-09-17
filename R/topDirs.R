@@ -5,17 +5,17 @@
 #'    by. Defaults to 1.
 #' @param logcpm_cutoff The logCPM cutoff you wish to
 #'    filter by. Defaults to 1.
-#' @param p.adj_cutoff The p-value cutoff you wish to filter
+#' @param p.adj_cutoff The adjusted p-value cutoff you wish to filter
 #'    by. Defaults to 0.01.
 #' @param D_cutoff The distance cutoff you wish to filter
 #'    by. Interactions with a D < D_cutoff will be filtered.
 #'    Defaults to 1. 
 #' @param return_df The format for the data.frame returned
 #'    by the function. Options are "bed" and "pairedbed".
-#' @param alpha The p-value cut off for determining the count
-#'     of number of times a region is significant. The adjusted
-#'     p-value is used for this. Defaults
-#'     to 0.05.
+#' @param alpha The p-value cutoff for determining the count
+#'     of number of times a region is significant. Used to calculate
+#'     the number of times a region was detected as significantly interacting. 
+#'     Defaults to 0.05.
 #' @details This function is meant to filter the results of
 #'     multiHiCcompare. The top differentially interacting 
 #'     regions (DIRs) can be returned by using this function.
@@ -145,3 +145,4 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
   
   return(res)
 }
+
