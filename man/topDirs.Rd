@@ -17,17 +17,17 @@ by. Defaults to 1.}
 \item{logcpm_cutoff}{The logCPM cutoff you wish to
 filter by. Defaults to 1.}
 
-\item{p.adj_cutoff}{The p-value cutoff you wish to filter
+\item{p.adj_cutoff}{The adjusted p-value cutoff you wish to filter
 by. Defaults to 0.01.}
 
 \item{D_cutoff}{The distance cutoff you wish to filter
 by. Interactions with a D < D_cutoff will be filtered.
 Defaults to 1.}
 
-\item{alpha}{The p-value cut off for determining the count
-of number of times a region is significant. The adjusted
-p-value is used for this. Defaults
-to 0.05.}
+\item{alpha}{The p-value cutoff for determining the count
+of number of times a region is significant. Used to calculate
+the number of times a region was detected as significantly interacting. 
+Defaults to 0.05.}
 
 \item{return_df}{The format for the data.frame returned
 by the function. Options are "bed" and "pairedbed".}
