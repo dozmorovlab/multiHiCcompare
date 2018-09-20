@@ -20,11 +20,11 @@ Read the full paper describing the methods used in `multiHiCcompare` here: <inse
 First make sure you have all dependencies installed in R.
 
 ```
-install.packages(c('dplyr', 'data.table', 'devtools', 'qqman))
+install.packages(c('dplyr', 'data.table', 'devtools', 'qqman', 'metap', 'pheatmap', 'pbapply'))
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install(c("BiocParallel", "HiCcompare", "edgeR"))
+BiocManager::install(c("BiocParallel", "HiCcompare", "edgeR", 'GenomicRanges'))
 ```
 
 To install HiCcompare from bioconductor open R and enter the following commands. Currently it is recommended to use the GitHub release or the development version of the bioconductor release.
