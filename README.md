@@ -24,7 +24,7 @@ install.packages(c('dplyr', 'data.table', 'devtools', 'qqman', 'metap', 'pheatma
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install(c("BiocParallel", "HiCcompare", "edgeR", 'GenomicRanges'))
+BiocManager::install(c("BiocParallel", "HiCcompare", "edgeR", "GenomicRanges", "GenomeInfoDbData"))
 ```
 
 To install HiCcompare from bioconductor open R and enter the following commands. Currently it is recommended to use the GitHub release or the development version of the bioconductor release.
