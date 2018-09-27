@@ -24,6 +24,7 @@
 #'     functions to visualize the top DIRs. 
 #' @return A data.table containing the filtered results.
 #' @export
+#' @importFrom BLMA addCLT
 #' @examples 
 #' data('hicexp_diff')
 #' topDirs(hicexp_diff)
@@ -74,11 +75,22 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     
     
     # aggregate into fisher pvalue
+    # fisher_aggregate <- aggregate(p.values, 
+    #                               by = list(regions), 
+    #                               FUN = function(x) {
+    #                                 if (length(x) > 1) {
+    #                                   metap::sumlog(x)$p
+    #                                 } else {
+    #                                   x
+    #                                 }
+    #                               })
+    
+    # Use addCLT instead of fisher method
     fisher_aggregate <- aggregate(p.values, 
                                   by = list(regions), 
                                   FUN = function(x) {
                                     if (length(x) > 1) {
-                                      metap::sumlog(x)$p
+                                      BLMA::addCLT(x)
                                     } else {
                                       x
                                     }
