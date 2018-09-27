@@ -13,11 +13,12 @@ detected}
 
 \item{method}{string denoting the p-value method to
 use for plotting. Options are "standard", "fisher",
-"stouffer", and count. "standard" plots a manhattan plot
+"stouffer", "addCLT", and "count". "standard" plots a manhattan plot
 using all individual p-values (very slow, use with caution).  
 "fisher" or "stouffer" methods use the Fisher's method or
 the Stouffer-Liptak method, respectively, for combining p-values
 for each region which are then plotted on the -log10(p-value) Y-axis.
+"addCLT" combines p-values using the BLMA package's addCLT function.
 "count" summarizes the number of times a region was detected as 
 significant (see "alpha" parameter), plotted on Y-axis. The higher
 the dots are, the more sighificant/more frequent a region was 

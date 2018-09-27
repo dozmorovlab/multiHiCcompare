@@ -4,11 +4,12 @@
 #'     detected
 #' @param method string denoting the p-value method to
 #'     use for plotting. Options are "standard", "fisher",
-#'     "stouffer", and count. "standard" plots a manhattan plot
+#'     "stouffer", "addCLT", and "count". "standard" plots a manhattan plot
 #'     using all individual p-values (very slow, use with caution).  
 #'     "fisher" or "stouffer" methods use the Fisher's method or
 #'     the Stouffer-Liptak method, respectively, for combining p-values
 #'     for each region which are then plotted on the -log10(p-value) Y-axis.
+#'     "addCLT" combines p-values using the BLMA package's addCLT function.
 #'     "count" summarizes the number of times a region was detected as 
 #'     significant (see "alpha" parameter), plotted on Y-axis. The higher
 #'     the dots are, the more sighificant/more frequent a region was 
@@ -43,6 +44,7 @@
 #'     to generate the manhattan plot.
 #' @importFrom qqman manhattan
 #' @importFrom metap sumz sumlog
+#' @importFrom BLMA addCLT
 #' @export
 #' @examples
 #' data("hicexp_diff")
@@ -52,7 +54,7 @@
 manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, 
                              alpha = 0.05, plot.chr = NA) {
   # check input
-  method <- match.arg(method, c("standard", "fisher", "stouffer", "count"), 
+  method <- match.arg(method, c("standard", "fisher", "stouffer", "count", "addCLT"), 
                       several.ok = FALSE)
   if (!is.na(plot.chr)) {
     if (!is.numeric(plot.chr)) {
@@ -186,6 +188,39 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     
     man.df <- count_aggregate
     colnames(man.df)[3] <- 'count'
+  }
+  
+  # addCLT method
+  if (method == "addCLT") {
+    # make aggregate p-value for regions
+    regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
+                 paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
+    p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
+    
+    
+    clt_aggregate <- aggregate(p.values, 
+                                  by = list(regions), 
+                                  FUN = function(x) {
+                                    if (length(x) > 1) {
+                                      BLMA::addCLT(x)
+                                    } else {
+                                      x
+                                    }
+                                  })
+    
+    clt_aggregate <- cbind(read.table(text = clt_aggregate$Group.1, 
+                                         sep = ":"), clt_aggregate$x)
+    colnames(clt_aggregate) <- c("CHR", "BP", "P")
+    # clt_aggregate$P[clt_aggregate$P == 0] <- 10^-100
+    
+    # subset by chr is option is not NA
+    if (!is.na(plot.chr)) {
+      clt_aggregate <- clt_aggregate[clt_aggregate$CHR == plot.chr,]
+    }
+    # plot combined p-value manahttan plots
+    suppressWarnings(qqman::manhattan(clt_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
+    
+    man.df <- clt_aggregate
   }
   
   
