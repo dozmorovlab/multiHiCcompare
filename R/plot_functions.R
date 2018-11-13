@@ -259,6 +259,4 @@ pval_heatmap <- function(hicexp, alpha = NA, chr = 0) {
                        show_colnames = FALSE)
     }, 
     m, fc, SIMPLIFY = FALSE)
-  
-  
 }

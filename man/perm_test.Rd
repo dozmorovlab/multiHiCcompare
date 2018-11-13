@@ -11,7 +11,7 @@ perm_test(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1,
 \arguments{
 \item{hicexp}{A Hicexp object which has been compared.}
 
-\item{feature}{A GRanges object contain locations for
+\item{feature}{A GRanges object containing locations for
 a genomic feature you would like to test for enrichment
 in the differentially interacting regions (DIRs).}
 

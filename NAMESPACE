@@ -3,6 +3,7 @@
 export(MD_composite)
 export(MD_hicexp)
 export(cyclic_loess)
+export(exportJuicebox)
 export(fastlo)
 export(hic_exactTest)
 export(hic_filter)
