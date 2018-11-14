@@ -6,7 +6,7 @@
 \usage{
 exportJuicebox(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1,
   p.adj_cutoff = 0.01, D_cutoff = 1,
-  file_name = "juiceboxAnnotations.txt")
+  file_name = "juiceboxAnnotations.txt", color = "0,0,255")
 }
 \arguments{
 \item{hicexp}{A hicexp object which has been compared.}
@@ -25,6 +25,11 @@ by. Interactions with a D < D_cutoff will be filtered.
 Defaults to 1.}
 
 \item{file_name}{The file name of the text file to be saved.}
+
+\item{color}{A decimal RGB color code. Should be a character
+value in form of "0,0,255". Defaults to color code for
+blue. This will determine the color of the annotations
+on the Juicebox heatmap.}
 }
 \value{
 A text file containing annotations for input into Juicebox.
