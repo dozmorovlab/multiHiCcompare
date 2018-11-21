@@ -6,8 +6,8 @@
 #' 
 #' @param ... Hi-C data. Data must in sparse upper triangular 
 #'     format with 4 columns: chr, region1, region2, IF or
-#'     in 7 column BEDPE format with columns chHCT116_r1, start1, 
-#'     end1, chHCT116_r2, start2, end2, IF.
+#'     in 7 column BEDPE format with columns chr, start1, 
+#'     end1, chr, start2, end2, IF.
 #' @param data_list Alternate way to enter data. If you have
 #'     your Hi-C data in the form of a list already with each
 #'     entry of the list representing a sample use this option.
