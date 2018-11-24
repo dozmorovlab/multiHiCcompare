@@ -23,3 +23,13 @@ Content type 'application/x-gzip' length 314643015 bytes (300.1 MB)
 ==================================================
 downloaded 300.1 MB
 ```
+
+- When `multiHiCcompare` is loaded, `KEGG.db` is also loaded. Why? It is not a part of package's functionality.
+
+```
+> library(multiHiCcompare)
+
+KEGG.db contains mappings based on older data because the original resource was removed from the the public domain before the most recent update was
+  produced. This package should now be considered deprecated and future versions of Bioconductor may not have it available.  Users who want more current
+  data are encouraged to look at the KEGGREST or reactome.db packages
+```
