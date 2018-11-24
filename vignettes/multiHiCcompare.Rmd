@@ -24,7 +24,7 @@ library(multiHiCcompare)
 
 # Introduction
 
-`multiHiCcompare` is an extension of the original `HiCcompare` package. It provides functions for the joint normalization and detection of differential chromatin interactions between multiple Hi-C datasets. `multiHiCcompare` operates on processed Hi-C data in the form of chromosome-specific chromatin interaction matrices. It accepts four-column tab-separated text files storing chromatin interaction matrices in a sparse matrix format (see [Creating the hicexp object](#hicexp)). Functions to convert popular Hi-C data formats (`.hic`, `.cool`) to sparse format are available (see ?cooleHCT116_r2sparse). `multiHiCcompare` differs from other packages that attempt to compare Hi-C data in that it works on processed data in chromatin interaction matrix format instead of raw sequencing data. In addition, `multiHiCcompare` provides a non-parametric method for the joint normalization and removal of biases between multiple Hi-C datasets for the purpose of comparative analysis. `multiHiCcompare` also provides a general linear model (GLM) based framework for detecting differences in Hi-C data.
+`multiHiCcompare` is an extension of the original `HiCcompare` package. It provides functions for the joint normalization and detection of differential chromatin interactions between multiple Hi-C datasets. `multiHiCcompare` operates on processed Hi-C data in the form of chromosome-specific chromatin interaction matrices. It accepts four-column tab-separated text files storing chromatin interaction matrices in a sparse matrix format (see [Creating the hicexp object](#hicexp)). Functions to convert popular Hi-C data formats (`.hic`, `.cool`) to sparse format are available (see `?cooleHCT116_r2sparse`, and the examples below). `multiHiCcompare` differs from other packages that attempt to compare Hi-C data in that it works on processed data in chromatin interaction matrix format instead of raw sequencing data. In addition, `multiHiCcompare` provides a non-parametric method for the joint normalization and removal of biases between multiple Hi-C datasets for the purpose of comparative analysis. `multiHiCcompare` also provides a general linear model (GLM) based framework for detecting differences in Hi-C data.
 
 # How to use `multiHiCcompare`
 
@@ -46,7 +46,7 @@ Hi-C data is available from several sources and in many formats. `multiHiCcompar
   1. Download the `straw` software from [https://github.com/theaidenlab/straw/wiki](https://github.com/theaidenlab/straw/wiki) and install it.
   2. Use `straw` to extract a Hi-C sparse upper triangular matrix. An example is below:
   
-Say we downloaded the `GSE63525_K562_combined_30.hic ` file from GEO [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525)  
+Say we downloaded and uncompressed the `GSE63525_K562_combined_30.hic ` file from GEO [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525), direct link [ftp](ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_K562_combined_30.hic.gz), [http](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE63525&format=file&file=GSE63525%5FK562%5Fcombined%5F30%2Ehic%2Egz)
 
 To extract the raw matrix corresponding to chromosome 22 at 500kb resolution we would use the following command within the terminal
 
@@ -80,7 +80,7 @@ The `cooler` software, [http://cooler.readthedocs.io/en/latest/index.html](http:
 
 ### Using data from HiC-Pro
 
-HiC-Pro is another tool for processing raw Hi-C data into usable matrix files. HiC-Pro will produce a `.matrix` file and a `.bed` file for the data. These `.matrix` files are in sparse upper triangular format similar to the results of Juicer and the dumped contents of a `.hic` file, however instead of using the genomic start coordinates for the first two columns of the sparse matrix they use an ID number. The `.bed` file contains the mappings for each of these IDs to their genomic coordinates. The original `HiCcompare` includes a function to convert the results of HiC-Pro into a usable format for analysis in `multiHiCcompare`. When using data from HiC-Pro it is important to use the raw `.matrix` files and NOT the iced `.matrix` files. The iced `.matrix` files have already had ICE normalization applied to them and are not suitable for entry into `multiHiCcompare`. Here we convert HiC-Pro data for input into `multiHiCcompare`:
+HiC-Pro is another tool for processing raw Hi-C data into usable matrix files. HiC-Pro will produce a `.matrix` file and a `.bed` file for the data. These `.matrix` files are in sparse upper triangular format similar to the results of Juicer and the dumped contents of a `.hic` file, however instead of using the genomic start coordinates for the first two columns of the sparse matrix they use an ID number. The `.bed` file contains the mappings for each of these IDs to their genomic coordinates. The original `HiCcompare` package includes a function to convert the results of HiC-Pro into a usable format for analysis in `multiHiCcompare`. When using data from HiC-Pro it is important to use the raw `.matrix` files and NOT the iced `.matrix` files. The iced `.matrix` files have already had ICE normalization applied to them and are not suitable for entry into `multiHiCcompare`. Here we convert HiC-Pro data for input into `multiHiCcompare`:
 
 ```{r, eval=FALSE}
 # read in files
@@ -100,7 +100,7 @@ See the help using `?HiCcompare::hicpro2bedpe` for more details.
 
 ## Parallel Processing
 
-Hi-C data is large, especially at high resolutions, and loess normalization is computationally intensive. `multiHiCcompare` was built with parallelization in mind and the best performance when working with large Hi-C experiments (many samples or high resolution) will be achieved when using a computing cluster. Parallel processing can be used for all normalization and comparison functions by setting `parallel = TRUE` in the function options. `multiHiCcompare` uses the Bioconductor `BiocParallel` package for parallel processing. You can set the number of processors to use on linux with the following command:
+Hi-C data is large, especially at high resolutions, and loess normalization is computationally intensive. `multiHiCcompare` was built with parallelization in mind and the best performance when working with large Hi-C experiments (many samples or high resolution) will be achieved when using a computing cluster. Parallel processing can be used for all normalization and comparison functions by setting `parallel = TRUE` in the function options. `multiHiCcompare` uses the Bioconductor `BiocParallel` package for parallel processing. You can set the number of processors to use on Linux with the following command:
 
 ```{r, eval = FALSE}
 library(BiocParallel)
@@ -175,13 +175,14 @@ The `hicexp` S4 class has several slots which can be accessed with the accessor 
 
 ### Library scaling
 
-The simplest form of normalization for the purpose of comparing Hi-C data is library scaling. `multiHiCcompare` provides the `hic_scale()` function to scale the Hi-C libraries from each sample to the size of the smallest library. If you believe that any trends present in your data are important differences and not due to bias then you can use library scaling for normalizing your data. Otherwise it is recommended to use either cyclic loess or fast loess. You can perform library scaling as follows. Note that you need to pick a single normalization method. If you use `hic_scale` you will not be able to use cyclic loess normalization. 
+The simplest form of normalization for the purpose of comparing Hi-C data is library scaling. `multiHiCcompare` provides the `hic_scale()` function to scale the Hi-C libraries from each sample to the size of the smallest library. If you believe that any trends present in your data are important differences and not due to bias then you can use library scaling for normalizing your data as follows. 
 
 ```{r, eval=FALSE}
 data("hicexp2")
 hicexp2 <- hic_scale(hicexp2)
 ```
 
+Note that you need to use either simple scaling or loess normalization method. It is recommended to use either cyclic loess or fast loess that will implicitly rescale the libraries and remove unwanted trends.
 
 ### Cyclic Loess Normalization
 
