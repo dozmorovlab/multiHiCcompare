@@ -43,4 +43,16 @@ No vignettes found by browseVignettes(package = "multiHiCcompare")
 
 # `juiceboxVisualization.Rmd`
 
-- `exportJuicebox(rao2017, logfc_cutoff = 2, logcpm_cutoff = 1, p.adj_cutoff = 0.001, file_name = "rao2017Annotations.txt")` - Add "rao2017Annotations.txt" file as the example data to the package, so the user won't need to search for it.
+- `exportJuicebox(rao2017, logfc_cutoff = 2, logcpm_cutoff = 1, p.adj_cutoff = 0.001, file_name = "rao2017Annotations.txt")` - Add "rao2017Annotations.txt" file as the example data to the package, so the user won't need to download it.
+    - I've also managed to do the following for chr22 example, perhaps, rewrite using this example:
+
+```
+load("data/hicexp_diff.rda")
+exportJuicebox(hicexp_diff, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 0.01, file_name = "rao2017Annotations.txt")
+```
+
+- For the "comment" field exported by `exportJuicebox`, can you output the statistics for each pair, like: "p.adj = 8.45E-5; logfc = 3.47; logcpm = 1.24; distance = 50000000", in that order, with that number formats. The user should be able to see these statistics when exploring the results.
+
+- Perform HICCUPSdiff analysis, overlay together with your results. Let's see if we can make a strong case that the majority of them overlap when visualized together.
+
+
