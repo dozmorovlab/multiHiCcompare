@@ -48,6 +48,11 @@ perm_test <- function(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1, 
   olaps <- findOverlaps(sig.regions, feature)
   message("There are ", length(olaps), " overlaps between your genomic feature and the significant regions")
   
+  # If 0 overlaps return p-value of 1
+  if (length(olaps) < 1) {
+    return(1)
+  }
+  
   # set up permutation test
   sample.size <- length(sig.regions) # Number of DIRs
   n.olap      <- length(olaps) # How many of them overlap with DE genes
