@@ -5,7 +5,7 @@ package: multiHiCcompare
 output: 
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{multiHiCcompare Vignette}
+  %\VignetteIndexEntry{Visualizing results in Juicebox}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 ---
