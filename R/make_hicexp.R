@@ -173,7 +173,13 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
     hic_table <- tmp_table
     # check chr format, if "chr#" change to just the number
     if (!is.numeric(hic_table$chr)) {
+      # replace any "chr"
       hic_table[, chr := sub("chr", "", chr)]
+      # replace any X 
+      hic_table[, chr := sub("X", "23", chr)]
+      # replace any Y
+      hic_table[, chr := sub("Y", "24", chr)]
+      # convert to numeric
       hic_table[, chr := as.numeric(chr)]
     }
     # sort hic_table
