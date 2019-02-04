@@ -89,7 +89,7 @@ browseVignettes("multiHiCcompare")
 ## Citation
 Please cite `multiHiCcompare` if you use it in your analysis.
 
-<link>
+John C Stansfield, Kellen G Cresswell, Mikhail G Dozmorov; multiHiCcompare: joint normalization and comparative analysis of complex Hi-C experiments, Bioinformatics, , btz048, https://doi.org/10.1093/bioinformatics/btz048
 
 ## Contributions & Support
 Suggestions for new features and bug reports are welcome. Please create a new issue for any of these or contact the author directly: @jstansfield0 (stansfieldjc@vcu.edu)
