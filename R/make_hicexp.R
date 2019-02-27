@@ -143,15 +143,18 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   
   # cycle through groups to create a table for each experimental condition
 
-    tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], 
-                                  by = c('chr' = 'chr', 'region1' = 'region1',
-                                         'region2' = 'region2'))
+    # tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], 
+    #                               by = c('chr' = 'chr', 'region1' = 'region1',
+    #                                      'region2' = 'region2'))
+    tmp_table <- merge_hic_tables(tabs[[1]], tabs[[2]])
+    
     if (length(tabs) > 2) {
       for(j in 3:length(tabs)) {
-        tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], 
-                                      by = c('chr' = 'chr', 
-                                             'region1' = 'region1',
-                                             'region2' = 'region2'))
+        # tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], 
+        #                               by = c('chr' = 'chr', 
+        #                                      'region1' = 'region1',
+        #                                      'region2' = 'region2'))
+        tmp_table <- merge_hic_tables(tmp_table, tabs[[j]])
       }
     }
     # rename table columns & replace NA IFs with 0
@@ -219,3 +222,44 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   return(experiment)
 }
 
+
+# Function for joining tables
+merge_hic_tables <- function(tab1, tab2) {
+  # check if more than 1 chr 
+  if (length(unique(tab1$chr)) > 1 & length(unique(tab2$chr)) > 1) {
+    # split by chr
+    tab1 <- split(tab1, tab1$chr)
+    tab2 <- split(tab2, tab2$chr)
+    # sort lists
+    tab1 <- tab1[order(names(tab1))]
+    tab2 <- tab2[order(names(tab2))]
+    # check chrs are lined up
+    if (!all.equal(names(tab1), names(tab2))) {
+      stop("Chromosomes not lined up")
+    }
+    # merge by separately by chr
+    tmp_table <- mapply(function(t1, t2) {
+      if (length(unique(t1$chr)) > 1 | length(unique(t2$chr)) > 1) {
+        stop("Chromosomes are screwed up")
+      } 
+      if (! all.equal(unique(t1$chr), unique(t2$chr)) ) {
+        stop("Chromosomes are screwed up")
+      }
+      new_t <- dplyr::full_join(t1[, -1],
+                                t2[, -1], 
+                       by = c('region1' = 'region1', 
+                              'region2' = 'region2'))
+      new_t$chr <- t1$chr[1]
+      new_t <- new_t[, c('chr', 'region1', 'region2', 'IF.x', 'IF.y')]
+    }, tab1, tab2, SIMPLIFY = FALSE)
+    # bind list of tables
+    tmp_table <- data.table::rbindlist(tmp_table)
+    # tmp_table <- tmp_table[, c("chr.x", 'region1', 'region2', 'IF.x', 'IF.y')]
+  } else{
+    # otherwise merge standard way
+    tmp_table <- dplyr::full_join(tab1, tab2, 
+                                  by = c('chr' = 'chr', 'region1' = 'region1',
+                                         'region2' = 'region2'))
+  }
+  return(tmp_table)
+}
