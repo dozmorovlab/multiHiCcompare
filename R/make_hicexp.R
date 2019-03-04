@@ -101,9 +101,9 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   }
   # set column names of data 
   tabs <- lapply(tabs, function(x) {
-     colnames(x) <- c('chr', 'region1', 'region2', 'IF') 
-     return(x)
-     })
+    colnames(x) <- c('chr', 'region1', 'region2', 'IF') 
+    return(x)
+  })
   
   # initialize values
   # hic_table <- list() # initialize list for tables for each condition
@@ -133,7 +133,7 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
       stop("Number of rows in covariates should correspond to number 
            of Hi-C data objects entered")
     }
-  }
+    }
   if (zero.p < 0 | zero.p > 1) {
     stop("zero.p must be in [0,1]")
   }
@@ -142,65 +142,62 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   }
   
   # cycle through groups to create a table for each experimental condition
-
-    # tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], 
-    #                               by = c('chr' = 'chr', 'region1' = 'region1',
-    #                                      'region2' = 'region2'))
-    tmp_table <- merge_hic_tables(tabs[[1]], tabs[[2]])
-    
-    if (length(tabs) > 2) {
-      for(j in 3:length(tabs)) {
-        # tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], 
-        #                               by = c('chr' = 'chr', 
-        #                                      'region1' = 'region1',
-        #                                      'region2' = 'region2'))
-        tmp_table <- merge_hic_tables(tmp_table, tabs[[j]])
-      }
+  
+  tmp_table <- dplyr::full_join(tabs[[1]], tabs[[2]], 
+                                by = c('chr' = 'chr', 'region1' = 'region1',
+                                       'region2' = 'region2'))
+  if (length(tabs) > 2) {
+    for(j in 3:length(tabs)) {
+      tmp_table <- dplyr::full_join(tmp_table, tabs[[j]], 
+                                    by = c('chr' = 'chr', 
+                                           'region1' = 'region1',
+                                           'region2' = 'region2'))
     }
-    # rename table columns & replace NA IFs with 0
-    colnames(tmp_table)[4:ncol(tmp_table)] <- paste0("IF", 1:(ncol(tmp_table) - 3))
-    tmp_table[is.na(tmp_table)] <- 0
-    
-    
-    # calculate resolution
-    bins <- unique(c(tmp_table$region1, tmp_table$region2))
-    bins <- bins[order(bins)]
-    resolution <- min(diff(bins))
-    tmp_table <- data.table::as.data.table(tmp_table)
-    tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
-    # rearrange columns
-    tmp_table <- tmp_table[, c('chr', 'region1', 'region2', 'D',
-                               paste0("IF", 1:(ncol(tmp_table) - 4))), with = FALSE]
-    
-    # set table in place on condition list
-    hic_table <- tmp_table
-    # check chr format, if "chr#" change to just the number
-    if (!is.numeric(hic_table$chr)) {
-      # replace any "chr"
-      hic_table[, chr := sub("chr", "", chr)]
-      # replace any X 
-      hic_table[, chr := sub("X", "23", chr)]
-      # replace any Y
-      hic_table[, chr := sub("Y", "24", chr)]
-      # convert to numeric
-      hic_table[, chr := as.numeric(chr)]
-    }
-    # sort hic_table
-    hic_table <- hic_table[order(chr, region1, region2),]
-
+  }
+  # rename table columns & replace NA IFs with 0
+  colnames(tmp_table)[4:ncol(tmp_table)] <- paste0("IF", 1:(ncol(tmp_table) - 3))
+  tmp_table[is.na(tmp_table)] <- 0
+  
+  
+  # calculate resolution
+  bins <- unique(c(tmp_table$region1, tmp_table$region2))
+  bins <- bins[order(bins)]
+  resolution <- min(diff(bins))
+  tmp_table <- data.table::as.data.table(tmp_table)
+  tmp_table[, `:=`(D, abs(region2 - region1) / resolution)]
+  # rearrange columns
+  tmp_table <- tmp_table[, c('chr', 'region1', 'region2', 'D',
+                             paste0("IF", 1:(ncol(tmp_table) - 4))), with = FALSE]
+  
+  # set table in place on condition list
+  hic_table <- tmp_table
+  # check chr format, if "chr#" change to just the number
+  if (!is.numeric(hic_table$chr)) {
+    # replace any "chr"
+    hic_table[, chr := sub("chr", "", chr)]
+    # replace any X 
+    hic_table[, chr := sub("X", "23", chr)]
+    # replace any Y
+    hic_table[, chr := sub("Y", "24", chr)]
+    # convert to numeric
+    hic_table[, chr := as.numeric(chr)]
+  }
+  # sort hic_table
+  hic_table <- hic_table[order(chr, region1, region2),]
+  
   # check that all resolutions are equal
   if (length(unique(res)) > 1) {
     stop("Resolution of all datasets must be equal.")
   }
-    # remove rows with 0's
-    if (remove_zeros) {
-      IFs <- as.matrix(hic_table[, -c("chr", "region1", "region2", "D"), with = FALSE])
-      IFs <- IFs == 0 # matrix of TRUE where zeros occur
-      keep <- rowSums(IFs) == 0 # if row has no zeros it will sum to 0
-      hic_table <- hic_table[keep,]
-    }
-    
-
+  # remove rows with 0's
+  if (remove_zeros) {
+    IFs <- as.matrix(hic_table[, -c("chr", "region1", "region2", "D"), with = FALSE])
+    IFs <- IFs == 0 # matrix of TRUE where zeros occur
+    keep <- rowSums(IFs) == 0 # if row has no zeros it will sum to 0
+    hic_table <- hic_table[keep,]
+  }
+  
+  
   # make metadata 
   metadata <- data.frame(group = groups)
   row.names(metadata) <- paste0("Sample", 1:length(groups))
@@ -220,46 +217,4 @@ make_hicexp <- function(..., data_list = NA, groups, covariates = NULL,
   }
   
   return(experiment)
-}
-
-
-# Function for joining tables
-merge_hic_tables <- function(tab1, tab2) {
-  # check if more than 1 chr 
-  if (length(unique(tab1$chr)) > 1 & length(unique(tab2$chr)) > 1) {
-    # split by chr
-    tab1 <- split(tab1, tab1$chr)
-    tab2 <- split(tab2, tab2$chr)
-    # sort lists
-    tab1 <- tab1[order(names(tab1))]
-    tab2 <- tab2[order(names(tab2))]
-    # check chrs are lined up
-    if (!all.equal(names(tab1), names(tab2))) {
-      stop("Chromosomes not lined up")
-    }
-    # merge by separately by chr
-    tmp_table <- mapply(function(t1, t2) {
-      if (length(unique(t1$chr)) > 1 | length(unique(t2$chr)) > 1) {
-        stop("Chromosomes are screwed up")
-      } 
-      if (! all.equal(unique(t1$chr), unique(t2$chr)) ) {
-        stop("Chromosomes are screwed up")
-      }
-      new_t <- dplyr::full_join(t1[, -1],
-                                t2[, -1], 
-                       by = c('region1' = 'region1', 
-                              'region2' = 'region2'))
-      new_t$chr <- t1$chr[1]
-      new_t <- new_t[, c('chr', 'region1', 'region2', 'IF.x', 'IF.y')]
-    }, tab1, tab2, SIMPLIFY = FALSE)
-    # bind list of tables
-    tmp_table <- data.table::rbindlist(tmp_table)
-    # tmp_table <- tmp_table[, c("chr.x", 'region1', 'region2', 'IF.x', 'IF.y')]
-  } else{
-    # otherwise merge standard way
-    tmp_table <- dplyr::full_join(tab1, tab2, 
-                                  by = c('chr' = 'chr', 'region1' = 'region1',
-                                         'region2' = 'region2'))
   }
-  return(tmp_table)
-}
