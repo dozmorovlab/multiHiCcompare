@@ -86,6 +86,10 @@ To view the usage vignette:
 
 browseVignettes("multiHiCcompare")
 
+## Tutorial for Differential Analysis of Hi-C Data
+
+For more detailed instructions and examples on how to perform differential analyses on Hi-C data please see our tutorial paper "R Tutorial: Detection of Differentially Interacting Chromatin Regions From Multiple Hi‐C Dataset" published in Current Protocols in Bioinformatics. https://doi.org/10.1002/cpbi.76
+
 ## Citation
 Please cite `multiHiCcompare` if you use it in your analysis.
 
