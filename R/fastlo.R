@@ -149,7 +149,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
     while (length(small_D) > 0) {
       i <- small_D[1]
       # check if first distance has less than min.row
-      if (table_by_dist[[i]]$D[1] == 0) {
+      if (table_by_dist[[i]]$D[1] == 0 | table_by_dist[[i]]$D[1] == min(rbindlist(table_by_dist)$D)) {
         new_table <- rbind(table_by_dist[[i]], table_by_dist[[i+1]])
         table_by_dist[[i]] <- new_table
         table_by_dist[[i+1]] <- NA
