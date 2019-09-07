@@ -2,7 +2,7 @@
 
 ## Overview
 
-`multiHiCcompare` is an extension of the original `HiCcompare` R package (http://bioconductor.org/packages/HiCcompare/ or https://github.com/dozmorovlab/HiCcompare). `multiHiCcompare` provides functions for the joint normalization and comparison of complex Hi-C experiments. `multiHiCcompare` operates on processed Hi-C data in the form of sparse upper triangular matrices. 
+`multiHiCcompare` is an extension of the original `HiCcompare` R package (http://bioconductor.org/packages/HiCcompare/ or https://github.com/dozmorovlab/HiCcompare). `multiHiCcompare` provides functions for the joint normalization and comparison of complex Hi-C experiments. `multiHiCcompare` operates on processed Hi-C data in the form of sparse upper triangular matrices. The developmental version is available at https://github.com/jstansfield0/multiHiCcompare, the stable version is available at https://github.com/dozmorovlab/multiHiCcompare.
 
 `multiHiCcompare` accepts four-column text files storing chromatin interaction matrices in a sparse matrix format. There are many sources of public Hi-C data such as http://aidenlab.org/data.html and http://cooler.readthedocs.io/en/latest/index.html. `multiHiCcompare` is designed to the give the user the ability to perform a comparative analysis on the 3D structure of the genomes of cells in different biological states or under different experimental conditions. `multiHiCcompare` implements a cyclic loess joint normalization algorithm to remove bias between multiple Hi-C datasets and prepare them for comparison. `multiHiCcompare` also provides a general linear model based difference detection method that makes use of the `edgeR` R package's framework. 
 
