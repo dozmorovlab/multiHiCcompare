@@ -146,7 +146,7 @@ fastlo <- function(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
   small_D <- which(row.nums < min.row)
   # check if any tables have less than min.row
   if (length(small_D) > 0) {
-    while (length(small_D) > 0) {
+    while (length(small_D) > 1) {
       i <- small_D[1]
       # check if first distance has less than min.row
       if (table_by_dist[[i]]$D[1] == 0 | table_by_dist[[i]]$D[1] == min(rbindlist(table_by_dist)$D)) {
