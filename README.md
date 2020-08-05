@@ -1,5 +1,7 @@
 # multiHiCcompare
 
+Stansfield, John C, Kellen G Cresswell, and Mikhail G Dozmorov. “[MultiHiCcompare: Joint Normalization and Comparative Analysis of Complex Hi-C Experiments](https://doi.org/10.1093/bioinformatics/btz048).” Bioinformatics, January 22, 2019. 
+
 ## Overview
 
 `multiHiCcompare` is an extension of the original `HiCcompare` R package (http://bioconductor.org/packages/HiCcompare/ or https://github.com/dozmorovlab/HiCcompare). `multiHiCcompare` provides functions for the joint normalization and comparison of complex Hi-C experiments. `multiHiCcompare` operates on processed Hi-C data in the form of sparse upper triangular matrices. The developmental version is available at https://github.com/jstansfield0/multiHiCcompare, the stable version is available at https://github.com/dozmorovlab/multiHiCcompare.
