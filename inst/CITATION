@@ -12,7 +12,7 @@ citEntry(entry = "Article",
 	month = "Sep",
 	url = "https://github.com/dozmorovlab/multiHiCcompare",
 	doi = "10.1093/bioinformatics/btz048",
-	textVersion = "Stansfield, John C, Kellen G Cresswell, and Mikhail G Dozmorov. “MultiHiCcompare: Joint Normalization and Comparative Analysis of Complex Hi-C Experiments.” Bioinformatics, January 22, 2019. https://doi.org/10.1093/bioinformatics/btz048"
+	textVersion = "Stansfield, John C, Kellen G Cresswell, and Mikhail G Dozmorov. MultiHiCcompare: Joint Normalization and Comparative Analysis of Complex Hi-C Experiments. Bioinformatics, January 22, 2019. https://doi.org/10.1093/bioinformatics/btz048"
 )
 
 
