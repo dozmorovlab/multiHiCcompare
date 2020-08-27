@@ -1,1 +1,8 @@
-Preparing for release.
+Changes in version 1.8.0 (2020-XX-XX)
++ Track NEWS
++ Bump version , so y of x.y.z version should be even in release
++ Update R version dependency from 3.5.0 to 4.0
++ Add CITATION, also to README.md file
++ Update DESCRIPTION
+  o Add Mikhail Dozmorov as Maintainer
+  o Add URL and BugReports fields
