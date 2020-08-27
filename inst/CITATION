@@ -1,0 +1,18 @@
+citHeader("To cite package 'multiHiCcompare', please, use:")
+
+citEntry(entry = "Article",
+	title = "multiHiCcompare: joint normalization and comparative analysis of complex Hi-C experiments",
+	author = personList(as.person("John C. Stansfield"),
+		as.person("Kellen G. Cresswell"),
+		as.person("Mikhail G. Dozmorov")),
+	journal = "Bioinformatics",
+	year = 2019L,
+	volume = 35L,
+	number = 17L,
+	month = "Sep",
+	url = "https://github.com/dozmorovlab/multiHiCcompare",
+	doi = "10.1093/bioinformatics/btz048",
+	textVersion = "Stansfield, John C, Kellen G Cresswell, and Mikhail G Dozmorov. “MultiHiCcompare: Joint Normalization and Comparative Analysis of Complex Hi-C Experiments.” Bioinformatics, January 22, 2019. https://doi.org/10.1093/bioinformatics/btz048"
+)
+
+
