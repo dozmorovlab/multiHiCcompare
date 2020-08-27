@@ -17,6 +17,7 @@
 #' @export
 #' @importFrom GenomicRanges makeGRangesFromDataFrame findOverlaps GRanges
 #' @importFrom GenomeInfoDb seqlevelsStyle
+#' @import GenomeInfoDbData
 #' @examples 
 #' \dontrun{
 #' data("hicexp_diff")
