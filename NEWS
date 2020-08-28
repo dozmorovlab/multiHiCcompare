@@ -1,7 +1,8 @@
-Changes in version 1.8.0 (2020-XX-XX)
+Changes in version 1.7.1 (2020-08-28)
 + Track NEWS
-+ Bump version , so y of x.y.z version should be even in release
++ Bump version
 + Update R version dependency from 3.5.0 to 4.0
++ Add exported objects to NAMESPACE that caused BiocCheck error
 + Add CITATION, also to README.md file
 + Update DESCRIPTION
   o Add Mikhail Dozmorov as Maintainer
