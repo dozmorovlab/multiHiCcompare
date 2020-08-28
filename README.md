@@ -1,5 +1,9 @@
 # [multiHiCcompare](https://dozmorovlab.github.io/multiHiCcompare/)
 
+<!-- badges: start -->
+[![BioC status](http://www.bioconductor.org/shields/build/release/bioc/multiHiCcompare.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/multiHiCcompare)
+<!-- badges: end -->
+
 ## Overview
 
 `multiHiCcompare` is an extension of the original [HiCcompare R package](http://bioconductor.org/packages/HiCcompare/). `multiHiCcompare` provides functions for the joint normalization and comparison of complex Hi-C experiments. `multiHiCcompare` operates on processed Hi-C data in the form of sparse upper triangular matrices.
