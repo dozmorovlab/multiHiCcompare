@@ -4,8 +4,14 @@
 \alias{fastlo}
 \title{Perform fast loess normalization on a Hi-C experiment}
 \usage{
-fastlo(hicexp, iterations = 3, span = 0.7, parallel = FALSE,
-  verbose = FALSE, max.pool = 0.7)
+fastlo(
+  hicexp,
+  iterations = 3,
+  span = 0.7,
+  parallel = FALSE,
+  verbose = FALSE,
+  max.pool = 0.7
+)
 }
 \arguments{
 \item{hicexp}{A hicexp object}

@@ -4,9 +4,15 @@
 \alias{topDirs}
 \title{Filter results of multiHiCcompare}
 \usage{
-topDirs(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1,
-  p.adj_cutoff = 0.01, D_cutoff = 1, alpha = 0.05,
-  return_df = "pairedbed")
+topDirs(
+  hicexp,
+  logfc_cutoff = 1,
+  logcpm_cutoff = 1,
+  p.adj_cutoff = 0.01,
+  D_cutoff = 1,
+  alpha = 0.05,
+  return_df = "pairedbed"
+)
 }
 \arguments{
 \item{hicexp}{A hicexp object which has been compared.}

@@ -4,8 +4,17 @@
 \alias{hic_glm}
 \title{Function to perform GLM differential analysis on Hi-C experiment}
 \usage{
-hic_glm(hicexp, design, contrast = NA, coef = NA, method = "QLFTest",
-  M = 1, p.method = "fdr", parallel = FALSE, max.pool = 0.7)
+hic_glm(
+  hicexp,
+  design,
+  contrast = NA,
+  coef = NA,
+  method = "QLFTest",
+  M = 1,
+  p.method = "fdr",
+  parallel = FALSE,
+  max.pool = 0.7
+)
 }
 \arguments{
 \item{hicexp}{A hicexp object,}

@@ -4,9 +4,15 @@
 \alias{exportJuicebox}
 \title{Export multiHiCcompare results for visualization in Juicebox}
 \usage{
-exportJuicebox(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1,
-  p.adj_cutoff = 0.01, D_cutoff = 1,
-  file_name = "juiceboxAnnotations.txt", color = "0,0,255")
+exportJuicebox(
+  hicexp,
+  logfc_cutoff = 1,
+  logcpm_cutoff = 1,
+  p.adj_cutoff = 0.01,
+  D_cutoff = 1,
+  file_name = "juiceboxAnnotations.txt",
+  color = "0,0,255"
+)
 }
 \arguments{
 \item{hicexp}{A hicexp object which has been compared.}

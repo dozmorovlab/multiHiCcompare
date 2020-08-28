@@ -5,8 +5,13 @@
 \title{Perform a permutation test to check enrichment of a genomic
     feature with DIRs detected by multiHiCcompare}
 \usage{
-perm_test(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1,
-  num.perm = 1000)
+perm_test(
+  hicexp,
+  feature,
+  p.adj_cutoff = 10^-10,
+  logfc_cutoff = 1,
+  num.perm = 1000
+)
 }
 \arguments{
 \item{hicexp}{A Hicexp object which has been compared.}

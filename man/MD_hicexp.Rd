@@ -4,8 +4,7 @@
 \alias{MD_hicexp}
 \title{Make MD plots for all combinations of a condition}
 \usage{
-MD_hicexp(hicexp, prow = 3, pcol = 3, plot.chr = NA,
-  plot.loess = FALSE)
+MD_hicexp(hicexp, prow = 3, pcol = 3, plot.chr = NA, plot.loess = FALSE)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}

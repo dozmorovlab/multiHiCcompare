@@ -4,8 +4,7 @@
 \alias{hic_filter}
 \title{Perform filtering on a Hi-C experiment}
 \usage{
-hic_filter(hicexp, zero.p = 0.8, A.min = 5,
-  remove.regions = hg19_cyto)
+hic_filter(hicexp, zero.p = 0.8, A.min = 5, remove.regions = hg19_cyto)
 }
 \arguments{
 \item{hicexp}{A hicexp object.}

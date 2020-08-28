@@ -4,7 +4,9 @@
 \name{hg19_cyto}
 \alias{hg19_cyto}
 \title{A GenomicRanges object containing centromeric, gvar, and stalk regions.}
-\format{An object of class \code{GRanges} of length 70.}
+\format{
+An object of class \code{GRanges} of length 70.
+}
 \source{
 Data from UCSC
     \url{http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz}

@@ -25,7 +25,7 @@
 #' @importFrom data.table rbindlist
 #' @importFrom stats aggregate loess loess.control model.matrix 
 #'     optimize p.adjust predict update D loess.smooth
-#' @importFrom utils combn read.table
+#' @importFrom utils combn read.table tail write.table
 #' @examples 
 #' #' data("hicexp2")
 #' hicexp2 <- cyclic_loess(hicexp2, span = 0.7)

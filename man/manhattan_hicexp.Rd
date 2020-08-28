@@ -4,8 +4,13 @@
 \alias{manhattan_hicexp}
 \title{Manhattan plot function for results of multiHiCcompare}
 \usage{
-manhattan_hicexp(hicexp, method = "standard", return_df = FALSE,
-  alpha = 0.05, plot.chr = NA)
+manhattan_hicexp(
+  hicexp,
+  method = "standard",
+  return_df = FALSE,
+  alpha = 0.05,
+  plot.chr = NA
+)
 }
 \arguments{
 \item{hicexp}{A hicexp object that has had differences

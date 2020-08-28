@@ -17,6 +17,7 @@
 #' @export
 #' @importFrom GenomicRanges makeGRangesFromDataFrame findOverlaps GRanges
 #' @importFrom GenomeInfoDb seqlevelsStyle
+#' @importFrom stats start end
 #' @import GenomeInfoDbData
 #' @examples 
 #' \dontrun{
@@ -31,7 +32,7 @@ perm_test <- function(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1, 
     stop("feature must be a GRanges object")
   }
   # convert seqnames of feature to include chr
-  seqlevelsStyle(feature) <- "UCSC"
+  GenomeInfoDb::seqlevelsStyle(feature) <- "UCSC"
   # check that data has been compared
   if (nrow(results(hicexp)) < 1) {
     stop("Differences must be detected before making a manhattan plot.")

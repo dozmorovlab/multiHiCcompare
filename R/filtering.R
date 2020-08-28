@@ -34,7 +34,7 @@
 #'     before normalization.
 #' @return A hicexp object.
 #' @export
-#' @importFrom GenomicRanges makeGRangesFromDataFrame findOverlaps
+#' @importFrom GenomicRanges makeGRangesFromDataFrame findOverlaps pos
 #' @examples 
 #' data("hicexp2")
 #' hicexp2 <- hic_filter(hicexp2)

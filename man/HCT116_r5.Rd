@@ -4,7 +4,9 @@
 \name{HCT116_r5}
 \alias{HCT116_r5}
 \title{A 4 column sparse matrix for a Hi-C matrix.}
-\format{An object of class \code{data.frame} with 55092 rows and 4 columns.}
+\format{
+An object of class \code{data.frame} with 55092 rows and 4 columns.
+}
 \source{
 Data from Rao 2017. See their website at
     \url{http://www.aidenlab.org/}

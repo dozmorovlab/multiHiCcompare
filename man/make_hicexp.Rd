@@ -4,9 +4,17 @@
 \alias{make_hicexp}
 \title{Make Hi-C experiment object from data}
 \usage{
-make_hicexp(..., data_list = NA, groups, covariates = NULL,
-  remove_zeros = FALSE, zero.p = 0.8, A.min = 5, filter = TRUE,
-  remove.regions = hg19_cyto)
+make_hicexp(
+  ...,
+  data_list = NA,
+  groups,
+  covariates = NULL,
+  remove_zeros = FALSE,
+  zero.p = 0.8,
+  A.min = 5,
+  filter = TRUE,
+  remove.regions = hg19_cyto
+)
 }
 \arguments{
 \item{...}{Hi-C data. Data must in sparse upper triangular 

@@ -4,8 +4,13 @@
 \alias{cyclic_loess}
 \title{Cyclic Loess normalization for Hi-C data}
 \usage{
-cyclic_loess(hicexp, iterations = 3, span = NA, parallel = FALSE,
-  verbose = FALSE)
+cyclic_loess(
+  hicexp,
+  iterations = 3,
+  span = NA,
+  parallel = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{hicexp}{A hicexp object}

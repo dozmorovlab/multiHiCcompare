@@ -1,7 +1,7 @@
 #' Make MD plots for all combinations of a condition
 #' 
 #' @importFrom graphics abline legend lines par persp
-#'     points smoothScatter
+#'     points smoothScatter axis
 #' @param hicexp A hicexp object.
 #' @param prow The number of rows to use for the 
 #'    grid of MD plots. Defaults to 3.
