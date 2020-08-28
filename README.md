@@ -1,4 +1,4 @@
-# multiHiCcompare
+# [multiHiCcompare](https://dozmorovlab.github.io/multiHiCcompare/)
 
 ## Overview
 
