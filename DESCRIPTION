@@ -43,7 +43,7 @@ Suggests: knitr,
     rmarkdown,
     testthat,
     BiocStyle
-RoxygenNote: 6.1.0
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 BugReports: https://github.com/dozmorovlab/multiHiCcompare/issues
 URL: https://github.com/dozmorovlab/multiHiCcompare
