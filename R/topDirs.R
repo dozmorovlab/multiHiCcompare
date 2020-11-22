@@ -12,10 +12,6 @@
 #'    Defaults to 1. 
 #' @param return_df The format for the data.frame returned
 #'    by the function. Options are "bed" and "pairedbed".
-#' @param alpha The p-value cutoff for determining the count
-#'     of number of times a region is significant. Used to calculate
-#'     the number of times a region was detected as significantly interacting. 
-#'     Defaults to 0.05.
 #' @details This function is meant to filter the results of
 #'     multiHiCcompare. The top differentially interacting 
 #'     regions (DIRs) can be returned by using this function.
@@ -30,7 +26,13 @@
 #' topDirs(hicexp_diff)
 
 topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 0.01,
-                           D_cutoff = 1, alpha = 0.05, return_df = "pairedbed") {
+                           D_cutoff = 1, return_df = "pairedbed") { 
+  # New in v.2.0 - remove alpha parameter
+  # @param alpha The p-value cutoff for determining the count
+  #     of number of times a region is significant. Used to calculate
+  #     the number of times a region was detected as significantly interacting. 
+  #     Defaults to 0.05.
+  # alpha = 0.05, 
   # check that data has been compared
   if (nrow(results(hicexp)) < 1) {
     stop("Differences must be detected before making a manhattan plot.")
@@ -41,11 +43,13 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
   
   # make results object
   res <- results(hicexp)
+  # filter (New in v2.0 - use global filtering)
+  res <- res[logCPM >= logcpm_cutoff & abs(logFC) >= logfc_cutoff & p.adj <= p.adj_cutoff & D >= D_cutoff, ]
   
   # if pairedbed just need to filter
   if (return_df == "pairedbed") {
-    # filter
-    res <- res[logCPM >= logcpm_cutoff & abs(logFC) >= logfc_cutoff & p.adj <= p.adj_cutoff & D >= D_cutoff, ]
+    # filter (Changed from v2.0 - use global filtering)
+    # res <- res[logCPM >= logcpm_cutoff & abs(logFC) >= logfc_cutoff & p.adj <= p.adj_cutoff & D >= D_cutoff, ]
     # reformat
     res$chr1 <- paste0('chr', res$chr)
     res$chr2 <- paste0('chr', res$chr)
@@ -63,8 +67,8 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
   
   # if BED need to aggregate regions
   if (return_df == "bed") {
-    # subset to only significant interactions
-    res <- res[p.adj < alpha, ]
+    # subset to only significant interactions (Changed from v2.0 - use global filtering)
+    # res <- res[p.adj < alpha, ]
     # make vector of regions and p-values
     regions <- c(paste0(res$chr, ':', res$region1),
                  paste0(res$chr, ':', res$region2))
@@ -145,8 +149,8 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     res <- data.table::as.data.table(res)
     res <- res[order(res$count, decreasing = TRUE), ]
     
-    # filter
-    res <- res[avgLogCPM >= logcpm_cutoff & abs(avgLogFC) >= logfc_cutoff & avgP.adj <= p.adj_cutoff & avgD >= D_cutoff, ]
+    # filter (Changed from v2.0 - use global filtering)
+    # res <- res[avgLogCPM >= logcpm_cutoff & abs(avgLogFC) >= logfc_cutoff & avgP.adj <= p.adj_cutoff & avgD >= D_cutoff, ]
     
     # format pvalues
     res$avgP.adj <- formatC(res$avgP.adj, digits = 4, format = "E")
