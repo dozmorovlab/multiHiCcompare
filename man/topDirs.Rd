@@ -10,8 +10,8 @@ topDirs(
   logcpm_cutoff = 1,
   p.adj_cutoff = 0.01,
   D_cutoff = 1,
-  alpha = 0.05,
-  return_df = "pairedbed"
+  return_df = "pairedbed",
+  pval_aggregate = "max"
 )
 }
 \arguments{
@@ -30,13 +30,15 @@ by. Defaults to 0.01.}
 by. Interactions with a D < D_cutoff will be filtered.
 Defaults to 1.}
 
-\item{alpha}{The p-value cutoff for determining the count
-of number of times a region is significant. Used to calculate
-the number of times a region was detected as significantly interacting. 
-Defaults to 0.05.}
-
 \item{return_df}{The format for the data.frame returned
-by the function. Options are "bed" and "pairedbed".}
+by the function. Options are "bed" and "pairedbed" (Default).}
+
+\item{pval_aggregate}{Method to aggregate region-specific p-values.
+If a region differentially interacts with several other regions,
+the p-values are aggregated using a 'max' method (Default, select maximum
+p-value, most conservative), or the Fisher ('fisher'), Lancaster ('lancaster'),
+or Sidak ('sidak') methods (see 'aggregate' package).
+regions, it is assigned a single p-value aggregated from several}
 }
 \value{
 A data.table containing the filtered results.

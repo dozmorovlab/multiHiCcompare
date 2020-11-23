@@ -11,7 +11,13 @@
 #'    by. Interactions with a D < D_cutoff will be filtered.
 #'    Defaults to 1. 
 #' @param return_df The format for the data.frame returned
-#'    by the function. Options are "bed" and "pairedbed".
+#'    by the function. Options are "bed" and "pairedbed" (Default).
+#' @param pval_aggregate Method to aggregate region-specific p-values.
+#' If a region differentially interacts with several other regions,
+#' the p-values are aggregated using a 'max' method (Default, select maximum
+#' p-value, most conservative), or the Fisher ('fisher'), Lancaster ('lancaster'),
+#' or Sidak ('sidak') methods (see 'aggregate' package).
+#' regions, it is assigned a single p-value aggregated from several 
 #' @details This function is meant to filter the results of
 #'     multiHiCcompare. The top differentially interacting 
 #'     regions (DIRs) can be returned by using this function.
@@ -20,13 +26,13 @@
 #'     functions to visualize the top DIRs. 
 #' @return A data.table containing the filtered results.
 #' @export
-#' @importFrom BLMA addCLT
+#' @import aggregation
 #' @examples 
 #' data('hicexp_diff')
 #' topDirs(hicexp_diff)
 
 topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 0.01,
-                           D_cutoff = 1, return_df = "pairedbed") { 
+                           D_cutoff = 1, return_df = "pairedbed", pval_aggregate = "max") { 
   # New in v.2.0 - remove alpha parameter
   # @param alpha The p-value cutoff for determining the count
   #     of number of times a region is significant. Used to calculate
@@ -94,7 +100,15 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
                                   by = list(regions), 
                                   FUN = function(x) {
                                     if (length(x) > 1) {
-                                      BLMA::addCLT(x)
+                                      if (pval_aggregate == "max") {
+                                        max(x, na.rm = TRUE)
+                                      } else if (pval_aggregate == "fisher") {
+                                        aggregation::fisher(x)
+                                      } else if (pval_aggregate == "lancaster") {
+                                        aggregation::lancaster(x)
+                                      } else if (pval_aggregate == "sidak") {
+                                        aggregation::sidak(x)
+                                      }
                                     } else {
                                       x
                                     }
@@ -119,7 +133,7 @@ topDirs <- function(hicexp, logfc_cutoff = 1, logcpm_cutoff = 1, p.adj_cutoff = 
     #                                               sep = ":"), stouffer_liptak_aggregate$x)
     
     # aggregate counts
-    count <- ifelse(p.values < alpha, 1, 0)
+    count <- ifelse(p.values < p.adj_cutoff, 1, 0)
     count_aggregate <- aggregate(count, by = list(regions), sum)
     count_aggregate <- cbind(read.table(text = count_aggregate$Group.1, sep = ":"),
                              count_aggregate$x)

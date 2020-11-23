@@ -5,7 +5,7 @@ package: multiHiCcompare
 output: 
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{multiHiCcompare main Vignette}
+  %\VignetteIndexEntry{multiHiCcompare}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 ---
@@ -306,7 +306,8 @@ head(td)
 Additionally, you can summarize the regions that were detected as significant at least once by setting `return_df = 'bed'`.
 
 ```{r}
-counts <- topDirs(hicexp1, logfc_cutoff = 0.5, logcpm_cutoff = 0.5, p.adj_cutoff = 0.2, alpha = 0.1, return_df = 'bed')
+counts <- topDirs(hicexp1, logfc_cutoff = 0.5, logcpm_cutoff = 0.5, 
+                  p.adj_cutoff = 0.2, return_df = 'bed', pval_aggregate = "max")
 head(counts)
 ```
 
@@ -329,7 +330,7 @@ plot_counts(counts)
 There are several other functions included in `multiHiCcompare`. `manhattan_hicexp()` produces a Manhattan plot for the results of a comparison to identify "hotspot" regions of the genome where large numbers of significant differences are found.
 
 ```{r}
-manhattan_hicexp(hicexp1, method = "standard")
+manhattan_hicexp(hicexp1, p.adj_cutoff = "standard")
 ```
 
 There is also the MD plotting function `MD_hicexp()` which will plot MD plots for each unique pair of samples in the `hicexp` object.

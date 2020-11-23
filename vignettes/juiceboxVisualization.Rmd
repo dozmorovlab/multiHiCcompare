@@ -2,10 +2,10 @@
 title: "Visualizing multiHiCcompare results in Juicebox"
 author: "John C. Stansfield & Mikhail G. Dozmorov"
 package: multiHiCcompare
-output: 
+output:
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Visualizing results in Juicebox}
+  %\VignetteIndexEntry{juiceboxVisualization}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 ---

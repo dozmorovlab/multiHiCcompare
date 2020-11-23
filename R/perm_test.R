@@ -13,6 +13,12 @@
 #'      for more information. Defaults to 1.
 #' @param num.perm The number of permutations to run.
 #'      Defaults to 1000. 
+#' @param pval_aggregate Method to aggregate region-specific p-values.
+#' If a region differentially interacts with several other regions,
+#' the p-values are aggregated using a 'max' method (Default, select maximum
+#' p-value, most conservative), or the Fisher ('fisher'), Lancaster ('lancaster'),
+#' or Sidak ('sidak') methods (see 'aggregate' package).
+#' regions, it is assigned a single p-value aggregated from several. See ?topDirs
 #' @return The permutation p-value
 #' @export
 #' @importFrom GenomicRanges makeGRangesFromDataFrame findOverlaps GRanges
@@ -26,7 +32,7 @@
 #' perm_test(hicexp_diff, hg19_cyto)
 #' }
 
-perm_test <- function(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1, num.perm = 1000) {
+perm_test <- function(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1, num.perm = 1000, pval_aggregate = "max") {
   # check that feature is a GRanges object
   if (!is(feature, "GRanges")) {
     stop("feature must be a GRanges object")
@@ -62,8 +68,8 @@ perm_test <- function(hicexp, feature, p.adj_cutoff = 10^-10, logfc_cutoff = 1, 
   
   # make background regions GRanges object
   regions <- topDirs(hicexp, logfc_cutoff = 0, logcpm_cutoff = -10,
-                     D_cutoff = 0, p.adj_cutoff = 1, alpha = 2, 
-                     return_df = 'bed' ) 
+                     D_cutoff = 0, p.adj_cutoff = 1, 
+                     return_df = 'bed', pval_aggregate = "max") 
   # Order regions
   regions <- regions[order(chr, start, end), ]
   # Remove unnecessary columns

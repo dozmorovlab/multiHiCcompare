@@ -6,9 +6,9 @@
 \usage{
 manhattan_hicexp(
   hicexp,
-  method = "standard",
+  pval_aggregate = "standard",
   return_df = FALSE,
-  alpha = 0.05,
+  p.adj_cutoff = 0.05,
   plot.chr = NA
 )
 }
@@ -16,23 +16,22 @@ manhattan_hicexp(
 \item{hicexp}{A hicexp object that has had differences
 detected}
 
-\item{method}{string denoting the p-value method to
+\item{pval_aggregate}{string denoting the p-value method to
 use for plotting. Options are "standard", "fisher",
-"stouffer", "addCLT", and "count". "standard" plots a manhattan plot
+"lancaster", "sidak", and "count". "standard" plots a manhattan plot
 using all individual p-values (very slow, use with caution).  
-"fisher" or "stouffer" methods use the Fisher's method or
-the Stouffer-Liptak method, respectively, for combining p-values
+"fisher", "lancaster", or "sidak" methods use the Fisher's, Lancaster,
+or the Sidak method, respectively, for combining p-values
 for each region which are then plotted on the -log10(p-value) Y-axis.
-"addCLT" combines p-values using the BLMA package's addCLT function.
 "count" summarizes the number of times a region was detected as 
-significant (see "alpha" parameter), plotted on Y-axis. The higher
-the dots are, the more sighificant/more frequent a region was 
-detected as significantly differentially interacting.}
+significant (see "p.adj_cutoff" parameter), plotted on Y-axis. The higher
+the dots are, the more significant/more frequent a region was 
+detected as significantly differentially interacting. See ?topDirs}
 
 \item{return_df}{Logical, should the data.frame used to
 generate the plot be returned?}
 
-\item{alpha}{The adjusted p-value cutoff to be used for 
+\item{p.adj_cutoff}{The adjusted p-value cutoff to be used for 
 calling an interaction significant. This is
 only used if method = 'count'. Defaults to 
 0.05.}
@@ -55,10 +54,10 @@ This function is used to create a manhattan
     of the upper triangle of the full Hi-C matrix. Each genomic
     region of the Hi-C dataset has multiple interactions it
     is involved in and the significance of all of these can 
-    be visualized with \code{method = "standard"}. 
+    be visualized with \code{pval_aggregate = "standard"}. 
     Alternatively the p-values for all these interactions
-    can be combined using either Fisher's method or the
-    Stouffer-Liptak method of combining p-values. Additionally
+    can be combined using either Fisher's, or the Lancaster or the
+    Sidac method of combining p-values. Additionally
     the "count" option will plot based on the number of times
     each region was found to be involved in a signficantly 
     different interaction. The 
@@ -69,5 +68,5 @@ This function is used to create a manhattan
 }
 \examples{
 data("hicexp_diff")
-manhattan_hicexp(hicexp_diff, method = "fisher")
+manhattan_hicexp(hicexp_diff, pval_aggregate = "fisher")
 }

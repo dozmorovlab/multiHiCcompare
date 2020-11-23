@@ -2,21 +2,20 @@
 #' 
 #' @param hicexp A hicexp object that has had differences
 #'     detected
-#' @param method string denoting the p-value method to
+#' @param pval_aggregate string denoting the p-value method to
 #'     use for plotting. Options are "standard", "fisher",
-#'     "stouffer", "addCLT", and "count". "standard" plots a manhattan plot
+#'     "lancaster", "sidak", and "count". "standard" plots a manhattan plot
 #'     using all individual p-values (very slow, use with caution).  
-#'     "fisher" or "stouffer" methods use the Fisher's method or
-#'     the Stouffer-Liptak method, respectively, for combining p-values
+#'     "fisher", "lancaster", or "sidak" methods use the Fisher's, Lancaster,
+#'     or the Sidak method, respectively, for combining p-values
 #'     for each region which are then plotted on the -log10(p-value) Y-axis.
-#'     "addCLT" combines p-values using the BLMA package's addCLT function.
 #'     "count" summarizes the number of times a region was detected as 
-#'     significant (see "alpha" parameter), plotted on Y-axis. The higher
-#'     the dots are, the more sighificant/more frequent a region was 
-#'     detected as significantly differentially interacting.
+#'     significant (see "p.adj_cutoff" parameter), plotted on Y-axis. The higher
+#'     the dots are, the more significant/more frequent a region was 
+#'     detected as significantly differentially interacting. See ?topDirs
 #' @param return_df Logical, should the data.frame used to
 #'     generate the plot be returned?
-#' @param alpha The adjusted p-value cutoff to be used for 
+#' @param p.adj_cutoff The adjusted p-value cutoff to be used for 
 #'     calling an interaction significant. This is
 #'     only used if method = 'count'. Defaults to 
 #'     0.05.
@@ -29,10 +28,10 @@
 #'     of the upper triangle of the full Hi-C matrix. Each genomic
 #'     region of the Hi-C dataset has multiple interactions it
 #'     is involved in and the significance of all of these can 
-#'     be visualized with \code{method = "standard"}. 
+#'     be visualized with \code{pval_aggregate = "standard"}. 
 #'     Alternatively the p-values for all these interactions
-#'     can be combined using either Fisher's method or the
-#'     Stouffer-Liptak method of combining p-values. Additionally
+#'     can be combined using either Fisher's, or the Lancaster or the
+#'     Sidac method of combining p-values. Additionally
 #'     the "count" option will plot based on the number of times
 #'     each region was found to be involved in a signficantly 
 #'     different interaction. The 
@@ -43,18 +42,17 @@
 #' @return A manhattan plot and optionally the data.frame used
 #'     to generate the manhattan plot.
 #' @importFrom qqman manhattan
-#' @importFrom metap sumz sumlog
-#' @importFrom BLMA addCLT
+#' @import aggregation
 #' @export
 #' @examples
 #' data("hicexp_diff")
-#' manhattan_hicexp(hicexp_diff, method = "fisher")
+#' manhattan_hicexp(hicexp_diff, pval_aggregate = "fisher")
 
 
-manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE, 
-                             alpha = 0.05, plot.chr = NA) {
+manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FALSE, 
+                             p.adj_cutoff = 0.05, plot.chr = NA) {
   # check input
-  method <- match.arg(method, c("standard", "fisher", "stouffer", "count", "addCLT"), 
+  pval_aggregate <- match.arg(pval_aggregate, c("standard", "fisher", "sidak", "count", "lancaster"), 
                       several.ok = FALSE)
   if (!is.na(plot.chr)) {
     if (!is.numeric(plot.chr)) {
@@ -69,7 +67,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     stop("Differences must be detected before making a manhattan plot.")
   }
   
-  if (method == "standard") {
+  if (pval_aggregate == "standard") {
     # make data.frame for plotting
     man.df <- data.frame(BP = c(results(hicexp)$region1, 
                                 results(hicexp)$region2),
@@ -85,7 +83,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     suppressWarnings(qqman::manhattan(man.df, suggestiveline = FALSE, genomewideline = FALSE))
   }
   
-  if (method == "fisher") {
+  if (pval_aggregate == "fisher") {
     # make aggregate p-value for regions
     regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
                  paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
@@ -103,7 +101,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
                                   by = list(regions), 
                                   FUN = function(x) {
                                     if (length(x) > 1) {
-                                      metap::sumlog(x)$p
+                                      aggregation::fisher(x)
                                     } else {
                                       x
                                     }
@@ -124,7 +122,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     man.df <- fisher_aggregate
   }
   
-  if (method == "stouffer") {
+  if (pval_aggregate == "sidak") {
     # make aggregate p-value for regions
     regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
                  paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
@@ -132,39 +130,39 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     p.values[p.values == 1] <- 0.99999 # change pvalues from 1 so sumz works correctly
     
     
-    stouffer_liptak_aggregate <- aggregate(p.values, 
+    sidak_aggregate <- aggregate(p.values, 
                                            by = list(regions), 
                                            FUN = function(x) {
                                              if (length(x) > 1) {
-                                               suppressWarnings(metap::sumz(x)$p) 
+                                               aggregation::sidak(x) 
                                              } else {
                                                x
                                              }
                                             })
     
-    stouffer_liptak_aggregate <- cbind(read.table(text = stouffer_liptak_aggregate$Group.1,
-                                                  sep = ":"), stouffer_liptak_aggregate$x)
-    colnames(stouffer_liptak_aggregate) <- c("CHR", "BP", "P")
+    sidak_aggregate <- cbind(read.table(text = sidak_aggregate$Group.1,
+                                                  sep = ":"), sidak_aggregate$x)
+    colnames(sidak_aggregate) <- c("CHR", "BP", "P")
     # make sure there are no zero p-values
-    stouffer_liptak_aggregate$P[stouffer_liptak_aggregate$P == 0] <- .Machine$double.xmin
+    sidak_aggregate$P[sidak_aggregate$P == 0] <- .Machine$double.xmin
     
     # subset by chr is option is not NA
     if (!is.na(plot.chr)) {
-      stouffer_liptak_aggregate <- stouffer_liptak_aggregate[stouffer_liptak_aggregate$CHR == plot.chr,]
+      sidak_aggregate <- sidak_aggregate[sidak_aggregate$CHR == plot.chr,]
     }
     
-    suppressWarnings(qqman::manhattan(stouffer_liptak_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
+    suppressWarnings(qqman::manhattan(sidak_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
     
-    man.df <- stouffer_liptak_aggregate
+    man.df <- sidak_aggregate
   }
   
   
-  if (method == 'count') {
+  if (pval_aggregate == 'count') {
     # make aggregate count for regions
     regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
                  paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
     p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
-    count <- ifelse(p.values < alpha, 1, 0)
+    count <- ifelse(p.values < p.adj_cutoff, 1, 0)
     
     ## count method
     count_aggregate <- aggregate(count, by = list(regions), 
@@ -190,8 +188,8 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
     colnames(man.df)[3] <- 'count'
   }
   
-  # addCLT method
-  if (method == "addCLT") {
+  # lancaster method
+  if (pval_aggregate == "lancaster") {
     # make aggregate p-value for regions
     regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
                  paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
@@ -202,7 +200,7 @@ manhattan_hicexp <- function(hicexp, method = "standard", return_df = FALSE,
                                   by = list(regions), 
                                   FUN = function(x) {
                                     if (length(x) > 1) {
-                                      BLMA::addCLT(x)
+                                      aggregation::lancaster(x)
                                     } else {
                                       x
                                     }

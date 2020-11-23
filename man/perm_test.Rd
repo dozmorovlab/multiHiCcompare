@@ -10,7 +10,8 @@ perm_test(
   feature,
   p.adj_cutoff = 10^-10,
   logfc_cutoff = 1,
-  num.perm = 1000
+  num.perm = 1000,
+  pval_aggregate = "max"
 )
 }
 \arguments{
@@ -30,6 +31,13 @@ for more information. Defaults to 1.}
 
 \item{num.perm}{The number of permutations to run.
 Defaults to 1000.}
+
+\item{pval_aggregate}{Method to aggregate region-specific p-values.
+If a region differentially interacts with several other regions,
+the p-values are aggregated using a 'max' method (Default, select maximum
+p-value, most conservative), or the Fisher ('fisher'), Lancaster ('lancaster'),
+or Sidak ('sidak') methods (see 'aggregate' package).
+regions, it is assigned a single p-value aggregated from several. See ?topDirs}
 }
 \value{
 The permutation p-value

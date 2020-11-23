@@ -1,3 +1,15 @@
+Changes in version 2.0.0 (2020-11-23)
++ Update selection of significant results in the 'topDirs' function. Major change, 
+results will be more strict compared to pre-2.0.0 version
++ Removed 'BLMA' and 'metap' dependency, added 'aggregation' dependency
++ P-values are aggregated using 'max' by default. I.e., for a region differentially
+interacting with multiple regions, a maximum p-value will be selected. Fisher,
+Lancaster, and Sidak methods are also available
++ Harmonize counting of significant regions using 'p.adj_cutoff' only ('alpha' 
+cutoff removed)
++ The 'manhattan' function is harmonized with 'topDirs'
++ The 'perm_test' function is harmonized with 'topDirs'
++ Update vignettes to match functions
 Changes in version 1.7.1 (2020-08-28)
 + Track NEWS
 + Bump version
