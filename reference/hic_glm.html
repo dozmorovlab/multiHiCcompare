@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiHiCcompare</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.0</span>
       </span>
     </div>
 
@@ -132,17 +132,17 @@
     <p>Function to perform GLM differential analysis on Hi-C experiment</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/multiHiCcompare/man/hic_glm.html'>hic_glm</a></span>(
-  <span class='kw'>hicexp</span>,
-  <span class='kw'>design</span>,
-  contrast = <span class='fl'>NA</span>,
-  coef = <span class='fl'>NA</span>,
-  method = <span class='st'>"QLFTest"</span>,
-  M = <span class='fl'>1</span>,
-  p.method = <span class='st'>"fdr"</span>,
-  parallel = <span class='fl'>FALSE</span>,
-  max.pool = <span class='fl'>0.7</span>
-)</pre>
+    <pre class="usage"><span class='fu'>hic_glm</span><span class='op'>(</span>
+  <span class='va'>hicexp</span>,
+  <span class='va'>design</span>,
+  contrast <span class='op'>=</span> <span class='cn'>NA</span>,
+  coef <span class='op'>=</span> <span class='cn'>NA</span>,
+  method <span class='op'>=</span> <span class='st'>"QLFTest"</span>,
+  M <span class='op'>=</span> <span class='fl'>1</span>,
+  p.method <span class='op'>=</span> <span class='st'>"fdr"</span>,
+  parallel <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  max.pool <span class='op'>=</span> <span class='fl'>0.7</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,10 +224,11 @@ typically to 0.5 or 0.6.</p></td>
     option.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hicexp_diff"</span>)
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span>(<span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/multiHiCcompare/man/meta.html'>meta</a></span>(<span class='kw'>hicexp_diff</span>)<span class='op'>$</span><span class='kw'>group</span>) <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span>)))
-<span class='kw'>hicexp_diff</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/multiHiCcompare/man/hic_glm.html'>hic_glm</a></span>(<span class='kw'>hicexp_diff</span>, design = <span class='kw'>d</span>, coef = <span class='fl'>2</span>)}
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"hicexp_diff"</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='meta.html'>meta</a></span><span class='op'>(</span><span class='va'>hicexp_diff</span><span class='op'>)</span><span class='op'>$</span><span class='va'>group</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>hicexp_diff</span> <span class='op'>&lt;-</span> <span class='fu'>hic_glm</span><span class='op'>(</span><span class='va'>hicexp_diff</span>, design <span class='op'>=</span> <span class='va'>d</span>, coef <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>}</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -244,7 +245,7 @@ typically to 0.5 or 0.6.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

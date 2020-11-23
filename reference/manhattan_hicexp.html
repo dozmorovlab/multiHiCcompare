@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">multiHiCcompare</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.0</span>
       </span>
     </div>
 
@@ -132,13 +132,13 @@
     <p>Manhattan plot function for results of multiHiCcompare</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/multiHiCcompare/man/manhattan_hicexp.html'>manhattan_hicexp</a></span>(
-  <span class='kw'>hicexp</span>,
-  method = <span class='st'>"standard"</span>,
-  return_df = <span class='fl'>FALSE</span>,
-  alpha = <span class='fl'>0.05</span>,
-  plot.chr = <span class='fl'>NA</span>
-)</pre>
+    <pre class="usage"><span class='fu'>manhattan_hicexp</span><span class='op'>(</span>
+  <span class='va'>hicexp</span>,
+  pval_aggregate <span class='op'>=</span> <span class='st'>"standard"</span>,
+  return_df <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  p.adj_cutoff <span class='op'>=</span> <span class='fl'>0.05</span>,
+  plot.chr <span class='op'>=</span> <span class='cn'>NA</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,19 +149,18 @@
 detected</p></td>
     </tr>
     <tr>
-      <th>method</th>
+      <th>pval_aggregate</th>
       <td><p>string denoting the p-value method to
 use for plotting. Options are "standard", "fisher",
-"stouffer", "addCLT", and "count". "standard" plots a manhattan plot
+"lancaster", "sidak", and "count". "standard" plots a manhattan plot
 using all individual p-values (very slow, use with caution).  
-"fisher" or "stouffer" methods use the Fisher's method or
-the Stouffer-Liptak method, respectively, for combining p-values
+"fisher", "lancaster", or "sidak" methods use the Fisher's, Lancaster,
+or the Sidak method, respectively, for combining p-values
 for each region which are then plotted on the -log10(p-value) Y-axis.
-"addCLT" combines p-values using the BLMA package's addCLT function.
 "count" summarizes the number of times a region was detected as 
-significant (see "alpha" parameter), plotted on Y-axis. The higher
-the dots are, the more sighificant/more frequent a region was 
-detected as significantly differentially interacting.</p></td>
+significant (see "p.adj_cutoff" parameter), plotted on Y-axis. The higher
+the dots are, the more significant/more frequent a region was 
+detected as significantly differentially interacting. See ?topDirs</p></td>
     </tr>
     <tr>
       <th>return_df</th>
@@ -169,7 +168,7 @@ detected as significantly differentially interacting.</p></td>
 generate the plot be returned?</p></td>
     </tr>
     <tr>
-      <th>alpha</th>
+      <th>p.adj_cutoff</th>
       <td><p>The adjusted p-value cutoff to be used for 
 calling an interaction significant. This is
 only used if method = 'count'. Defaults to 
@@ -195,10 +194,10 @@ to NA indicating that all chromosomes will be plotted.</p></td>
     of the upper triangle of the full Hi-C matrix. Each genomic
     region of the Hi-C dataset has multiple interactions it
     is involved in and the significance of all of these can 
-    be visualized with <code>method = "standard"</code>. 
+    be visualized with <code>pval_aggregate = "standard"</code>. 
     Alternatively the p-values for all these interactions
-    can be combined using either Fisher's method or the
-    Stouffer-Liptak method of combining p-values. Additionally
+    can be combined using either Fisher's, or the Lancaster or the
+    Sidac method of combining p-values. Additionally
     the "count" option will plot based on the number of times
     each region was found to be involved in a signficantly 
     different interaction. The 
@@ -208,8 +207,9 @@ to NA indicating that all chromosomes will be plotted.</p></td>
     analysis.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hicexp_diff"</span>)
-<span class='fu'><a href='https://rdrr.io/pkg/multiHiCcompare/man/manhattan_hicexp.html'>manhattan_hicexp</a></span>(<span class='kw'>hicexp_diff</span>, method = <span class='st'>"fisher"</span>)</div><div class='img'><img src='manhattan_hicexp-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"hicexp_diff"</span><span class='op'>)</span>
+<span class='fu'>manhattan_hicexp</span><span class='op'>(</span><span class='va'>hicexp_diff</span>, pval_aggregate <span class='op'>=</span> <span class='st'>"fisher"</span><span class='op'>)</span>
+</div><div class='img'><img src='manhattan_hicexp-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -225,7 +225,7 @@ to NA indicating that all chromosomes will be plotted.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
