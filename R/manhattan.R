@@ -74,7 +74,8 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
                          CHR = as.numeric(c(results(hicexp)$chr, 
                                             results(hicexp)$chr)), 
                          P = c(results(hicexp)$p.adj, 
-                               results(hicexp)$p.adj))
+                               results(hicexp)$p.adj),
+                         SNP = paste0(results(hicexp)$chr, ":", results(hicexp)$region1, "-", results(hicexp)$region2))
     # subset by chr is option is not NA
     if (!is.na(plot.chr)) {
       man.df <- man.df[man.df$CHR == plot.chr,]
@@ -111,6 +112,8 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
                                          sep = ":"), fisher_aggregate$x)
     colnames(fisher_aggregate) <- c("CHR", "BP", "P")
     fisher_aggregate$P[fisher_aggregate$P == 0] <- 10^-100
+    # Add SNP column
+    fisher_aggregate$SNP <- paste0(fisher_aggregate$CHR, ":", fisher_aggregate$BP)
     
     # subset by chr is option is not NA
     if (!is.na(plot.chr)) {
@@ -145,6 +148,8 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
     colnames(sidak_aggregate) <- c("CHR", "BP", "P")
     # make sure there are no zero p-values
     sidak_aggregate$P[sidak_aggregate$P == 0] <- .Machine$double.xmin
+    # Add SNP column
+    sidak_aggregate$SNP <- paste0(sidak_aggregate$CHR, ":", sidak_aggregate$BP)
     
     # subset by chr is option is not NA
     if (!is.na(plot.chr)) {
@@ -176,6 +181,8 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
     count_aggregate <- cbind(read.table(text = count_aggregate$Group.1, sep = ":"),
                              count_aggregate$x)
     colnames(count_aggregate) <- c("CHR", "BP", "P")
+    # Add SNP column
+    count_aggregate$SNP <- paste0(count_aggregate$CHR, ":", count_aggregate$BP)
     
     # subset by chr is option is not NA
     if (!is.na(plot.chr)) {
@@ -210,6 +217,8 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
                                          sep = ":"), clt_aggregate$x)
     colnames(clt_aggregate) <- c("CHR", "BP", "P")
     # clt_aggregate$P[clt_aggregate$P == 0] <- 10^-100
+    # Add SNP column
+    clt_aggregate$SNP <- paste0(clt_aggregate$CHR, ":", clt_aggregate$BP)
     
     # subset by chr is option is not NA
     if (!is.na(plot.chr)) {
@@ -258,7 +267,8 @@ plot_pvals <- function(dirs, plot.chr = NA) {
     }
   }
   # make dataframe for plotting
-  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = as.numeric(dirs$avgP.adj))
+  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = as.numeric(dirs$avgP.adj), 
+                   SNP = paste0(dirs$chr, ":", dirs$start, "-", dirs$end))
   # subset if plot.chr is not NA
   if(!is.na(plot.chr[1])) {
     df <- df[df$CHR == plot.chr,]
@@ -296,7 +306,8 @@ plot_counts <- function(dirs, plot.chr = NA) {
     }
   }
   # make dataframe for plotting
-  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = dirs$count)
+  df <- data.frame(CHR = as.numeric(sub('chr', '', dirs$chr)), BP = dirs$start, P = dirs$count,
+                   SNP = paste0(dirs$chr, ":", dirs$start, "-", dirs$end))
   # subset if plot.chr is not NA
   if(!is.na(plot.chr[1])) {
     df <- df[df$CHR == plot.chr,]
