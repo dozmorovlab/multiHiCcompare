@@ -1,7 +1,7 @@
 Package: multiHiCcompare
 Title: Normalize and detect differences between Hi-C datasets when replicates 
   of each experimental condition are available
-Version: 1.12.0
+Version: 1.13.0
 Author: John Stansfield <stansfieldjc@vcu.edu>,
     Mikhail Dozmorov <mikhail.dozmorov@vcuhealth.org>
 Maintainer: John Stansfield <stansfieldjc@vcu.edu>, Mikhail Dozmorov <mikhail.dozmorov@vcuhealth.org>
