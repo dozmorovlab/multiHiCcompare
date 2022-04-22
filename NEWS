@@ -1,4 +1,6 @@
-Changes in version 2.0.0 (2020-11-23)
+Changes in version 1.12.0 (2020-11-23)
++ Match NEWS and DESCRIPTION versioning
+Changes in version 1.12.0 (2020-11-23)
 + Update selection of significant results in the 'topDirs' function. Major change, 
 results will be more strict compared to pre-2.0.0 version
 + Removed 'BLMA' and 'metap' dependency, added 'aggregation' dependency
