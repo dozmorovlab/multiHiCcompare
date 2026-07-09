@@ -1,3 +1,8 @@
+Changes in version 1.31.1 (2022-07-09)
++ Remove aggretation package dependence
++ Add metap implementation of fisher p-value aggregation
++ Add custom implementation of Sidak p-value aggregation
++ Remove support for Lancaster p-value aggregation
 Changes in version 1.13.0 (2022-04-21)
 + Match NEWS and DESCRIPTION versioning
 Changes in version 1.12.0 (2020-11-23)

@@ -1,10 +1,17 @@
 Package: multiHiCcompare
 Title: Normalize and detect differences between Hi-C datasets when replicates 
   of each experimental condition are available
-Version: 1.13.0
-Author: John Stansfield <stansfieldjc@vcu.edu>,
-    Mikhail Dozmorov <mikhail.dozmorov@vcuhealth.org>
-Maintainer: John Stansfield <stansfieldjc@vcu.edu>, Mikhail Dozmorov <mikhail.dozmorov@vcuhealth.org>
+Version: 1.31.1
+Authors@R: c(
+    person(given = "Mikhail",
+           family = "Dozmorov",
+           role = c("aut", "cre"),
+           email = "mikhail.dozmorov@gmail.com",
+           comment = c(ORCID = "0000-0002-0086-8358")),
+    person(given = "John",
+           family = "Stansfield",
+           role = c("aut"),
+           email = "stansfieldjc@vcu.edu"))
 Description: multiHiCcompare provides functions for joint normalization 
     and difference detection in multiple Hi-C datasets. This extension of
     the original HiCcompare package now allows for Hi-C experiments with 
@@ -33,7 +40,7 @@ Imports:
     pbapply,
     GenomeInfoDbData,
     GenomeInfoDb,
-    aggregation
+    metap
 biocViews: Software,
   HiC, Sequencing, Normalization
 License: MIT + file LICENSE
@@ -43,7 +50,7 @@ Suggests: knitr,
     rmarkdown,
     testthat,
     BiocStyle
-RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 BugReports: https://github.com/dozmorovlab/multiHiCcompare/issues
 URL: https://github.com/dozmorovlab/multiHiCcompare
+Config/roxygen2/version: 8.0.0

@@ -18,9 +18,9 @@ detected}
 
 \item{pval_aggregate}{string denoting the p-value method to
 use for plotting. Options are "standard", "fisher",
-"lancaster", "sidak", and "count". "standard" plots a manhattan plot
+"sidak", and "count". "standard" plots a manhattan plot
 using all individual p-values (very slow, use with caution).  
-"fisher", "lancaster", or "sidak" methods use the Fisher's, Lancaster,
+"fisher", or "sidak" methods use the Fisher's
 or the Sidak method, respectively, for combining p-values
 for each region which are then plotted on the -log10(p-value) Y-axis.
 "count" summarizes the number of times a region was detected as 
@@ -56,7 +56,7 @@ This function is used to create a manhattan
     is involved in and the significance of all of these can 
     be visualized with \code{pval_aggregate = "standard"}. 
     Alternatively the p-values for all these interactions
-    can be combined using either Fisher's, or the Lancaster or the
+    can be combined using either Fisher's, or the
     Sidac method of combining p-values. Additionally
     the "count" option will plot based on the number of times
     each region was found to be involved in a signficantly 

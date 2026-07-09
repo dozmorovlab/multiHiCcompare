@@ -36,8 +36,8 @@ by the function. Options are "bed" and "pairedbed" (Default).}
 \item{pval_aggregate}{Method to aggregate region-specific p-values.
 If a region differentially interacts with several other regions,
 the p-values are aggregated using a 'max' method (Default, select maximum
-p-value, most conservative), or the Fisher ('fisher'), Lancaster ('lancaster'),
-or Sidak ('sidak') methods (see 'aggregate' package).
+p-value, most conservative), or the Fisher ('fisher')
+or Sidak ('sidak') methods.
 regions, it is assigned a single p-value aggregated from several}
 }
 \value{

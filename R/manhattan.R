@@ -4,9 +4,9 @@
 #'     detected
 #' @param pval_aggregate string denoting the p-value method to
 #'     use for plotting. Options are "standard", "fisher",
-#'     "lancaster", "sidak", and "count". "standard" plots a manhattan plot
+#'     "sidak", and "count". "standard" plots a manhattan plot
 #'     using all individual p-values (very slow, use with caution).  
-#'     "fisher", "lancaster", or "sidak" methods use the Fisher's, Lancaster,
+#'     "fisher", or "sidak" methods use the Fisher's
 #'     or the Sidak method, respectively, for combining p-values
 #'     for each region which are then plotted on the -log10(p-value) Y-axis.
 #'     "count" summarizes the number of times a region was detected as 
@@ -30,7 +30,7 @@
 #'     is involved in and the significance of all of these can 
 #'     be visualized with \code{pval_aggregate = "standard"}. 
 #'     Alternatively the p-values for all these interactions
-#'     can be combined using either Fisher's, or the Lancaster or the
+#'     can be combined using either Fisher's, or the
 #'     Sidac method of combining p-values. Additionally
 #'     the "count" option will plot based on the number of times
 #'     each region was found to be involved in a signficantly 
@@ -42,7 +42,7 @@
 #' @return A manhattan plot and optionally the data.frame used
 #'     to generate the manhattan plot.
 #' @importFrom qqman manhattan
-#' @import aggregation
+#' @import metap
 #' @export
 #' @examples
 #' data("hicexp_diff")
@@ -52,8 +52,8 @@
 manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FALSE, 
                              p.adj_cutoff = 0.05, plot.chr = NA) {
   # check input
-  pval_aggregate <- match.arg(pval_aggregate, c("standard", "fisher", "sidak", "count", "lancaster"), 
-                      several.ok = FALSE)
+  pval_aggregate <- match.arg(pval_aggregate, c("standard", "fisher", "sidak", "count"), 
+                              several.ok = FALSE)
   if (!is.na(plot.chr)) {
     if (!is.numeric(plot.chr)) {
       stop("plot.chr must be either NA or a numeric value.")
@@ -102,11 +102,11 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
                                   by = list(regions), 
                                   FUN = function(x) {
                                     if (length(x) > 1) {
-                                      aggregation::fisher(x)
+                                      metap::sumlog(x)$p
                                     } else {
                                       x
                                     }
-                                    })
+                                  })
     
     fisher_aggregate <- cbind(read.table(text = fisher_aggregate$Group.1, 
                                          sep = ":"), fisher_aggregate$x)
@@ -134,17 +134,17 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
     
     
     sidak_aggregate <- aggregate(p.values, 
-                                           by = list(regions), 
-                                           FUN = function(x) {
-                                             if (length(x) > 1) {
-                                               aggregation::sidak(x) 
-                                             } else {
-                                               x
-                                             }
-                                            })
+                                 by = list(regions), 
+                                 FUN = function(x) {
+                                   if (length(x) > 1) {
+                                     1 - (1 - min(x))^length(x)
+                                   } else {
+                                     x
+                                   }
+                                 })
     
     sidak_aggregate <- cbind(read.table(text = sidak_aggregate$Group.1,
-                                                  sep = ":"), sidak_aggregate$x)
+                                        sep = ":"), sidak_aggregate$x)
     colnames(sidak_aggregate) <- c("CHR", "BP", "P")
     # make sure there are no zero p-values
     sidak_aggregate$P[sidak_aggregate$P == 0] <- .Machine$double.xmin
@@ -172,10 +172,10 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
     ## count method
     count_aggregate <- aggregate(count, by = list(regions), 
                                  FUN = function(cnt) {
-      c.sum <- sum(cnt)
-      # c.pval <- 1 / sqrt(c.sum)
-      return(c.sum)
-    })
+                                   c.sum <- sum(cnt)
+                                   # c.pval <- 1 / sqrt(c.sum)
+                                   return(c.sum)
+                                 })
     
     # count_aggregate$x[is.infinite(count_aggregate$x)] <- 1 # replace any regions that had counts of 0 significant with pseudo-pval of 1
     count_aggregate <- cbind(read.table(text = count_aggregate$Group.1, sep = ":"),
@@ -196,39 +196,39 @@ manhattan_hicexp <- function(hicexp, pval_aggregate = "standard", return_df = FA
   }
   
   # lancaster method
-  if (pval_aggregate == "lancaster") {
-    # make aggregate p-value for regions
-    regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
-                 paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
-    p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
-    
-    
-    clt_aggregate <- aggregate(p.values, 
-                                  by = list(regions), 
-                                  FUN = function(x) {
-                                    if (length(x) > 1) {
-                                      aggregation::lancaster(x)
-                                    } else {
-                                      x
-                                    }
-                                  })
-    
-    clt_aggregate <- cbind(read.table(text = clt_aggregate$Group.1, 
-                                         sep = ":"), clt_aggregate$x)
-    colnames(clt_aggregate) <- c("CHR", "BP", "P")
-    # clt_aggregate$P[clt_aggregate$P == 0] <- 10^-100
-    # Add SNP column
-    clt_aggregate$SNP <- paste0(clt_aggregate$CHR, ":", clt_aggregate$BP)
-    
-    # subset by chr is option is not NA
-    if (!is.na(plot.chr)) {
-      clt_aggregate <- clt_aggregate[clt_aggregate$CHR == plot.chr,]
-    }
-    # plot combined p-value manahttan plots
-    suppressWarnings(qqman::manhattan(clt_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
-    
-    man.df <- clt_aggregate
-  }
+  # if (pval_aggregate == "lancaster") {
+  #   # make aggregate p-value for regions
+  #   regions <- c(paste0(results(hicexp)$chr, ':', results(hicexp)$region1),
+  #                paste0(results(hicexp)$chr, ':', results(hicexp)$region2))
+  #   p.values <- c(results(hicexp)$p.adj, results(hicexp)$p.adj)
+  #   
+  #   
+  #   clt_aggregate <- aggregate(p.values, 
+  #                                 by = list(regions), 
+  #                                 FUN = function(x) {
+  #                                   if (length(x) > 1) {
+  #                                     aggregation::lancaster(x)
+  #                                   } else {
+  #                                     x
+  #                                   }
+  #                                 })
+  #   
+  #   clt_aggregate <- cbind(read.table(text = clt_aggregate$Group.1, 
+  #                                        sep = ":"), clt_aggregate$x)
+  #   colnames(clt_aggregate) <- c("CHR", "BP", "P")
+  #   # clt_aggregate$P[clt_aggregate$P == 0] <- 10^-100
+  #   # Add SNP column
+  #   clt_aggregate$SNP <- paste0(clt_aggregate$CHR, ":", clt_aggregate$BP)
+  #   
+  #   # subset by chr is option is not NA
+  #   if (!is.na(plot.chr)) {
+  #     clt_aggregate <- clt_aggregate[clt_aggregate$CHR == plot.chr,]
+  #   }
+  #   # plot combined p-value manahttan plots
+  #   suppressWarnings(qqman::manhattan(clt_aggregate, suggestiveline = FALSE, genomewideline = FALSE))
+  #   
+  #   man.df <- clt_aggregate
+  # }
   
   
   # return man.df if requested
